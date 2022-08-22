@@ -22,6 +22,10 @@
             filled
             type="date"
             hint="Date"
+            lazy-rules
+            :rules="[
+              (val) => (val && val.length > 0) || 'Please make a selection',
+            ]"
           />
         </div>
       </div>
@@ -46,8 +50,12 @@
             class="form-input"
             v-model="requestor"
             :options="requestorOptions"
-            label="Requestor"
-            hint="Your name"
+            label="IS requestor"
+            hint="Requestor's name"
+            lazy-rules
+            :rules="[
+              (val) => (val && val.length > 0) || 'Please make a selection',
+            ]"
           />
         </div>
         <div class="col-12 col-md-4 offset-md-1">
@@ -57,6 +65,10 @@
             filled
             type="date"
             hint="Proposed change date"
+            lazy-rules
+            :rules="[
+              (val) => (val && val.length > 0) || 'Please make a selection',
+            ]"
           />
         </div>
       </div>
@@ -70,6 +82,10 @@
             :options="processingOptions"
             label="Processing"
             hint="Desired form processing speed"
+            lazy-rules
+            :rules="[
+              (val) => (val && val.length > 0) || 'Please make a selection',
+            ]"
           />
         </div>
         <div class="col-12 col-md-3 offset-md-1">
@@ -80,6 +96,10 @@
             :options="riskAndImpactOptions"
             label="Risk"
             hint="Risk severity"
+            lazy-rules
+            :rules="[
+              (val) => (val && val.length > 0) || 'Please make a selection',
+            ]"
           />
         </div>
         <div class="col-12 col-md-3 offset-md-1">
@@ -90,6 +110,10 @@
             :options="riskAndImpactOptions"
             label="Impact"
             hint="Impact severity"
+            lazy-rules
+            :rules="[
+              (val) => (val && val.length > 0) || 'Please make a selection',
+            ]"
           />
         </div>
       </div>
@@ -160,6 +184,10 @@
             :options="approvingManagerOptions"
             label="Approving manager"
             hint="The manager who should view this request"
+            lazy-rules
+            :rules="[
+              (val) => (val && val.length > 0) || 'Please make a selection',
+            ]"
           />
         </div>
       </div>
@@ -185,9 +213,9 @@ export default {
     const trackingNumber = ref(null);
     const requestor = ref(null);
     const changeDate = ref(null);
-    const processingRate = ref(null);
-    const riskSeverity = ref(null);
-    const impactSeverity = ref(null);
+    const processingRate = ref("Normal");
+    const riskSeverity = ref("Low");
+    const impactSeverity = ref("Low");
     const changeDescription = ref(null);
     const testingDetails = ref(null);
     const recoveryPlan = ref(null);
