@@ -5,7 +5,57 @@
       :rows="rows"
       :columns="columns"
       row-key="id"
-    ></q-table>
+      wrap-cells="true"
+    >
+      <template v-slot:header="props">
+        <q-tr :props="props">
+          <q-th auto-width />
+          <q-th v-for="col in props.cols" :key="col.name" :props="props">
+            {{ col.label }}
+          </q-th>
+        </q-tr>
+      </template>
+
+      <template v-slot:body="props">
+        <q-tr :props="props">
+          <q-td auto-width>
+            <q-btn
+              size="sm"
+              color="accent"
+              round
+              dense
+              @click="props.expand = !props.expand"
+              :icon="props.expand ? 'remove' : 'add'"
+            />
+          </q-td>
+          <q-td v-for="col in props.cols" :key="col.name" :props="props">
+            {{ col.value }}
+          </q-td>
+        </q-tr>
+        <q-tr v-show="props.expand" :props="props">
+          <q-td colspan="100%">
+            <div style="width: 100vw; overflow-wrap: break-word">
+              <h6>Description</h6>
+              {{ props.row.description }}.
+            </div>
+
+            <br />
+
+            <div style="width: 100vw; overflow-wrap: break-word">
+              <h6>Testing details</h6>
+              {{ props.row.testing_details }}
+            </div>
+
+            <br />
+
+            <div style="width: 100vw; overflow-wrap: break-word">
+              <h6>Recovery plan</h6>
+              {{ props.row.recovery_plan }}
+            </div>
+          </q-td>
+        </q-tr>
+      </template>
+    </q-table>
   </q-page>
 </template>
 
@@ -38,16 +88,9 @@ const columns = [
     sortable: true,
   },
   {
-    name: "description",
-    align: "center",
-    label: "Description",
-    field: "description",
-    sortable: true,
-  },
-  {
     name: "request_date",
     align: "center",
-    label: "Request date (yyyy-mm-dd)",
+    label: "Request date",
     field: "request_date",
     sortable: true,
   },
@@ -68,7 +111,7 @@ const columns = [
   {
     name: "change_date",
     align: "center",
-    label: "Proposed change date (yyyy-mm-dd)",
+    label: "Change date",
     field: "change_date",
     sortable: true,
   },
@@ -80,8 +123,21 @@ const columns = [
     sortable: true,
   },
   {
-    name: "approving_manager",
+    name: "risk_severity",
     align: "center",
+    label: "Risk severity",
+    field: "risk_severity",
+    sortable: true,
+  },
+  {
+    name: "impact_severity",
+    align: "center",
+    label: "Impact severity",
+    field: "impact_severity",
+    sortable: true,
+  },
+  {
+    name: "approving_manager",
     label: "Approving manager",
     field: "approving_manager",
     sortable: true,
@@ -89,14 +145,14 @@ const columns = [
   {
     name: "approval_date",
     align: "center",
-    label: "Approval date (yyyy-mm-dd)",
+    label: "Approval date",
     field: "approval_date",
     sortable: true,
   },
   {
     name: "board_date",
     align: "center",
-    label: "Board date (yyyy-mm-dd)",
+    label: "Board date",
     field: "board_date",
     sortable: true,
   },
@@ -122,7 +178,6 @@ export default {
 
         if (data) {
           rows.value = data;
-          console.log(data[0]);
         }
       } catch (error) {
         logText(error.message);
