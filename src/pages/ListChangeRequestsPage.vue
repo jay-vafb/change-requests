@@ -34,6 +34,7 @@
           </q-td>
         </q-tr>
         <q-tr v-show="props.expand" :props="props">
+          <!--TODO: show line breaks in description, testing details, and recovery plan-->
           <q-td colspan="100%">
             <div style="width: 100%; overflow-wrap: break-word">
               <h6>Description</h6>
@@ -59,7 +60,7 @@
             <div style="width: 400px">
               <q-btn
                 class="q-mr-md"
-                :disabled="!isApprovingManager"
+                v-if="isApprovingManager || isReviewer"
                 label="Approve"
                 color="accent"
                 style="width: 30%"
@@ -67,7 +68,7 @@
               />
               <q-btn
                 class="q-mr-md"
-                :disabled="!isApprovingManager"
+                v-if="isApprovingManager || isReviewer"
                 label="Deny"
                 color="secondary"
                 style="width: 30%"
@@ -195,6 +196,13 @@ export default {
     const $q = useQuasar();
     const rows = ref([]);
     const isApprovingManager = ref(false);
+    const isReviewer = ref(false);
+
+    onMounted(() => {
+      getAllChangeRequests();
+      checkIfIsApprovingManager();
+      checkIfIsReviewer();
+    });
 
     async function getAllChangeRequests() {
       try {
@@ -209,6 +217,8 @@ export default {
       }
     }
 
+    // TODO: consolidate the following two methods into one accepting
+    // a parameter
     async function checkIfIsApprovingManager() {
       try {
         const { data, error } = await supabase
@@ -224,12 +234,42 @@ export default {
       }
     }
 
+    async function checkIfIsReviewer() {
+      try {
+        const { data, error } = await supabase
+          .from("profiles")
+          .select("user_role")
+          .match({ id: supabase.auth.user().id });
+
+        if (error) throw error;
+        if (data[0].user_role === "reviewer") isReviewer.value = true;
+      } catch (error) {
+        logText(error.message);
+      }
+    }
+
     function approveChangeRequest(props) {
-      updateChangeRequestStatus(props, "Approved");
+      if (isApprovingManager.value)
+        updateChangeRequestStatus(props, "Approved");
+      else if (
+        isReviewer.value &&
+        props.row.status !== "Approved" &&
+        props.row.status !== "Denied"
+      ) {
+        updateChangeRequestStatus(props, "Pending approval");
+      }
     }
 
     function denyChangeRequest(props) {
-      updateChangeRequestStatus(props, "Denied");
+      if (isApprovingManager.value) updateChangeRequestStatus(props, "Denied");
+      else if (
+        isReviewer.value &&
+        props.row.status !== "Approved" &&
+        props.row.status !== "Denied"
+      ) {
+        logText(props.row);
+        updateChangeRequestStatus(props, "Needs changes");
+      }
     }
 
     async function updateChangeRequestStatus(props, status) {
@@ -247,15 +287,11 @@ export default {
       }
     }
 
-    onMounted(() => {
-      getAllChangeRequests();
-      checkIfIsApprovingManager();
-    });
-
     return {
       columns,
       rows,
       isApprovingManager,
+      isReviewer,
       approveChangeRequest,
       denyChangeRequest,
     };
