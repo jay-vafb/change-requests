@@ -36,7 +36,7 @@
           <q-td colspan="100%">
             <div style="width: 100vw; overflow-wrap: break-word">
               <h6>Description</h6>
-              {{ props.row.description }}.
+              {{ props.row.description }}
             </div>
 
             <br />

@@ -5,7 +5,7 @@
         <div class="col-12 col-md-6">
           <q-input
             outlined
-            v-model="subject"
+            v-model="subjectInput"
             label="Subject"
             hint="Subject"
             lazy-rules
@@ -16,7 +16,7 @@
         </div>
         <div class="col-12 col-md-4 offset-md-1">
           <q-input
-            v-model="date"
+            v-model="datePicker"
             filled
             type="date"
             hint="Date"
@@ -32,7 +32,7 @@
         <div class="col-12 col-md-2">
           <q-input
             outlined
-            v-model="trackingNumber"
+            v-model="trackingNumberInput"
             label="Tracking number"
             hint="Tracking number"
             lazy-rules
@@ -44,7 +44,7 @@
         <div class="col-12 col-md-3 offset-md-1">
           <q-select
             outlined
-            v-model="requestor"
+            v-model="requestorDropdown"
             :options="requestorOptions"
             label="IS requestor"
             hint="Requestor's name"
@@ -56,7 +56,7 @@
         </div>
         <div class="col-12 col-md-4 offset-md-1">
           <q-input
-            v-model="changeDate"
+            v-model="changeDatePicker"
             filled
             type="date"
             hint="Proposed change date"
@@ -72,7 +72,7 @@
         <div class="col-12 col-md-3">
           <q-select
             outlined
-            v-model="processingSpeed"
+            v-model="processingSpeedDropdown"
             :options="processingOptions"
             label="Processing"
             hint="Desired form processing speed"
@@ -85,7 +85,7 @@
         <div class="col-12 col-md-3 offset-md-1">
           <q-select
             outlined
-            v-model="riskSeverity"
+            v-model="riskSeverityDropdown"
             :options="riskAndImpactOptions"
             label="Risk"
             hint="Risk severity"
@@ -98,7 +98,7 @@
         <div class="col-12 col-md-3 offset-md-1">
           <q-select
             outlined
-            v-model="impactSeverity"
+            v-model="impactSeverityDropdown"
             :options="riskAndImpactOptions"
             label="Impact"
             hint="Impact severity"
@@ -113,7 +113,7 @@
       <div class="row">
         <div class="col-12 col-md-11">
           <q-input
-            v-model="changeDescription"
+            v-model="changeDescriptionInput"
             filled
             autogrow
             clearable
@@ -131,7 +131,7 @@
       <div class="row">
         <div class="col-12 col-md-11">
           <q-input
-            v-model="testingDetails"
+            v-model="testingDetailsInput"
             filled
             autogrow
             clearable
@@ -149,7 +149,7 @@
       <div class="row">
         <div class="col-12 col-md-11">
           <q-input
-            v-model="recoveryPlan"
+            v-model="recoveryPlanInput"
             filled
             autogrow
             clearable
@@ -168,7 +168,7 @@
         <div class="col-12 col-md-4">
           <q-select
             outlined
-            v-model="approvingManager"
+            v-model="approvingManagerDropdown"
             :options="approvingManagerOptions"
             label="Approving manager"
             hint="The manager who should view this request"
@@ -194,7 +194,7 @@
           color="secondary"
         ></q-btn>
 
-        <q-spinner-oval v-if="loading" color="secondary" size="2em" />
+        <q-spinner-oval v-if="isLoading" color="secondary" size="2em" />
       </div>
     </q-form>
   </div>
@@ -211,37 +211,37 @@ export default {
   setup() {
     const $q = useQuasar();
 
-    const subject = ref(null);
-    const date = ref(null);
-    const trackingNumber = ref(null);
-    const requestor = ref(null);
-    const changeDate = ref(null);
-    const processingSpeed = ref("Normal");
-    const riskSeverity = ref("Low");
-    const impactSeverity = ref("Low");
-    const changeDescription = ref(null);
-    const testingDetails = ref(null);
-    const recoveryPlan = ref(null);
-    const approvingManager = ref(null);
-    const loading = ref(false);
+    const subjectInput = ref(null);
+    const datePicker = ref(null);
+    const trackingNumberInput = ref(null);
+    const requestorDropdown = ref(null);
+    const changeDatePicker = ref(null);
+    const processingSpeedDropdown = ref("Normal");
+    const riskSeverityDropdown = ref("Low");
+    const impactSeverityDropdown = ref("Low");
+    const changeDescriptionInput = ref(null);
+    const testingDetailsInput = ref(null);
+    const recoveryPlanInput = ref(null);
+    const approvingManagerDropdown = ref(null);
+    const isLoading = ref(false);
 
     function onSubmit() {
       saveChangeRequest();
     }
 
     function onReset() {
-      subject.value = null;
-      date.value = null;
-      trackingNumber.value = null;
-      requestor.value = null;
-      changeDate.value = null;
-      processingSpeed.value = "Normal";
-      riskSeverity.value = "Low";
-      impactSeverity.value = "Low";
-      changeDescription.value = null;
-      testingDetails.value = null;
-      recoveryPlan.value = null;
-      approvingManager.value = null;
+      subjectInput.value = null;
+      datePicker.value = null;
+      trackingNumberInput.value = null;
+      requestorDropdown.value = null;
+      changeDatePicker.value = null;
+      processingSpeedDropdown.value = "Normal";
+      riskSeverityDropdown.value = "Low";
+      impactSeverityDropdown.value = "Low";
+      changeDescriptionInput.value = null;
+      testingDetailsInput.value = null;
+      recoveryPlanInput.value = null;
+      approvingManagerDropdown.value = null;
     }
 
     async function saveChangeRequest() {
@@ -264,24 +264,24 @@ export default {
       }
     }
 
-    function setLoading(isLoading) {
-      loading.value = isLoading;
+    function setLoading(loading) {
+      isLoading.value = loading;
     }
 
     function createChangeRequest() {
       return {
-        subject: subject.value,
-        request_date: new Date(date.value),
-        tracking_number: trackingNumber.value,
-        requestor: requestor.value,
-        change_date: new Date(changeDate.value),
-        processing_speed: processingSpeed.value,
-        risk_severity: riskSeverity.value,
-        impact_severity: impactSeverity.value,
-        description: changeDescription.value,
-        testing_details: testingDetails.value,
-        recovery_plan: recoveryPlan.value,
-        approving_manager: approvingManager.value,
+        subject: subjectInput.value,
+        request_date: new Date(datePicker.value),
+        tracking_number: trackingNumberInput.value,
+        requestor: requestorDropdown.value,
+        change_date: new Date(changeDatePicker.value),
+        processing_speed: processingSpeedDropdown.value,
+        risk_severity: riskSeverityDropdown.value,
+        impact_severity: impactSeverityDropdown.value,
+        description: changeDescriptionInput.value,
+        testing_details: testingDetailsInput.value,
+        recovery_plan: recoveryPlanInput.value,
+        approving_manager: approvingManagerDropdown.value,
         status: "Under Review",
       };
     }
@@ -296,19 +296,19 @@ export default {
     }
 
     return {
-      subject,
-      date,
-      trackingNumber,
-      requestor,
-      changeDate,
-      processingSpeed,
-      riskSeverity,
-      impactSeverity,
-      changeDescription,
-      testingDetails,
-      recoveryPlan,
-      approvingManager,
-      loading,
+      subjectInput,
+      datePicker,
+      trackingNumberInput,
+      requestorDropdown,
+      changeDatePicker,
+      processingSpeedDropdown,
+      riskSeverityDropdown,
+      impactSeverityDropdown,
+      changeDescriptionInput,
+      testingDetailsInput,
+      recoveryPlanInput,
+      approvingManagerDropdown,
+      isLoading,
 
       requestorOptions: ["Chad Nelson", "Sripal Adamala", "Jay Call"],
       processingOptions: [

@@ -1,6 +1,6 @@
 <template>
   <q-layout view="hHh lpR fFf">
-    <q-header bordered class="bg-primary text-white" v-if="store">
+    <q-header bordered class="bg-primary text-white">
       <q-toolbar>
         <q-btn
           color="secondary"
