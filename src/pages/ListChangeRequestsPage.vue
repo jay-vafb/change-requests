@@ -59,6 +59,7 @@
             <div style="width: 400px">
               <q-btn
                 class="q-mr-md"
+                :disabled="!isApprovingManager"
                 label="Approve"
                 color="accent"
                 style="width: 30%"
@@ -66,6 +67,7 @@
               />
               <q-btn
                 class="q-mr-md"
+                :disabled="!isApprovingManager"
                 label="Deny"
                 color="secondary"
                 style="width: 30%"
@@ -192,7 +194,7 @@ export default {
   setup() {
     const $q = useQuasar();
     const rows = ref([]);
-    const isLoading = ref(false);
+    const isApprovingManager = ref(false);
 
     async function getAllChangeRequests() {
       try {
@@ -202,6 +204,21 @@ export default {
         if (data) {
           rows.value = data;
         }
+      } catch (error) {
+        logText(error.message);
+      }
+    }
+
+    async function checkIfIsApprovingManager() {
+      try {
+        const { data, error } = await supabase
+          .from("profiles")
+          .select("user_role")
+          .match({ id: supabase.auth.user().id });
+
+        if (error) throw error;
+        if (data[0].user_role === "approving_manager")
+          isApprovingManager.value = true;
       } catch (error) {
         logText(error.message);
       }
@@ -232,11 +249,13 @@ export default {
 
     onMounted(() => {
       getAllChangeRequests();
+      checkIfIsApprovingManager();
     });
 
     return {
       columns,
       rows,
+      isApprovingManager,
       approveChangeRequest,
       denyChangeRequest,
     };
