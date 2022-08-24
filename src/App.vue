@@ -14,7 +14,11 @@ export default {
 
     router.beforeEach(async (to, from) => {
       // to.path must be checked to prevent infinite redirection
-      if (!supabase.auth.user() && to.path !== "/auth") {
+      if (
+        !supabase.auth.user() &&
+        to.path !== "/auth" &&
+        to.path !== "/register"
+      ) {
         return { path: "/auth" };
       }
     });
