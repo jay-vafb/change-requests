@@ -61,13 +61,6 @@ export default {
     const router = useRouter();
     const leftDrawerOpen = ref(false);
 
-    router.beforeEach(async (to, from) => {
-      // to.path must be checked to prevent infinite redirection
-      if (!supabase.auth.user() && to.path !== "/auth") {
-        return { path: "/auth" };
-      }
-    });
-
     function toggleLeftDrawer() {
       leftDrawerOpen.value = !leftDrawerOpen.value;
     }
