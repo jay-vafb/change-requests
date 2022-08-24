@@ -23,7 +23,7 @@
 
           <q-input
             v-model="passwordInput"
-            type="password"
+            :type="showPassword ? 'password' : 'text'"
             prefix="Password:"
             lazy-rules
             :rules="[
@@ -32,6 +32,13 @@
           >
             <template v-slot:prepend>
               <q-icon name="lock" />
+            </template>
+            <template v-slot:append>
+              <q-icon
+                :name="showPassword ? 'visibility_off' : 'visibility'"
+                class="cursor-pointer"
+                @click="showPassword = !showPassword"
+              />
             </template>
           </q-input>
 
@@ -57,7 +64,7 @@
 import { ref } from "vue";
 import { useQuasar } from "quasar";
 import { supabase } from "../supabase";
-import { logText, showErrorMessage } from "../logger";
+import { showErrorMessage } from "../logger";
 import { useRouter } from "vue-router";
 
 export default {
@@ -74,6 +81,7 @@ export default {
     const emailInput = ref(null);
     const passwordInput = ref(null);
     const isLoading = ref(false);
+    const showPassword = ref(true);
 
     function onSubmit() {
       isLoading.value = true;
@@ -102,6 +110,7 @@ export default {
       emailInput,
       passwordInput,
       isLoading,
+      showPassword,
       onSubmit,
     };
   },
