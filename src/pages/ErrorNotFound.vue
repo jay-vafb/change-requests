@@ -22,6 +22,7 @@
 
 <script>
 import { defineComponent } from "vue";
+import { supabase } from "../supabase";
 
 export default defineComponent({
   name: "ErrorNotFound",

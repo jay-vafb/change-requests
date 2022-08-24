@@ -1,6 +1,6 @@
 <template>
   <q-layout view="hHh lpR fFf">
-    <q-header bordered class="bg-primary text-white">
+    <q-header bordered class="bg-primary text-white" v-if="store">
       <q-toolbar>
         <q-btn
           color="secondary"
@@ -34,6 +34,13 @@
         link="/changeRequestForm"
         icon="description"
       ></EssentialLink>
+      <EssentialLink
+        title="Sign out"
+        caption="Sign out of your account"
+        link="/auth"
+        icon="logout"
+      >
+      </EssentialLink>
     </q-drawer>
 
     <q-page-container>
@@ -45,10 +52,13 @@
 <script>
 import { ref } from "vue";
 import EssentialLink from "src/components/EssentialLink.vue";
+import { store } from "../store";
+import { supabase } from "../supabase";
 
 export default {
   setup() {
     const leftDrawerOpen = ref(false);
+
     return {
       leftDrawerOpen,
       toggleLeftDrawer() {
@@ -56,6 +66,6 @@ export default {
       },
     };
   },
-  components: { EssentialLink, EssentialLink, EssentialLink },
+  components: { EssentialLink },
 };
 </script>

@@ -21,6 +21,17 @@ const routes = [
     ],
   },
 
+  {
+    path: "/auth",
+    component: () => import("layouts/AuthenticationLayout.vue"),
+    children: [
+      {
+        path: "",
+        component: () => import("pages/AuthenticationPage.vue"),
+      },
+    ],
+  },
+
   // Always leave this as last one,
   // but you can also remove it
   {

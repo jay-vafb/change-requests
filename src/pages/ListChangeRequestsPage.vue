@@ -5,7 +5,7 @@
       :rows="rows"
       :columns="columns"
       row-key="id"
-      wrap-cells="true"
+      :wrap-cells="true"
     >
       <template v-slot:header="props">
         <q-tr :props="props">
