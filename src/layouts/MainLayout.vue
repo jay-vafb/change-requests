@@ -37,8 +37,8 @@
       <EssentialLink
         title="Sign out"
         caption="Sign out of your account"
-        link="/auth"
         icon="logout"
+        :click="signOut"
       >
       </EssentialLink>
     </q-drawer>
@@ -52,18 +52,41 @@
 <script>
 import { ref } from "vue";
 import EssentialLink from "src/components/EssentialLink.vue";
-import { store } from "../store";
 import { supabase } from "../supabase";
+import { logText } from "../logger";
+import { useRouter } from "vue-router";
 
 export default {
   setup() {
+    const router = useRouter();
     const leftDrawerOpen = ref(false);
+
+    router.beforeEach(async (to, from) => {
+      // to.path must be checked to prevent infinite redirection
+      if (!supabase.auth.user() && to.path !== "/auth") {
+        return { path: "/auth" };
+      }
+    });
+
+    function toggleLeftDrawer() {
+      leftDrawerOpen.value = !leftDrawerOpen.value;
+    }
+
+    async function signOut() {
+      try {
+        const { error } = await supabase.auth.signOut();
+        if (error) throw error;
+
+        router.push("/auth");
+      } catch (error) {
+        logText(error.message);
+      }
+    }
 
     return {
       leftDrawerOpen,
-      toggleLeftDrawer() {
-        leftDrawerOpen.value = !leftDrawerOpen.value;
-      },
+      toggleLeftDrawer,
+      signOut,
     };
   },
   components: { EssentialLink },

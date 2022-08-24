@@ -1,5 +1,5 @@
 <template>
-  <q-item clickable :to="link">
+  <q-item clickable :to="link" @click="click">
     <q-item-section v-if="icon" avatar>
       <q-icon :color="color" :name="icon" />
     </q-item-section>
@@ -40,6 +40,10 @@ export default defineComponent({
     color: {
       type: String,
       default: "secondary",
+    },
+
+    click: {
+      type: Function,
     },
   },
 });

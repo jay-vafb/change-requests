@@ -10,3 +10,10 @@ export function showSuccessMessage(text, $q) {
     message: text,
   });
 }
+
+export function showErrorMessage(text, $q) {
+  $q.notify({
+    type: "negative",
+    message: text,
+  });
+}
