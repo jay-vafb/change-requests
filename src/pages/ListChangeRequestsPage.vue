@@ -249,7 +249,11 @@ export default {
     }
 
     function approveChangeRequest(props) {
-      if (isApprovingManager.value)
+      if (
+        isApprovingManager.value &&
+        props.row.status !== "Under review" &&
+        props.row.status !== "Needs changes"
+      )
         updateChangeRequestStatus(props, "Approved");
       else if (
         isReviewer.value &&
@@ -261,7 +265,12 @@ export default {
     }
 
     function denyChangeRequest(props) {
-      if (isApprovingManager.value) updateChangeRequestStatus(props, "Denied");
+      if (
+        isApprovingManager.value &&
+        props.row.status !== "Under review" &&
+        props.row.status !== "Needs changes"
+      )
+        updateChangeRequestStatus(props, "Denied");
       else if (
         isReviewer.value &&
         props.row.status !== "Approved" &&

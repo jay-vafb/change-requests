@@ -282,7 +282,7 @@ export default {
         testing_details: testingDetailsInput.value,
         recovery_plan: recoveryPlanInput.value,
         approving_manager: approvingManagerDropdown.value,
-        status: "Under Review",
+        status: "Under review",
       };
     }
 
