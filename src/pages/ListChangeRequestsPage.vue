@@ -21,36 +21,56 @@
           <q-td auto-width>
             <q-btn
               size="sm"
-              color="accent"
+              color="secondary"
               round
               dense
               @click="props.expand = !props.expand"
               :icon="props.expand ? 'remove' : 'add'"
             />
           </q-td>
+
           <q-td v-for="col in props.cols" :key="col.name" :props="props">
             {{ col.value }}
           </q-td>
         </q-tr>
         <q-tr v-show="props.expand" :props="props">
           <q-td colspan="100%">
-            <div style="width: 100vw; overflow-wrap: break-word">
+            <div style="width: 100%; overflow-wrap: break-word">
               <h6>Description</h6>
               {{ props.row.description }}
             </div>
 
             <br />
 
-            <div style="width: 100vw; overflow-wrap: break-word">
+            <div style="width: 100%; overflow-wrap: break-word">
               <h6>Testing details</h6>
               {{ props.row.testing_details }}
             </div>
 
             <br />
 
-            <div style="width: 100vw; overflow-wrap: break-word">
+            <div style="width: 100%; overflow-wrap: break-word">
               <h6>Recovery plan</h6>
               {{ props.row.recovery_plan }}
+            </div>
+
+            <br />
+
+            <div style="width: 400px">
+              <q-btn
+                class="q-mr-md"
+                label="Approve"
+                color="accent"
+                style="width: 30%"
+                @click="approveChangeRequest(props)"
+              />
+              <q-btn
+                class="q-mr-md"
+                label="Deny"
+                color="secondary"
+                style="width: 30%"
+                @click="denyChangeRequest(props)"
+              />
             </div>
           </q-td>
         </q-tr>
@@ -61,8 +81,9 @@
 
 <script>
 import { supabase } from "../supabase";
-import { logText } from "src/logger";
+import { logText, showSuccessMessage } from "src/logger";
 import { onMounted, ref } from "vue";
+import { useQuasar } from "quasar";
 
 const columns = [
   {
@@ -169,7 +190,9 @@ export default {
   name: "ListChangeRequestsPage",
 
   setup() {
+    const $q = useQuasar();
     const rows = ref([]);
+    const isLoading = ref(false);
 
     async function getAllChangeRequests() {
       try {
@@ -184,6 +207,29 @@ export default {
       }
     }
 
+    function approveChangeRequest(props) {
+      updateChangeRequestStatus(props, "Approved");
+    }
+
+    function denyChangeRequest(props) {
+      updateChangeRequestStatus(props, "Denied");
+    }
+
+    async function updateChangeRequestStatus(props, status) {
+      try {
+        const { data, error } = await supabase
+          .from("change_requests")
+          .update({ status })
+          .match({ id: props.row.id });
+
+        if (error) throw error;
+        rows.value[props.pageIndex].status = status;
+        showSuccessMessage("Change request updated", $q);
+      } catch (error) {
+        logText(error.message);
+      }
+    }
+
     onMounted(() => {
       getAllChangeRequests();
     });
@@ -191,6 +237,8 @@ export default {
     return {
       columns,
       rows,
+      approveChangeRequest,
+      denyChangeRequest,
     };
   },
 };
