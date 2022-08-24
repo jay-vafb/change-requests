@@ -4,16 +4,32 @@
       <q-form @submit="onSubmit">
         <div class="q-gutter-y-md column" style="max-width: 300px">
           <div class="flex" style="justify-content: center">
-            <h5>VAFB change requests</h5>
-            <h5>Sign in</h5>
+            <h5>VAFB Change Requests</h5>
+            <h5>Sign In</h5>
           </div>
-          <q-input v-model="emailInput" type="email" prefix="Email:">
+          <q-input
+            v-model="emailInput"
+            type="email"
+            prefix="Email:"
+            lazy-rules
+            :rules="[
+              (val) => (val && val.length > 0) || 'Please type something',
+            ]"
+          >
             <template v-slot:prepend>
               <q-icon name="mail" />
             </template>
           </q-input>
 
-          <q-input v-model="passwordInput" type="password" prefix="Password:">
+          <q-input
+            v-model="passwordInput"
+            type="password"
+            prefix="Password:"
+            lazy-rules
+            :rules="[
+              (val) => (val && val.length >= 0) || 'Please type something',
+            ]"
+          >
             <template v-slot:prepend>
               <q-icon name="lock" />
             </template>
@@ -41,7 +57,7 @@
 import { ref } from "vue";
 import { useQuasar } from "quasar";
 import { supabase } from "../supabase";
-import { showErrorMessage } from "../logger";
+import { logText, showErrorMessage } from "../logger";
 import { useRouter } from "vue-router";
 
 export default {
@@ -76,8 +92,7 @@ export default {
         // go to home page if login event successful
         if (user) router.push("/");
       } catch (error) {
-        if (error.message === "Invalid login credentials")
-          showErrorMessage("This account doesn't exist", $q);
+        showErrorMessage(error.message, $q);
       } finally {
         isLoading.value = false;
       }

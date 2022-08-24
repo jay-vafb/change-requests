@@ -4,18 +4,55 @@
       <q-form @submit="onSubmit">
         <div class="q-gutter-y-md column" style="max-width: 300px">
           <div class="flex" style="justify-content: center">
-            <h5>VAFB change requests</h5>
+            <h5>VAFB Change Requests</h5>
             <h5>Register</h5>
           </div>
-          <q-input v-model="emailInput" type="email" prefix="Email:">
+          <q-input
+            v-model="emailInput"
+            type="email"
+            prefix="Email:"
+            lazy-rules
+            :rules="[
+              (val) => (val && val.length > 0) || 'Please type something',
+            ]"
+          >
             <template v-slot:prepend>
               <q-icon name="mail" />
             </template>
           </q-input>
 
-          <q-input v-model="passwordInput" type="password" prefix="Password:">
+          <q-input
+            v-model="passwordInput"
+            :type="showPassword ? 'password' : 'text'"
+            prefix="Password:"
+            lazy-rules
+            :rules="[
+              (val) =>
+                (val && val.length >= 8) ||
+                'Password must be at least 8 characters',
+              (val) =>
+                /[a-z]/.test(val) ||
+                'Password must include at least one lowercase letter',
+              (val) =>
+                /[A-Z]/.test(val) ||
+                'Password must include at least one uppercase letter',
+              (val) =>
+                /[0-9]/.test(val) ||
+                'Password must include at least one numerical digit',
+              (val) =>
+                /[!@#$&*]/.test(val) ||
+                'Password must include at least one special character',
+            ]"
+          >
             <template v-slot:prepend>
               <q-icon name="lock" />
+            </template>
+            <template v-slot:append>
+              <q-icon
+                :name="showPassword ? 'visibility_off' : 'visibility'"
+                class="cursor-pointer"
+                @click="showPassword = !showPassword"
+              />
             </template>
           </q-input>
 
@@ -41,7 +78,7 @@
 import { ref } from "vue";
 import { useQuasar } from "quasar";
 import { supabase } from "../supabase";
-import { logText, showSuccessMessage, showErrorMessage } from "../logger";
+import { showSuccessMessage, showErrorMessage } from "../logger";
 
 export default {
   name: "RegisterPage",
@@ -52,6 +89,7 @@ export default {
     const emailInput = ref(null);
     const passwordInput = ref(null);
     const isLoading = ref(false);
+    const showPassword = ref(true);
 
     function onSubmit() {
       isLoading.value = true;
@@ -81,6 +119,7 @@ export default {
       emailInput,
       passwordInput,
       isLoading,
+      showPassword,
       onSubmit,
     };
   },
