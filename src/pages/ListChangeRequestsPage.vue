@@ -40,64 +40,89 @@
           :ref="(el) => setChangeRequestActive(props)"
         >
           <q-td colspan="100%">
-            <div
-              style="
-                width: 100%;
-                overflow-wrap: break-word;
-                white-space: pre-wrap;
-              "
-            >
-              <h6>Description</h6>
-              {{ props.row.description }}
-            </div>
+            <div class="q-gutter-md">
+              <div
+                style="
+                  width: 100%;
+                  overflow-wrap: break-word;
+                  white-space: pre-wrap;
+                "
+              >
+                <h6>Description</h6>
+                {{ props.row.description }}
+              </div>
 
-            <br />
+              <div
+                style="
+                  width: 100%;
+                  overflow-wrap: break-word;
+                  white-space: pre-wrap;
+                "
+              >
+                <h6>Testing details</h6>
+                {{ props.row.testing_details }}
+              </div>
 
-            <div
-              style="
-                width: 100%;
-                overflow-wrap: break-word;
-                white-space: pre-wrap;
-              "
-            >
-              <h6>Testing details</h6>
-              {{ props.row.testing_details }}
-            </div>
+              <div
+                style="
+                  width: 100%;
+                  overflow-wrap: break-word;
+                  white-space: pre-wrap;
+                "
+              >
+                <h6>Recovery plan</h6>
+                {{ props.row.recovery_plan }}
+              </div>
 
-            <br />
+              <!--TODO: use dynamic ref / vmodel here-->
+              <div class="q-gutter-xs">
+                <h6>General comments</h6>
 
-            <div
-              style="
-                width: 100%;
-                overflow-wrap: break-word;
-                white-space: pre-wrap;
-              "
-            >
-              <h6>Recovery plan</h6>
-              {{ props.row.recovery_plan }}
-            </div>
+                <q-input
+                  filled
+                  autogrow
+                  clearable
+                  type="textarea"
+                  label="General comments"
+                  hint="Give any comments you might have"
+                />
 
-            <br />
+                <q-btn label="Update" color="accent" />
+              </div>
 
-            <div style="width: 400px">
-              <q-btn
-                class="q-mr-md"
-                v-if="isApprovingManager || isReviewer"
-                :disabled="!isChangeRequestActive(props.pageIndex)"
-                label="Approve"
-                color="accent"
-                style="width: 30%"
-                @click="approveChangeRequest(props)"
-              />
-              <q-btn
-                class="q-mr-md"
-                v-if="isApprovingManager || isReviewer"
-                :disabled="!isChangeRequestActive(props.pageIndex)"
-                label="Deny"
-                color="secondary"
-                style="width: 30%"
-                @click="denyChangeRequest(props)"
-              />
+              <div class="q-gutter-xs">
+                <h6>Board comments</h6>
+                <q-input
+                  filled
+                  autogrow
+                  clearable
+                  type="textarea"
+                  label="Board recommendations"
+                  hint="Give any recommendations you might have"
+                />
+                <q-input filled type="date" hint="Board date" />
+              </div>
+
+              <div style="width: 400px">
+                <q-btn
+                  class="q-mr-md"
+                  v-if="isApprovingManager || isReviewer"
+                  :disabled="!isChangeRequestActive(props.pageIndex)"
+                  label="Approve"
+                  color="accent"
+                  style="width: 30%"
+                  @click="approveChangeRequest(props)"
+                />
+                <q-btn
+                  class="q-mr-md"
+                  v-if="isApprovingManager || isReviewer"
+                  :disabled="!isChangeRequestActive(props.pageIndex)"
+                  label="Deny"
+                  color="secondary"
+                  style="width: 30%"
+                  @click="denyChangeRequest(props)"
+                />
+              </div>
             </div>
           </q-td>
         </q-tr>
