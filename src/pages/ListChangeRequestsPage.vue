@@ -35,7 +35,6 @@
           </q-td>
         </q-tr>
         <q-tr v-show="props.expand" :props="props">
-          <!--TODO: show line breaks in description, testing details, and recovery plan-->
           <q-td colspan="100%">
             <div
               style="
@@ -220,8 +219,7 @@ export default {
 
     onMounted(() => {
       getAllChangeRequests();
-      checkIfIsApprovingManager();
-      checkIfIsReviewer();
+      setUserRole();
     });
 
     async function getAllChangeRequests() {
@@ -237,9 +235,7 @@ export default {
       }
     }
 
-    // TODO: consolidate the following two methods into one accepting
-    // a parameter
-    async function checkIfIsApprovingManager() {
+    async function setUserRole() {
       try {
         const { data, error } = await supabase
           .from("profiles")
@@ -247,22 +243,10 @@ export default {
           .match({ id: user.id });
 
         if (error) throw error;
+
         if (data[0].user_role === "approving_manager")
           isApprovingManager.value = true;
-      } catch (error) {
-        logText(error.message);
-      }
-    }
-
-    async function checkIfIsReviewer() {
-      try {
-        const { data, error } = await supabase
-          .from("profiles")
-          .select("user_role")
-          .match({ id: user.id });
-
-        if (error) throw error;
-        if (data[0].user_role === "reviewer") isReviewer.value = true;
+        else if (data[0].user_role === "reviewer") isReviewer.value = true;
       } catch (error) {
         logText(error.message);
       }
