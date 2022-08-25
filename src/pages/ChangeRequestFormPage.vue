@@ -204,7 +204,7 @@
 import { useQuasar } from "quasar";
 import { ref } from "vue";
 import { supabase } from "../supabase";
-import { logText } from "../logger";
+import { logText, showSuccessMessage } from "../logger";
 
 export default {
   name: "ChangeRequestFormPage",
@@ -256,7 +256,7 @@ export default {
           });
 
         if (error) throw error;
-        showSuccessMessage();
+        showSuccessMessage("Change request created", $q);
       } catch (error) {
         logText(error.message);
       } finally {
@@ -284,15 +284,6 @@ export default {
         approving_manager: approvingManagerDropdown.value,
         status: "Under review",
       };
-    }
-
-    function showSuccessMessage() {
-      $q.notify({
-        color: "green-4",
-        textColor: "white",
-        icon: "cloud_done",
-        message: "Change request created",
-      });
     }
 
     return {

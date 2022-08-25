@@ -316,7 +316,7 @@ export default {
 
     async function updateChangeRequestStatus(props, status) {
       try {
-        const { data, error } = await supabase
+        const { error } = await supabase
           .from("change_requests")
           .update({ status })
           .match({ id: props.row.id });

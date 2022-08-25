@@ -98,7 +98,7 @@ export default {
 
     async function handleRegister() {
       try {
-        const { user, error } = await supabase.auth.signUp({
+        const { error } = await supabase.auth.signUp({
           email: emailInput.value,
           password: passwordInput.value,
         });

@@ -71,7 +71,7 @@ export default {
   name: "SignInPage",
 
   async mounted() {
-    await supabase.auth.user();
+    supabase.auth.user();
   },
 
   setup() {
