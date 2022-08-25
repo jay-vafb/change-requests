@@ -34,7 +34,11 @@
             {{ col.value }}
           </q-td>
         </q-tr>
-        <q-tr v-show="props.expand" :props="props">
+        <q-tr
+          v-show="props.expand"
+          :props="props"
+          :ref="(el) => setChangeRequestActive(props)"
+        >
           <q-td colspan="100%">
             <div
               style="
@@ -79,6 +83,7 @@
               <q-btn
                 class="q-mr-md"
                 v-if="isApprovingManager || isReviewer"
+                :disabled="!isChangeRequestActive(props.pageIndex)"
                 label="Approve"
                 color="accent"
                 style="width: 30%"
@@ -87,6 +92,7 @@
               <q-btn
                 class="q-mr-md"
                 v-if="isApprovingManager || isReviewer"
+                :disabled="!isChangeRequestActive(props.pageIndex)"
                 label="Deny"
                 color="secondary"
                 style="width: 30%"
@@ -212,9 +218,12 @@ export default {
 
   setup() {
     const $q = useQuasar();
+
     const rows = ref([]);
     const isApprovingManager = ref(false);
     const isReviewer = ref(false);
+    const changeRequestsActive = ref([]);
+
     const user = supabase.auth.user();
 
     onMounted(() => {
@@ -233,6 +242,29 @@ export default {
       } catch (error) {
         logText(error.message);
       }
+    }
+
+    function setChangeRequestActive(props) {
+      if (
+        isApprovedOrDenied(props.row.status) ||
+        isPendingApproval(props.row.status)
+      ) {
+        changeRequestsActive[props.pageIndex] = false;
+      } else {
+        changeRequestsActive[props.pageIndex] = true;
+      }
+    }
+
+    function isApprovedOrDenied(status) {
+      return status === "Approved" || status === "Denied";
+    }
+
+    function isPendingApproval(status) {
+      return status === "Pending approval" && isReviewer.value;
+    }
+
+    function isChangeRequestActive(index) {
+      return changeRequestsActive[index];
     }
 
     async function setUserRole() {
@@ -258,6 +290,7 @@ export default {
         props.row.status !== "Under review" &&
         props.row.status !== "Needs changes"
       ) {
+        changeRequestsActive[props.pageIndex] = false;
         updateChangeRequestApprovalDate(props);
         updateChangeRequestStatus(props, "Approved");
       } else if (
@@ -265,6 +298,7 @@ export default {
         props.row.status !== "Approved" &&
         props.row.status !== "Denied"
       ) {
+        changeRequestsActive[props.pageIndex] = false;
         updateChangeRequestStatus(props, "Pending approval");
       } else {
         showErrorMessage("You don't have the permissions to do this", $q);
@@ -276,9 +310,10 @@ export default {
         isApprovingManager.value &&
         props.row.status !== "Under review" &&
         props.row.status !== "Needs changes"
-      )
+      ) {
+        changeRequestsActive[props.pageIndex] = false;
         updateChangeRequestStatus(props, "Denied");
-      else if (
+      } else if (
         isReviewer.value &&
         props.row.status !== "Approved" &&
         props.row.status !== "Denied"
@@ -334,6 +369,9 @@ export default {
       rows,
       isApprovingManager,
       isReviewer,
+      changeRequestsActive,
+      setChangeRequestActive,
+      isChangeRequestActive,
       approveChangeRequest,
       denyChangeRequest,
     };
