@@ -216,6 +216,7 @@ export default {
     const rows = ref([]);
     const isApprovingManager = ref(false);
     const isReviewer = ref(false);
+    const user = supabase.auth.user();
 
     onMounted(() => {
       getAllChangeRequests();
@@ -243,7 +244,7 @@ export default {
         const { data, error } = await supabase
           .from("profiles")
           .select("user_role")
-          .match({ id: supabase.auth.user().id });
+          .match({ id: user.id });
 
         if (error) throw error;
         if (data[0].user_role === "approving_manager")
@@ -258,7 +259,7 @@ export default {
         const { data, error } = await supabase
           .from("profiles")
           .select("user_role")
-          .match({ id: supabase.auth.user().id });
+          .match({ id: user.id });
 
         if (error) throw error;
         if (data[0].user_role === "reviewer") isReviewer.value = true;
