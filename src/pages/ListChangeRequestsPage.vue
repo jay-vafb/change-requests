@@ -257,9 +257,10 @@ export default {
         isApprovingManager.value &&
         props.row.status !== "Under review" &&
         props.row.status !== "Needs changes"
-      )
+      ) {
+        updateChangeRequestApprovalDate(props);
         updateChangeRequestStatus(props, "Approved");
-      else if (
+      } else if (
         isReviewer.value &&
         props.row.status !== "Approved" &&
         props.row.status !== "Denied"
@@ -286,6 +287,31 @@ export default {
       } else {
         showErrorMessage("You don't have the permissions to do this", $q);
       }
+    }
+
+    async function updateChangeRequestApprovalDate(props) {
+      const today = new Date();
+      try {
+        const { error } = await supabase
+          .from("change_requests")
+          .update({ approval_date: today })
+          .match({ id: props.row.id });
+
+        if (error) throw error;
+        rows.value[props.pageIndex].approval_date = formatDate(today);
+      } catch (error) {
+        logText(error.message);
+      }
+    }
+
+    function formatDate(date) {
+      return (
+        date.getFullYear() +
+        "-" +
+        ("0" + (date.getMonth() + 1)).slice(-2) +
+        "-" +
+        ("0" + date.getDate()).slice(-2)
+      );
     }
 
     async function updateChangeRequestStatus(props, status) {
