@@ -11,6 +11,8 @@
           @click="toggleLeftDrawer"
         />
         <q-toolbar-title>{{ $route.meta.title }}</q-toolbar-title>
+
+        {{ user.email }}
       </q-toolbar>
     </q-header>
 
@@ -60,6 +62,7 @@ export default {
   setup() {
     const router = useRouter();
     const leftDrawerOpen = ref(false);
+    const user = supabase.auth.user();
 
     function toggleLeftDrawer() {
       leftDrawerOpen.value = !leftDrawerOpen.value;
@@ -78,6 +81,7 @@ export default {
 
     return {
       leftDrawerOpen,
+      user,
       toggleLeftDrawer,
       signOut,
     };
