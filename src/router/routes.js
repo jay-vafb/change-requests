@@ -33,10 +33,6 @@ const routes = [
         path: "/register",
         component: () => import("pages/RegisterPage.vue"),
       },
-      {
-        path: "/verify",
-        component: () => import("pages/VerificationPage.vue"),
-      },
     ],
   },
 

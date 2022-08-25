@@ -17,8 +17,7 @@ export default {
       if (
         !supabase.auth.user() &&
         to.path !== "/auth" &&
-        to.path !== "/register" &&
-        to.path !== "/verify"
+        to.path !== "/register"
       ) {
         return { path: "/auth" };
       }
