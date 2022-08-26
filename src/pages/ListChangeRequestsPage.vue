@@ -37,7 +37,12 @@
         <q-tr
           v-show="props.expand"
           :props="props"
-          :ref="(el) => setChangeRequestActive(props)"
+          :ref="
+            (el) => {
+              setChangeRequestActive(props);
+              setGeneralComments(props);
+            }
+          "
         >
           <q-td colspan="100%">
             <div class="q-gutter-md">
@@ -85,9 +90,15 @@
                   type="textarea"
                   label="General comments"
                   hint="Give any comments you might have"
+                  v-model="generalCommentsInput[props.pageIndex]"
                 />
 
-                <q-btn label="Update" color="accent" />
+                <q-btn
+                  v-if="isApprovingManager || isReviewer"
+                  label="Update"
+                  color="accent"
+                  @click="updateGeneralComments(props)"
+                />
               </div>
 
               <div class="q-gutter-xs">
@@ -134,7 +145,7 @@
 <script>
 import { supabase } from "../supabase";
 import { logText, showErrorMessage, showSuccessMessage } from "src/logger";
-import { onMounted, ref } from "vue";
+import { onMounted, ref, reactive } from "vue";
 import { useQuasar } from "quasar";
 
 const columns = [
@@ -248,6 +259,7 @@ export default {
     const isApprovingManager = ref(false);
     const isReviewer = ref(false);
     const changeRequestsActive = ref([]);
+    const generalCommentsInput = reactive({});
 
     const user = supabase.auth.user();
 
@@ -304,6 +316,28 @@ export default {
         if (data[0].user_role === "approving_manager")
           isApprovingManager.value = true;
         else if (data[0].user_role === "reviewer") isReviewer.value = true;
+      } catch (error) {
+        logText(error.message);
+      }
+    }
+
+    function setGeneralComments(props) {
+      logText(props);
+      generalCommentsInput[props.pageIndex] = props.row.general_comments;
+    }
+
+    async function updateGeneralComments(props) {
+      const comment = generalCommentsInput[props.pageIndex];
+      if (!comment) return;
+
+      try {
+        const { error } = await supabase
+          .from("change_requests")
+          .update({ general_comments: comment })
+          .match({ id: props.row.id });
+
+        if (error) throw error;
+        showSuccessMessage("Comment updated", $q);
       } catch (error) {
         logText(error.message);
       }
@@ -395,8 +429,11 @@ export default {
       isApprovingManager,
       isReviewer,
       changeRequestsActive,
+      generalCommentsInput,
       setChangeRequestActive,
       isChangeRequestActive,
+      setGeneralComments,
+      updateGeneralComments,
       approveChangeRequest,
       denyChangeRequest,
     };
