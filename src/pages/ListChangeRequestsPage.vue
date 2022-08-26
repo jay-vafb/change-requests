@@ -41,6 +41,7 @@
             (el) => {
               setChangeRequestActive(props);
               setGeneralComments(props);
+              setBoardRecommendations(props);
             }
           "
         >
@@ -79,7 +80,6 @@
                 {{ props.row.recovery_plan }}
               </div>
 
-              <!--TODO: use dynamic ref / vmodel here-->
               <div class="q-gutter-xs">
                 <h6>General comments</h6>
 
@@ -108,9 +108,23 @@
                   type="textarea"
                   label="Board recommendations"
                   hint="Give any recommendations you might have"
+                  v-model="boardRecommendationsInput[props.pageIndex]"
                 />
-                <q-input filled type="date" hint="Board date" />
+                <q-input
+                  filled
+                  type="date"
+                  hint="Board date"
+                  v-model="boardDatePicker[props.pageIndex]"
+                />
+                <q-btn
+                  v-if="isApprovingManager || isReviewer"
+                  label="Update"
+                  color="accent"
+                  @click="updateBoardRecommendations(props)"
+                />
               </div>
+
+              <q-separator />
 
               <div style="width: 400px">
                 <q-btn
@@ -238,13 +252,6 @@ const columns = [
     field: "board_date",
     sortable: true,
   },
-  {
-    name: "board_recommendations",
-    align: "center",
-    label: "Board recommendations",
-    field: "board_recommendations",
-    sortable: true,
-  },
 ];
 
 export default {
@@ -256,8 +263,12 @@ export default {
     const rows = ref([]);
     const isApprovingManager = ref(false);
     const isReviewer = ref(false);
+
+    // TODO: make changeRequestsActive reactive object for more efficiency
     const changeRequestsActive = ref([]);
     const generalCommentsInput = reactive({});
+    const boardRecommendationsInput = reactive({});
+    const boardDatePicker = reactive({});
 
     const user = supabase.auth.user();
 
@@ -338,6 +349,37 @@ export default {
       } catch (error) {
         logText(error.message);
       }
+    }
+
+    function setBoardRecommendations(props) {
+      boardRecommendationsInput[props.pageIndex] =
+        props.row.board_recommendations;
+    }
+
+    async function updateBoardRecommendations(props) {
+      const recommendation = boardRecommendationsInput[props.pageIndex];
+      const boardDate = boardDatePicker[props.pageIndex];
+      if (!recommendation || !boardDate) return;
+
+      try {
+        const { error } = await supabase
+          .from("change_requests")
+          .update({
+            board_recommendations: recommendation,
+            board_date: boardDate,
+          })
+          .match({ id: props.row.id });
+
+        if (error) throw error;
+        updateBoardDateColumn(boardDate, props);
+        showSuccessMessage("Recommendations updated", $q);
+      } catch (error) {
+        logText(error.message);
+      }
+    }
+
+    function updateBoardDateColumn(date, props) {
+      rows.value[props.pageIndex].board_date = date;
     }
 
     function approveChangeRequest(props) {
@@ -427,10 +469,14 @@ export default {
       isReviewer,
       changeRequestsActive,
       generalCommentsInput,
+      boardRecommendationsInput,
+      boardDatePicker,
       setChangeRequestActive,
       isChangeRequestActive,
       setGeneralComments,
       updateGeneralComments,
+      setBoardRecommendations,
+      updateBoardRecommendations,
       approveChangeRequest,
       denyChangeRequest,
     };
