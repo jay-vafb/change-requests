@@ -85,7 +85,6 @@
 
                 <q-input
                   filled
-                  autogrow
                   clearable
                   type="textarea"
                   label="General comments"
@@ -105,7 +104,6 @@
                 <h6>Board comments</h6>
                 <q-input
                   filled
-                  autogrow
                   clearable
                   type="textarea"
                   label="Board recommendations"
