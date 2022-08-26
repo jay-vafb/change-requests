@@ -322,7 +322,6 @@ export default {
     }
 
     function setGeneralComments(props) {
-      logText(props);
       generalCommentsInput[props.pageIndex] = props.row.general_comments;
     }
 
