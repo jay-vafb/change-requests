@@ -20,6 +20,11 @@ export default {
         to.path !== "/register"
       ) {
         return { path: "/auth" };
+      } else if (
+        supabase.auth.user() &&
+        (to.path === "/auth" || to.path === "/register")
+      ) {
+        return { path: "/" };
       }
     });
   },
