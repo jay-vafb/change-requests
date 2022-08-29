@@ -30,7 +30,12 @@
             />
           </q-td>
 
-          <q-td v-for="col in props.cols" :key="col.name" :props="props">
+          <q-td
+            v-for="col in props.cols"
+            :key="col.name"
+            :props="props"
+            :class="getRowClass(props)"
+          >
             {{ col.value }}
           </q-td>
         </q-tr>
@@ -158,6 +163,7 @@
 import { supabase } from "../supabase";
 import { logText, showErrorMessage, showSuccessMessage } from "src/logger";
 import { onMounted, ref, reactive } from "vue";
+import { useRoute } from "vue-router";
 import { useQuasar } from "quasar";
 
 const columns = [
@@ -259,6 +265,7 @@ export default {
 
   setup() {
     const $q = useQuasar();
+    const route = useRoute();
 
     const rows = ref([]);
     const isApprovingManager = ref(false);
@@ -290,6 +297,30 @@ export default {
       }
     }
 
+    async function setUserRole() {
+      try {
+        const { data, error } = await supabase
+          .from("profiles")
+          .select("user_role")
+          .match({ id: user.id });
+
+        if (error) throw error;
+
+        if (data[0].user_role === "approving_manager")
+          isApprovingManager.value = true;
+        else if (data[0].user_role === "reviewer") isReviewer.value = true;
+      } catch (error) {
+        logText(error.message);
+      }
+    }
+
+    // TODO: move table element to top of table
+    function getRowClass(props) {
+      if (props.row.id === parseInt(route.query["request_id"])) {
+        return "bg-accent";
+      }
+    }
+
     function setChangeRequestActive(props) {
       if (
         isApprovedOrDenied(props.row.status) ||
@@ -311,23 +342,6 @@ export default {
 
     function isChangeRequestActive(index) {
       return changeRequestsActive[index];
-    }
-
-    async function setUserRole() {
-      try {
-        const { data, error } = await supabase
-          .from("profiles")
-          .select("user_role")
-          .match({ id: user.id });
-
-        if (error) throw error;
-
-        if (data[0].user_role === "approving_manager")
-          isApprovingManager.value = true;
-        else if (data[0].user_role === "reviewer") isReviewer.value = true;
-      } catch (error) {
-        logText(error.message);
-      }
     }
 
     function setGeneralComments(props) {
@@ -471,6 +485,7 @@ export default {
       generalCommentsInput,
       boardRecommendationsInput,
       boardDatePicker,
+      getRowClass,
       setChangeRequestActive,
       isChangeRequestActive,
       setGeneralComments,
