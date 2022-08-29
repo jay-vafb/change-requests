@@ -18,6 +18,11 @@ const routes = [
         component: () => import("pages/ListChangeRequestsPage.vue"),
         meta: { title: "Change requests" },
       },
+      {
+        path: "/statistics",
+        component: () => import("pages/StatisticsPage.vue"),
+        meta: { title: "Statistics" },
+      },
     ],
   },
 
