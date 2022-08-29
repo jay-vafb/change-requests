@@ -1,26 +1,36 @@
+import MainLayout from "../layouts/MainLayout.vue";
+import HomePage from "../pages/HomePage.vue";
+import ChangeRequestFormPage from "../pages/ChangeRequestFormPage.vue";
+import ListChangeRequestsPage from "../pages/ListChangeRequestsPage.vue";
+import StatisticsPage from "../pages/StatisticsPage.vue";
+import AuthenticationLayout from "../layouts/AuthenticationLayout.vue";
+import SignInPage from "../pages/SignInPage.vue";
+import RegisterPage from "../pages/RegisterPage.vue";
+import ErrorNotFound from "../pages/ErrorNotFound.vue";
+
 const routes = [
   {
     path: "/",
-    component: () => import("layouts/MainLayout.vue"),
+    component: MainLayout,
     children: [
       {
         path: "",
-        component: () => import("pages/HomePage.vue"),
+        component: HomePage,
         meta: { title: "Home" },
       },
       {
         path: "/changeRequestForm",
-        component: () => import("pages/ChangeRequestFormPage.vue"),
+        component: ChangeRequestFormPage,
         meta: { title: "Change request form" },
       },
       {
         path: "/changeRequests",
-        component: () => import("pages/ListChangeRequestsPage.vue"),
+        component: ListChangeRequestsPage,
         meta: { title: "Change requests" },
       },
       {
         path: "/statistics",
-        component: () => import("pages/StatisticsPage.vue"),
+        component: StatisticsPage,
         meta: { title: "Statistics" },
       },
     ],
@@ -28,15 +38,15 @@ const routes = [
 
   {
     path: "/auth",
-    component: () => import("layouts/AuthenticationLayout.vue"),
+    component: AuthenticationLayout,
     children: [
       {
         path: "",
-        component: () => import("pages/SignInPage.vue"),
+        component: SignInPage,
       },
       {
         path: "/register",
-        component: () => import("pages/RegisterPage.vue"),
+        component: RegisterPage,
       },
     ],
   },
@@ -45,7 +55,7 @@ const routes = [
   // but you can also remove it
   {
     path: "/:catchAll(.*)*",
-    component: () => import("pages/ErrorNotFound.vue"),
+    component: ErrorNotFound,
   },
 ];
 

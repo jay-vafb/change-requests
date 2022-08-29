@@ -37,6 +37,13 @@
         icon="description"
       ></EssentialLink>
       <EssentialLink
+        title="Statistics"
+        caption="View monthly change request statistics"
+        link="/statistics"
+        icon="equalizer"
+      >
+      </EssentialLink>
+      <EssentialLink
         title="Sign out"
         caption="Sign out of your account"
         icon="logout"
