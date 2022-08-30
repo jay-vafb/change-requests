@@ -256,6 +256,7 @@ export default {
           });
 
         if (error) throw error;
+
         showSuccessMessage("Change request created", $q);
       } catch (error) {
         logText(error.message);
