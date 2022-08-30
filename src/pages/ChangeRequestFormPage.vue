@@ -265,6 +265,8 @@ export default {
       }
     }
 
+    function sendEmailToReviewer() {}
+
     function setLoading(loading) {
       isLoading.value = loading;
     }
