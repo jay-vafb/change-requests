@@ -205,6 +205,7 @@ import { useQuasar } from "quasar";
 import { ref } from "vue";
 import { supabase } from "../supabase";
 import { logText, showSuccessMessage } from "../Logger";
+import emailjs from "@emailjs/browser";
 
 export default {
   name: "ChangeRequestFormPage",
@@ -255,8 +256,8 @@ export default {
             returning: "minimal",
           });
 
+        sendEmailToReviewer();
         if (error) throw error;
-
         showSuccessMessage("Change request created", $q);
       } catch (error) {
         logText(error.message);
