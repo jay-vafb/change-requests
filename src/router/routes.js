@@ -2,6 +2,7 @@ import MainLayout from "../layouts/MainLayout.vue";
 import HomePage from "../pages/HomePage.vue";
 import ChangeRequestFormPage from "../pages/ChangeRequestFormPage.vue";
 import ListChangeRequestsPage from "../pages/ListChangeRequestsPage.vue";
+import ViewChangeRequestPage from "../pages/ViewChangeRequestPage.vue";
 import StatisticsPage from "../pages/StatisticsPage.vue";
 import AuthenticationLayout from "../layouts/AuthenticationLayout.vue";
 import SignInPage from "../pages/SignInPage.vue";
@@ -27,6 +28,11 @@ const routes = [
         path: "/changeRequests",
         component: ListChangeRequestsPage,
         meta: { title: "Change requests" },
+      },
+      {
+        path: "/viewChangeRequest/:id",
+        component: ViewChangeRequestPage,
+        meta: { title: "View change request" },
       },
       {
         path: "/statistics",
