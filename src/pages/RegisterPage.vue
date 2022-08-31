@@ -78,7 +78,7 @@
 import { ref } from "vue";
 import { useQuasar } from "quasar";
 import { supabase } from "../supabase";
-import { showSuccessMessage, showErrorMessage } from "../Logger";
+import { showSuccessMessage, showErrorMessage } from "src/Logger";
 
 export default {
   name: "RegisterPage",
