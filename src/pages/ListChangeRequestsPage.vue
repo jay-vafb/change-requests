@@ -98,14 +98,14 @@
                 />
 
                 <q-btn
-                  v-if="isApprovingManager || isReviewer"
+                  v-if="isApprovingManager || isReviewer || isBoardApprover"
                   label="Update"
                   color="accent"
                   @click="updateGeneralComments(props)"
                 />
               </div>
 
-              <div v-if="isBoardApprover" class="q-gutter-xs">
+              <div class="q-gutter-xs">
                 <h6>Board comments</h6>
                 <q-input
                   filled
@@ -116,13 +116,14 @@
                   v-model="boardRecommendationsInput[props.pageIndex]"
                 />
                 <q-input
+                  v-if="isBoardApprover"
                   filled
                   type="date"
                   hint="Board date"
                   v-model="boardDatePicker[props.pageIndex]"
                 />
                 <q-btn
-                  v-if="isApprovingManager || isReviewer"
+                  v-if="isBoardApprover"
                   label="Update"
                   color="accent"
                   @click="updateBoardRecommendations(props)"
@@ -131,13 +132,15 @@
 
               <q-separator />
 
-              <div style="width: 400px">
+              <div
+                v-if="
+                  isChangeRequestActive(props.pageIndex) &&
+                  (isApprovingManager || isReviewer || isBoardApprover)
+                "
+                style="width: 400px"
+              >
                 <q-btn
                   class="q-mr-md"
-                  v-if="
-                    isChangeRequestActive(props.pageIndex) &&
-                    (isApprovingManager || isReviewer)
-                  "
                   label="Approve"
                   color="accent"
                   style="width: 30%"
@@ -145,10 +148,6 @@
                 />
                 <q-btn
                   class="q-mr-md"
-                  v-if="
-                    isChangeRequestActive(props.pageIndex) &&
-                    (isApprovingManager || isReviewer)
-                  "
                   label="Deny"
                   color="secondary"
                   style="width: 30%"
@@ -343,8 +342,9 @@ export default {
 
     function isApprovedOrDenied(status) {
       return (
-        status === "Manager approved" ||
         status === "Board approved" ||
+        status === "Board denied" ||
+        status === "Approved" ||
         status === "Denied"
       );
     }
@@ -386,7 +386,7 @@ export default {
     async function updateBoardRecommendations(props) {
       const recommendation = boardRecommendationsInput[props.pageIndex];
       const boardDate = boardDatePicker[props.pageIndex];
-      if (!recommendation || !boardDate) return;
+      if (!boardDate) return;
 
       try {
         const { error } = await supabase
@@ -411,9 +411,13 @@ export default {
 
     function approveChangeRequest(props) {
       if (isApprovingManager.value && props.row.status === "Pending approval") {
-        changeRequestsActive[props.pageIndex] = false;
         updateChangeRequestApprovalDate(props);
-        updateChangeRequestStatus(props, "Manager approved");
+        if (requiresBoardApproval(props.row)) {
+          updateChangeRequestStatus(props, "Pending board approval");
+        } else {
+          changeRequestsActive[props.pageIndex] = false;
+          updateChangeRequestStatus(props, "Approved");
+        }
       } else if (
         isReviewer.value &&
         (props.row.status === "Under review" ||
@@ -423,7 +427,8 @@ export default {
         updateChangeRequestStatus(props, "Pending approval");
       } else if (
         isBoardApprover.value &&
-        props.row.status === "Manager approved"
+        props.row.status === "Pending board approval" &&
+        requiresBoardApproval(props.row)
       ) {
         changeRequestsActive[props.pageIndex] = false;
         updateChangeRequestStatus(props, "Board approved");
@@ -440,13 +445,21 @@ export default {
         updateChangeRequestStatus(props, "Needs changes");
       } else if (
         isBoardApprover.value &&
-        props.row.status === "Manager approved"
+        props.row.status === "Pending board approval"
       ) {
         changeRequestsActive[props.pageIndex] = false;
         updateChangeRequestStatus(props, "Board denied");
       } else {
         showErrorMessage("You don't have the permissions to do this", $q);
       }
+    }
+
+    function requiresBoardApproval(changeRequest) {
+      return (
+        changeRequest.processing_speed !== "Normal" ||
+        changeRequest.risk_severity !== "Low" ||
+        changeRequest.impact_severity !== "Low"
+      );
     }
 
     async function updateChangeRequestApprovalDate(props) {
