@@ -275,7 +275,6 @@ export default {
     const isReviewer = ref(false);
     const isBoardApprover = ref(false);
 
-    // TODO: make changeRequestsActive reactive object for more efficiency
     const changeRequestsActive = reactive({});
     const generalCommentsInput = reactive({});
     const boardRecommendationsInput = reactive({});

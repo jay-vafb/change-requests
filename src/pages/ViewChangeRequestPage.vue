@@ -121,13 +121,33 @@
     </div>
 
     <div class="row">
-      <div class="col-12 col-md-4">
+      <div class="col-12 col-md-3">
         <q-input
           outlined
           label="Approving manager"
           stack-label
           readonly
           v-model="approvingManager"
+        />
+      </div>
+
+      <div class="col-12 col-md-4 offset-md-1">
+        <q-input
+          outlined
+          label="Status"
+          stack-label
+          readonly
+          v-model="status"
+        />
+      </div>
+
+      <div class="col-12 col-md-2 offset-md-1">
+        <q-input
+          outlined
+          label="Approval date"
+          stack-label
+          readonly
+          v-model="approvalDate"
         />
       </div>
     </div>
@@ -138,12 +158,14 @@
         label="Approve"
         color="accent"
         style="width: 30%"
+        @click="approveChangeRequest()"
       />
       <q-btn
         class="q-mr-md"
         label="Deny"
         color="secondary"
         style="width: 30%"
+        @click="denyChangeRequest()"
       />
     </div>
   </q-page>
@@ -152,15 +174,24 @@
 <script>
 import { onMounted, ref } from "vue";
 import { supabase } from "../supabase";
-import { logText } from "../logger";
+import { logText, showErrorMessage, showSuccessMessage } from "../logger";
 import { useRoute } from "vue-router";
+import { useQuasar } from "quasar";
 
 export default {
   name: "ViewChangeRequestPage",
 
   setup() {
+    const $q = useQuasar();
+    const user = supabase.auth.user();
     const route = useRoute();
 
+    const isApprovingManager = ref(false);
+    const isReviewer = ref(false);
+    const isBoardApprover = ref(false);
+    const isChangeRequestActive = ref(false);
+
+    const changeRequest = ref(null);
     const subject = ref(null);
     const date = ref(null);
     const trackingNumber = ref(null);
@@ -173,10 +204,34 @@ export default {
     const testingDetails = ref(null);
     const recoveryPlan = ref(null);
     const approvingManager = ref(null);
+    const status = ref(null);
+    const approvalDate = ref(null);
 
     onMounted(() => {
+      setUserRole();
       getChangeRequest(route.params.id);
     });
+
+    async function setUserRole() {
+      try {
+        const { data, error } = await supabase
+          .from("profiles")
+          .select("user_role")
+          .match({ id: user.id });
+
+        if (error) throw error;
+
+        if (data[0].user_role === "approving_manager") {
+          isApprovingManager.value = true;
+        } else if (data[0].user_role === "reviewer") {
+          isReviewer.value = true;
+        } else if (data[0].user_role === "board_approver") {
+          isBoardApprover.value = true;
+        }
+      } catch (error) {
+        logText(error.message);
+      }
+    }
 
     async function getChangeRequest(id) {
       try {
@@ -185,30 +240,162 @@ export default {
           .select()
           .match({ id });
 
+        if (data.length > 0) {
+          changeRequest.value = data[0];
+          setChangeRequestActive(data[0].status);
+          populateFormFields();
+        }
+
         if (error) throw error;
-        populateFormFields(data[0]);
       } catch (error) {
         logText(error.message);
       }
     }
 
-    function populateFormFields(changeRequest) {
-      logText(changeRequest);
-      subject.value = changeRequest.subject;
-      date.value = changeRequest.request_date;
-      trackingNumber.value = changeRequest.tracking_number;
-      requestorName.value = changeRequest.requestor;
-      changeDate.value = changeRequest.change_date;
-      processingSpeed.value = changeRequest.processing_speed;
-      riskSeverity.value = changeRequest.risk_severity;
-      impactSeverity.value = changeRequest.impact_severity;
-      description.value = changeRequest.description;
-      testingDetails.value = changeRequest.testing_details;
-      recoveryPlan.value = changeRequest.recovery_plan;
-      approvingManager.value = changeRequest.approving_manager;
+    function setChangeRequestActive(status) {
+      if (isApprovedOrDenied(status) || isPendingApproval(status)) {
+        isChangeRequestActive.value = false;
+      } else {
+        isChangeRequestActive.value = true;
+      }
+    }
+
+    function isApprovedOrDenied(status) {
+      return (
+        status === "Board approved" ||
+        status === "Board denied" ||
+        status === "Approved" ||
+        status === "Denied"
+      );
+    }
+
+    function isPendingApproval(status) {
+      return status === "Pending approval" && isReviewer.value;
+    }
+
+    function populateFormFields() {
+      subject.value = changeRequest.value.subject;
+      date.value = changeRequest.value.request_date;
+      trackingNumber.value = changeRequest.value.tracking_number;
+      requestorName.value = changeRequest.value.requestor;
+      changeDate.value = changeRequest.value.change_date;
+      processingSpeed.value = changeRequest.value.processing_speed;
+      riskSeverity.value = changeRequest.value.risk_severity;
+      impactSeverity.value = changeRequest.value.impact_severity;
+      description.value = changeRequest.value.description;
+      testingDetails.value = changeRequest.value.testing_details;
+      recoveryPlan.value = changeRequest.value.recovery_plan;
+      approvingManager.value = changeRequest.value.approving_manager;
+      status.value = changeRequest.value.status;
+      approvalDate.value = changeRequest.value.approval_date;
+    }
+
+    function approveChangeRequest() {
+      if (
+        isApprovingManager.value &&
+        changeRequest.value.status === "Pending approval"
+      ) {
+        updateChangeRequestApprovalDate();
+        if (requiresBoardApproval()) {
+          updateChangeRequestStatus("Pending board approval");
+        } else {
+          isChangeRequestActive.value = false;
+          updateChangeRequestStatus("Approved");
+        }
+      } else if (
+        isReviewer.value &&
+        (changeRequest.value.status === "Under review" ||
+          changeRequest.value.status === "Needs changes")
+      ) {
+        isChangeRequestActive.value = false;
+        updateChangeRequestStatus("Pending approval");
+      } else if (
+        isBoardApprover.value &&
+        changeRequest.value.status === "Pending board approval"
+      ) {
+        isChangeRequestActive.value = false;
+        updateChangeRequestStatus("Board approved");
+      } else {
+        showErrorMessage("You don't have the permissions to do this", $q);
+      }
+    }
+
+    function denyChangeRequest() {
+      if (
+        isApprovingManager.value &&
+        changeRequest.value.status === "Pending approval"
+      ) {
+        isChangeRequestActive.value = false;
+        updateChangeRequestStatus("Denied");
+      } else if (
+        isReviewer.value &&
+        changeRequest.value.status === "Under review"
+      ) {
+        updateChangeRequestStatus("Needs changes");
+      } else if (
+        isBoardApprover.value &&
+        changeRequest.value.status === "Pending board approval"
+      ) {
+        isChangeRequestActive.value = false;
+        updateChangeRequestStatus("Board denied");
+      } else {
+        showErrorMessage("You don't have the permissions to do this", $q);
+      }
+    }
+
+    function requiresBoardApproval() {
+      return (
+        changeRequest.value.processing_speed !== "Normal" ||
+        changeRequest.value.risk_severity !== "Low" ||
+        changeRequest.value.impact_severity !== "Low"
+      );
+    }
+
+    async function updateChangeRequestApprovalDate() {
+      const today = new Date();
+      try {
+        const { error } = await supabase
+          .from("change_requests")
+          .update({ approval_date: today })
+          .match({ id: changeRequest.value.id });
+
+        approvalDate.value = formatDate(today);
+        if (error) throw error;
+      } catch (error) {
+        logText(error.message);
+      }
+    }
+
+    function formatDate(date) {
+      return (
+        date.getFullYear() +
+        "-" +
+        ("0" + (date.getMonth() + 1)).slice(-2) +
+        "-" +
+        ("0" + date.getDate()).slice(-2)
+      );
+    }
+
+    async function updateChangeRequestStatus(newStatus) {
+      try {
+        const { error } = await supabase
+          .from("change_requests")
+          .update({ status: newStatus })
+          .match({ id: changeRequest.value.id });
+
+        status.value = newStatus;
+        if (error) throw error;
+        showSuccessMessage("Change request updated", $q);
+      } catch (error) {
+        logText(error.message);
+      }
     }
 
     return {
+      isReviewer,
+      isApprovingManager,
+      isBoardApprover,
+      isChangeRequestActive,
       subject,
       date,
       trackingNumber,
@@ -221,6 +408,11 @@ export default {
       testingDetails,
       recoveryPlan,
       approvingManager,
+      status,
+      approvalDate,
+
+      approveChangeRequest,
+      denyChangeRequest,
     };
   },
 };
