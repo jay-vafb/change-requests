@@ -64,7 +64,7 @@
 import { ref } from "vue";
 import { useQuasar } from "quasar";
 import { supabase } from "../supabase";
-import { showErrorMessage } from "../Logger";
+import { showErrorMessage } from "src/Logger";
 import { useRouter } from "vue-router";
 
 export default {

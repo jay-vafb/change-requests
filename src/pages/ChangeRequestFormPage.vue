@@ -204,7 +204,7 @@
 import { useQuasar } from "quasar";
 import { ref } from "vue";
 import { supabase } from "../supabase";
-import { logText, showSuccessMessage } from "../Logger";
+import { logText, showSuccessMessage } from "src/Logger";
 import emailjs from "@emailjs/browser";
 
 export default {
