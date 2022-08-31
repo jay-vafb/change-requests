@@ -62,7 +62,7 @@
 import { ref } from "vue";
 import EssentialLink from "src/components/EssentialLink.vue";
 import { supabase } from "../supabase";
-import { logText } from "src/Logger";
+import { logText } from "../logger";
 import { useRouter } from "vue-router";
 
 export default {

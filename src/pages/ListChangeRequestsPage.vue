@@ -164,7 +164,7 @@
 
 <script>
 import { supabase } from "../supabase";
-import { logText, showErrorMessage, showSuccessMessage } from "src/Logger";
+import { logText, showErrorMessage, showSuccessMessage } from "../logger";
 import { onMounted, ref, reactive } from "vue";
 import { useRoute } from "vue-router";
 import { useQuasar } from "quasar";
