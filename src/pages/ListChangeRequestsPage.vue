@@ -105,7 +105,7 @@
                 />
               </div>
 
-              <div class="q-gutter-xs">
+              <div v-if="isBoardApprover" class="q-gutter-xs">
                 <h6>Board comments</h6>
                 <q-input
                   filled
@@ -134,8 +134,10 @@
               <div style="width: 400px">
                 <q-btn
                   class="q-mr-md"
-                  v-if="isApprovingManager || isReviewer"
-                  :disabled="!isChangeRequestActive(props.pageIndex)"
+                  v-if="
+                    isChangeRequestActive(props.pageIndex) &&
+                    (isApprovingManager || isReviewer)
+                  "
                   label="Approve"
                   color="accent"
                   style="width: 30%"
@@ -143,8 +145,10 @@
                 />
                 <q-btn
                   class="q-mr-md"
-                  v-if="isApprovingManager || isReviewer"
-                  :disabled="!isChangeRequestActive(props.pageIndex)"
+                  v-if="
+                    isChangeRequestActive(props.pageIndex) &&
+                    (isApprovingManager || isReviewer)
+                  "
                   label="Deny"
                   color="secondary"
                   style="width: 30%"
@@ -270,9 +274,10 @@ export default {
     const rows = ref([]);
     const isApprovingManager = ref(false);
     const isReviewer = ref(false);
+    const isBoardApprover = ref(false);
 
     // TODO: make changeRequestsActive reactive object for more efficiency
-    const changeRequestsActive = ref([]);
+    const changeRequestsActive = reactive({});
     const generalCommentsInput = reactive({});
     const boardRecommendationsInput = reactive({});
     const boardDatePicker = reactive({});
@@ -306,9 +311,13 @@ export default {
 
         if (error) throw error;
 
-        if (data[0].user_role === "approving_manager")
+        if (data[0].user_role === "approving_manager") {
           isApprovingManager.value = true;
-        else if (data[0].user_role === "reviewer") isReviewer.value = true;
+        } else if (data[0].user_role === "reviewer") {
+          isReviewer.value = true;
+        } else if (data[0].user_role === "board_approver") {
+          isBoardApprover.value = true;
+        }
       } catch (error) {
         logText(error.message);
       }
@@ -333,7 +342,11 @@ export default {
     }
 
     function isApprovedOrDenied(status) {
-      return status === "Approved" || status === "Denied";
+      return (
+        status === "Manager approved" ||
+        status === "Board approved" ||
+        status === "Denied"
+      );
     }
 
     function isPendingApproval(status) {
@@ -397,40 +410,40 @@ export default {
     }
 
     function approveChangeRequest(props) {
-      if (
-        isApprovingManager.value &&
-        props.row.status !== "Under review" &&
-        props.row.status !== "Needs changes"
-      ) {
+      if (isApprovingManager.value && props.row.status === "Pending approval") {
         changeRequestsActive[props.pageIndex] = false;
         updateChangeRequestApprovalDate(props);
-        updateChangeRequestStatus(props, "Approved");
+        updateChangeRequestStatus(props, "Manager approved");
       } else if (
         isReviewer.value &&
-        props.row.status !== "Approved" &&
-        props.row.status !== "Denied"
+        (props.row.status === "Under review" ||
+          props.row.status === "Needs changes")
       ) {
         changeRequestsActive[props.pageIndex] = false;
         updateChangeRequestStatus(props, "Pending approval");
+      } else if (
+        isBoardApprover.value &&
+        props.row.status === "Manager approved"
+      ) {
+        changeRequestsActive[props.pageIndex] = false;
+        updateChangeRequestStatus(props, "Board approved");
       } else {
         showErrorMessage("You don't have the permissions to do this", $q);
       }
     }
 
     function denyChangeRequest(props) {
-      if (
-        isApprovingManager.value &&
-        props.row.status !== "Under review" &&
-        props.row.status !== "Needs changes"
-      ) {
+      if (isApprovingManager.value && props.row.status === "Pending approval") {
         changeRequestsActive[props.pageIndex] = false;
         updateChangeRequestStatus(props, "Denied");
-      } else if (
-        isReviewer.value &&
-        props.row.status !== "Approved" &&
-        props.row.status !== "Denied"
-      ) {
+      } else if (isReviewer.value && props.row.status === "Under review") {
         updateChangeRequestStatus(props, "Needs changes");
+      } else if (
+        isBoardApprover.value &&
+        props.row.status === "Manager approved"
+      ) {
+        changeRequestsActive[props.pageIndex] = false;
+        updateChangeRequestStatus(props, "Board denied");
       } else {
         showErrorMessage("You don't have the permissions to do this", $q);
       }
@@ -481,6 +494,7 @@ export default {
       rows,
       isApprovingManager,
       isReviewer,
+      isBoardApprover,
       changeRequestsActive,
       generalCommentsInput,
       boardRecommendationsInput,
