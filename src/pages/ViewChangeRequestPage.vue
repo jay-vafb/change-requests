@@ -152,7 +152,7 @@
       </div>
     </div>
 
-    <div style="width: 400px">
+    <div v-if="isChangeRequestActive" style="width: 400px">
       <q-btn
         class="q-mr-md"
         label="Approve"
@@ -172,7 +172,7 @@
 </template>
 
 <script>
-import { onMounted, ref } from "vue";
+import { onBeforeMount, ref } from "vue";
 import { supabase } from "../supabase";
 import { logText, showErrorMessage, showSuccessMessage } from "../logger";
 import { useRoute } from "vue-router";
@@ -207,7 +207,7 @@ export default {
     const status = ref(null);
     const approvalDate = ref(null);
 
-    onMounted(() => {
+    onBeforeMount(() => {
       setUserRole();
       getChangeRequest(route.params.id);
     });
@@ -253,7 +253,11 @@ export default {
     }
 
     function setChangeRequestActive(status) {
-      if (isApprovedOrDenied(status) || isPendingApproval(status)) {
+      if (
+        isApprovedOrDenied(status) ||
+        isPendingManagerApproval(status) ||
+        isPendingBoardApproval(status)
+      ) {
         isChangeRequestActive.value = false;
       } else {
         isChangeRequestActive.value = true;
@@ -269,8 +273,18 @@ export default {
       );
     }
 
-    function isPendingApproval(status) {
-      return status === "Pending approval" && isReviewer.value;
+    function isPendingManagerApproval(status) {
+      return (
+        status === "Pending approval" &&
+        (isReviewer.value || isBoardApprover.value)
+      );
+    }
+
+    function isPendingBoardApproval(status) {
+      return (
+        status === "Pending board approval" &&
+        (isApprovingManager.value || isReviewer.value)
+      );
     }
 
     function populateFormFields() {
@@ -384,6 +398,7 @@ export default {
           .match({ id: changeRequest.value.id });
 
         status.value = newStatus;
+        changeRequest.value.status = newStatus;
         if (error) throw error;
         showSuccessMessage("Change request updated", $q);
       } catch (error) {
