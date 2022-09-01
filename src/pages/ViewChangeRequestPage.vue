@@ -152,6 +152,58 @@
       </div>
     </div>
 
+    <br />
+
+    <div class="row">
+      <div class="col-12 col-md-11">
+        <q-input
+          filled
+          autogrow
+          type="textarea"
+          label="General comments"
+          stack-label
+          v-model="generalComments"
+        >
+          <template v-slot:append>
+            <q-btn
+              v-if="isApprovingManager || isReviewer || isBoardApprover"
+              label="Update"
+              color="accent"
+              @click="updateGeneralComments()"
+            />
+          </template>
+        </q-input>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-12 col-md-11">
+        <q-input
+          filled
+          autogrow
+          type="textarea"
+          label="Board comments"
+          stack-label
+          v-model="boardComments"
+        >
+          <template v-slot:append>
+            <div class="text-caption" v-text="boardDate"></div>
+          </template>
+        </q-input>
+      </div>
+    </div>
+
+    <div class="row">
+      <q-btn
+        v-if="isBoardApprover"
+        label="Update"
+        color="accent"
+        @click="updateBoardComments()"
+      />
+    </div>
+
+    <br />
+
     <div v-if="isChangeRequestActive" style="width: 400px">
       <q-btn
         class="q-mr-md"
@@ -206,6 +258,9 @@ export default {
     const approvingManager = ref(null);
     const status = ref(null);
     const approvalDate = ref(null);
+    const generalComments = ref(null);
+    const boardComments = ref(null);
+    const boardDate = ref(null);
 
     onBeforeMount(() => {
       setUserRole();
@@ -302,6 +357,44 @@ export default {
       approvingManager.value = changeRequest.value.approving_manager;
       status.value = changeRequest.value.status;
       approvalDate.value = changeRequest.value.approval_date;
+      generalComments.value = changeRequest.value.general_comments;
+      boardComments.value = changeRequest.value.board_recommendations;
+      boardDate.value = changeRequest.value.board_date;
+    }
+
+    async function updateGeneralComments() {
+      try {
+        const { error } = await supabase
+          .from("change_requests")
+          .update({ general_comments: generalComments.value })
+          .match({ id: changeRequest.value.id });
+
+        if (error) throw error;
+        showSuccessMessage("Comment updated", $q);
+      } catch (error) {
+        logText(error.message);
+      }
+    }
+
+    async function updateBoardComments() {
+      const today = new Date();
+
+      try {
+        const { error } = await supabase
+          .from("change_requests")
+          .update({
+            board_recommendations: boardComments.value,
+            board_date: today,
+          })
+          .match({ id: changeRequest.value.id });
+
+        boardDate.value = formatDate(today);
+
+        if (error) throw error;
+        showSuccessMessage("Recommendations updated", $q);
+      } catch (error) {
+        logText(error.message);
+      }
     }
 
     function approveChangeRequest() {
@@ -425,7 +518,12 @@ export default {
       approvingManager,
       status,
       approvalDate,
+      generalComments,
+      boardComments,
+      boardDate,
 
+      updateGeneralComments,
+      updateBoardComments,
       approveChangeRequest,
       denyChangeRequest,
     };
