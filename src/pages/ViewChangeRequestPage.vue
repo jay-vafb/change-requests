@@ -297,7 +297,7 @@ export default {
 
         if (data.length > 0) {
           changeRequest.value = data[0];
-          setChangeRequestActive(data[0].status);
+          await setChangeRequestActive(data[0].status);
           populateFormFields();
         }
 
@@ -307,11 +307,12 @@ export default {
       }
     }
 
-    function setChangeRequestActive(status) {
+    async function setChangeRequestActive(status) {
       if (
         isApprovedOrDenied(status) ||
         isPendingManagerApproval(status) ||
-        isPendingBoardApproval(status)
+        isPendingBoardApproval(status) ||
+        isUnderReview(status)
       ) {
         isChangeRequestActive.value = false;
       } else {
@@ -339,6 +340,13 @@ export default {
       return (
         status === "Pending board approval" &&
         (isApprovingManager.value || isReviewer.value)
+      );
+    }
+
+    function isUnderReview(status) {
+      return (
+        status === "Under review" &&
+        (isApprovingManager.value || isBoardApprover.value)
       );
     }
 
