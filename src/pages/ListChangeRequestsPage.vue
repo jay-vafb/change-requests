@@ -30,26 +30,11 @@
             />
           </q-td>
 
-          <q-td
-            v-for="col in props.cols"
-            :key="col.name"
-            :props="props"
-            :class="getRowClass(props)"
-          >
+          <q-td v-for="col in props.cols" :key="col.name" :props="props">
             {{ col.value }}
           </q-td>
         </q-tr>
-        <q-tr
-          v-show="props.expand"
-          :props="props"
-          :ref="
-            (el) => {
-              setChangeRequestActive(props);
-              setGeneralComments(props);
-              setBoardRecommendations(props);
-            }
-          "
-        >
+        <q-tr v-show="props.expand" :props="props" :ref="(el) => {}">
           <q-td colspan="100%">
             <div class="q-gutter-md">
               <div
@@ -85,73 +70,34 @@
                 {{ props.row.recovery_plan }}
               </div>
 
-              <div class="q-gutter-xs">
+              <div
+                style="
+                  width: 100%;
+                  overflow-wrap: break-word;
+                  white-space: pre-wrap;
+                "
+              >
                 <h6>General comments</h6>
-
-                <q-input
-                  filled
-                  clearable
-                  type="textarea"
-                  label="General comments"
-                  hint="Give any comments you might have"
-                  v-model="generalCommentsInput[props.pageIndex]"
-                />
-
-                <q-btn
-                  v-if="isApprovingManager || isReviewer || isBoardApprover"
-                  label="Update"
-                  color="accent"
-                  @click="updateGeneralComments(props)"
-                />
+                {{ props.row.general_comments }}
               </div>
-
-              <div class="q-gutter-xs">
-                <h6>Board comments</h6>
-                <q-input
-                  filled
-                  clearable
-                  type="textarea"
-                  label="Board recommendations"
-                  hint="Give any recommendations you might have"
-                  v-model="boardRecommendationsInput[props.pageIndex]"
-                />
-                <q-input
-                  v-if="isBoardApprover"
-                  filled
-                  type="date"
-                  hint="Board date"
-                  v-model="boardDatePicker[props.pageIndex]"
-                />
-                <q-btn
-                  v-if="isBoardApprover"
-                  label="Update"
-                  color="accent"
-                  @click="updateBoardRecommendations(props)"
-                />
-              </div>
-
-              <q-separator />
 
               <div
-                v-if="
-                  isChangeRequestActive(props.pageIndex) &&
-                  (isApprovingManager || isReviewer || isBoardApprover)
+                style="
+                  width: 100%;
+                  overflow-wrap: break-word;
+                  white-space: pre-wrap;
                 "
-                style="width: 400px"
               >
+                <h6>Board comments</h6>
+                {{ props.row.board_recommendations }}
+              </div>
+
+              <div>
                 <q-btn
                   class="q-mr-md"
-                  label="Approve"
+                  label="Make changes"
                   color="accent"
-                  style="width: 30%"
-                  @click="approveChangeRequest(props)"
-                />
-                <q-btn
-                  class="q-mr-md"
-                  label="Deny"
-                  color="secondary"
-                  style="width: 30%"
-                  @click="denyChangeRequest(props)"
+                  @click="openChangeRequest(props.row.id)"
                 />
               </div>
             </div>
@@ -164,9 +110,9 @@
 
 <script>
 import { supabase } from "../supabase";
-import { logText, showErrorMessage, showSuccessMessage } from "../logger";
+import { logText } from "../logger";
 import { onMounted, ref, reactive } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { useQuasar } from "quasar";
 
 const columns = [
@@ -268,23 +214,16 @@ export default {
 
   setup() {
     const $q = useQuasar();
-    const route = useRoute();
+    const router = useRouter();
 
     const rows = ref([]);
-    const isApprovingManager = ref(false);
-    const isReviewer = ref(false);
-    const isBoardApprover = ref(false);
 
-    const changeRequestsActive = reactive({});
     const generalCommentsInput = reactive({});
     const boardRecommendationsInput = reactive({});
     const boardDatePicker = reactive({});
 
-    const user = supabase.auth.user();
-
     onMounted(() => {
       getAllChangeRequests();
-      setUserRole();
     });
 
     async function getAllChangeRequests() {
@@ -300,226 +239,18 @@ export default {
       }
     }
 
-    async function setUserRole() {
-      try {
-        const { data, error } = await supabase
-          .from("profiles")
-          .select("user_role")
-          .match({ id: user.id });
-
-        if (error) throw error;
-
-        if (data[0].user_role === "approving_manager") {
-          isApprovingManager.value = true;
-        } else if (data[0].user_role === "reviewer") {
-          isReviewer.value = true;
-        } else if (data[0].user_role === "board_approver") {
-          isBoardApprover.value = true;
-        }
-      } catch (error) {
-        logText(error.message);
-      }
-    }
-
-    // TODO: move table element to top of table
-    function getRowClass(props) {
-      if (props.row.id === parseInt(route.query["request_id"])) {
-        return "bg-accent";
-      }
-    }
-
-    function setChangeRequestActive(props) {
-      if (
-        isApprovedOrDenied(props.row.status) ||
-        isPendingApproval(props.row.status)
-      ) {
-        changeRequestsActive[props.pageIndex] = false;
-      } else {
-        changeRequestsActive[props.pageIndex] = true;
-      }
-    }
-
-    function isApprovedOrDenied(status) {
-      return (
-        status === "Board approved" ||
-        status === "Board denied" ||
-        status === "Approved" ||
-        status === "Denied"
-      );
-    }
-
-    function isPendingApproval(status) {
-      return status === "Pending approval" && isReviewer.value;
-    }
-
-    function isChangeRequestActive(index) {
-      return changeRequestsActive[index];
-    }
-
-    function setGeneralComments(props) {
-      generalCommentsInput[props.pageIndex] = props.row.general_comments;
-    }
-
-    async function updateGeneralComments(props) {
-      const comment = generalCommentsInput[props.pageIndex];
-      if (!comment) return;
-
-      try {
-        const { error } = await supabase
-          .from("change_requests")
-          .update({ general_comments: comment })
-          .match({ id: props.row.id });
-
-        if (error) throw error;
-        showSuccessMessage("Comment updated", $q);
-      } catch (error) {
-        logText(error.message);
-      }
-    }
-
-    function setBoardRecommendations(props) {
-      boardRecommendationsInput[props.pageIndex] =
-        props.row.board_recommendations;
-    }
-
-    async function updateBoardRecommendations(props) {
-      const recommendation = boardRecommendationsInput[props.pageIndex];
-      const boardDate = boardDatePicker[props.pageIndex];
-      if (!boardDate) return;
-
-      try {
-        const { error } = await supabase
-          .from("change_requests")
-          .update({
-            board_recommendations: recommendation,
-            board_date: boardDate,
-          })
-          .match({ id: props.row.id });
-
-        if (error) throw error;
-        updateBoardDateColumn(boardDate, props);
-        showSuccessMessage("Recommendations updated", $q);
-      } catch (error) {
-        logText(error.message);
-      }
-    }
-
-    function updateBoardDateColumn(date, props) {
-      rows.value[props.pageIndex].board_date = date;
-    }
-
-    function approveChangeRequest(props) {
-      if (isApprovingManager.value && props.row.status === "Pending approval") {
-        updateChangeRequestApprovalDate(props);
-        if (requiresBoardApproval(props.row)) {
-          updateChangeRequestStatus(props, "Pending board approval");
-        } else {
-          changeRequestsActive[props.pageIndex] = false;
-          updateChangeRequestStatus(props, "Approved");
-        }
-      } else if (
-        isReviewer.value &&
-        (props.row.status === "Under review" ||
-          props.row.status === "Needs changes")
-      ) {
-        changeRequestsActive[props.pageIndex] = false;
-        updateChangeRequestStatus(props, "Pending approval");
-      } else if (
-        isBoardApprover.value &&
-        props.row.status === "Pending board approval" &&
-        requiresBoardApproval(props.row)
-      ) {
-        changeRequestsActive[props.pageIndex] = false;
-        updateChangeRequestStatus(props, "Board approved");
-      } else {
-        showErrorMessage("You don't have the permissions to do this", $q);
-      }
-    }
-
-    function denyChangeRequest(props) {
-      if (isApprovingManager.value && props.row.status === "Pending approval") {
-        changeRequestsActive[props.pageIndex] = false;
-        updateChangeRequestStatus(props, "Denied");
-      } else if (isReviewer.value && props.row.status === "Under review") {
-        updateChangeRequestStatus(props, "Needs changes");
-      } else if (
-        isBoardApprover.value &&
-        props.row.status === "Pending board approval"
-      ) {
-        changeRequestsActive[props.pageIndex] = false;
-        updateChangeRequestStatus(props, "Board denied");
-      } else {
-        showErrorMessage("You don't have the permissions to do this", $q);
-      }
-    }
-
-    function requiresBoardApproval(changeRequest) {
-      return (
-        changeRequest.processing_speed !== "Normal" ||
-        changeRequest.risk_severity !== "Low" ||
-        changeRequest.impact_severity !== "Low"
-      );
-    }
-
-    async function updateChangeRequestApprovalDate(props) {
-      const today = new Date();
-      try {
-        const { error } = await supabase
-          .from("change_requests")
-          .update({ approval_date: today })
-          .match({ id: props.row.id });
-
-        if (error) throw error;
-        rows.value[props.pageIndex].approval_date = formatDate(today);
-      } catch (error) {
-        logText(error.message);
-      }
-    }
-
-    function formatDate(date) {
-      return (
-        date.getFullYear() +
-        "-" +
-        ("0" + (date.getMonth() + 1)).slice(-2) +
-        "-" +
-        ("0" + date.getDate()).slice(-2)
-      );
-    }
-
-    async function updateChangeRequestStatus(props, status) {
-      try {
-        const { error } = await supabase
-          .from("change_requests")
-          .update({ status })
-          .match({ id: props.row.id });
-
-        if (error) throw error;
-        rows.value[props.pageIndex].status = status;
-        showSuccessMessage("Change request updated", $q);
-      } catch (error) {
-        logText(error.message);
-      }
+    function openChangeRequest(id) {
+      router.push({ path: "/viewChangeRequest/" + id });
     }
 
     return {
       columns,
       rows,
-      isApprovingManager,
-      isReviewer,
-      isBoardApprover,
-      changeRequestsActive,
       generalCommentsInput,
       boardRecommendationsInput,
       boardDatePicker,
-      getRowClass,
-      setChangeRequestActive,
-      isChangeRequestActive,
-      setGeneralComments,
-      updateGeneralComments,
-      setBoardRecommendations,
-      updateBoardRecommendations,
-      approveChangeRequest,
-      denyChangeRequest,
+
+      openChangeRequest,
     };
   },
 };
