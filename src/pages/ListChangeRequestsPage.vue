@@ -112,7 +112,7 @@
 import { supabase } from "../supabase";
 import { logText } from "../logger";
 import { onMounted, ref, reactive } from "vue";
-import { useRoute, useRouter } from "vue-router";
+import { useRouter } from "vue-router";
 import { useQuasar } from "quasar";
 
 const columns = [
