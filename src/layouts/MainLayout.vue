@@ -1,6 +1,6 @@
 <template>
   <q-layout view="hHh lpR fFf">
-    <q-header bordered class="bg-primary text-white">
+    <q-header bordered class="header bg-primary text-white">
       <q-toolbar>
         <q-btn
           color="secondary"
@@ -16,7 +16,13 @@
       </q-toolbar>
     </q-header>
 
-    <q-drawer show-if-above v-model="leftDrawerOpen" side="left" bordered>
+    <q-drawer
+      show-if-above
+      v-model="leftDrawerOpen"
+      side="left"
+      bordered
+      class="sidebar"
+    >
       <EssentialLink
         title="Home"
         caption="Visit home page"
@@ -59,11 +65,12 @@
 </template>
 
 <script>
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import EssentialLink from "src/components/EssentialLink.vue";
 import { supabase } from "../supabase";
 import { logText } from "../logger";
 import { useRouter } from "vue-router";
+import { store } from "src/store";
 
 export default {
   setup() {
@@ -71,8 +78,16 @@ export default {
     const leftDrawerOpen = ref(false);
     const user = supabase.auth.user();
 
+    watch(
+      () => store.isLeftDrawerOpen,
+      (newValue, oldValue) => {
+        leftDrawerOpen.value = store.isLeftDrawerOpen;
+      }
+    );
+
     function toggleLeftDrawer() {
       leftDrawerOpen.value = !leftDrawerOpen.value;
+      store.setLeftDrawerState(leftDrawerOpen.value);
     }
 
     async function signOut() {

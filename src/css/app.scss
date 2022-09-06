@@ -3,3 +3,34 @@
   margin: 0;
   padding: 0;
 }
+
+@media print {
+  .header {
+    display: none;
+  }
+
+  .sidebar {
+    display: none;
+    width: 0;
+  }
+
+  .board-inputs {
+    display: none;
+  }
+
+  .change-request-action {
+    display: none;
+  }
+
+  .print-break {
+    page-break-before: always;
+  }
+
+  #q-notify {
+    display: none;
+  }
+
+  ::-webkit-scrollbar {
+    display: none;
+  }
+}

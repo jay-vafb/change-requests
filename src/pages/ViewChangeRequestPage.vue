@@ -77,48 +77,38 @@
 
     <div class="row">
       <div class="col-12 col-md-11">
-        <q-input
-          filled
-          autogrow
-          clearable
-          type="textarea"
-          label="Description of change"
-          stack-label
-          readonly
-          v-model="description"
-        />
+        <h6>Description</h6>
+        <div
+          class="text-body-1"
+          v-text="description"
+          style="width: 100%; overflow-wrap: break-word; white-space: pre-wrap"
+        ></div>
       </div>
     </div>
 
     <div class="row">
       <div class="col-12 col-md-11">
-        <q-input
-          filled
-          autogrow
-          clearable
-          type="textarea"
-          label="Testing details"
-          stack-label
-          readonly
-          v-model="testingDetails"
-        />
+        <h6>Testing details</h6>
+        <div
+          class="text-body-1"
+          v-text="testingDetails"
+          style="width: 100%; overflow-wrap: break-word; white-space: pre-wrap"
+        ></div>
       </div>
     </div>
 
     <div class="row">
       <div class="col-12 col-md-11">
-        <q-input
-          filled
-          autogrow
-          clearable
-          type="textarea"
-          label="Backout/Recovery plan"
-          stack-label
-          readonly
-          v-model="recoveryPlan"
-        />
+        <h6>Recovery plan</h6>
+        <div
+          class="text-body-1"
+          v-text="recoveryPlan"
+          style="width: 100%; overflow-wrap: break-word; white-space: pre-wrap"
+        ></div>
       </div>
     </div>
+
+    <div class="print-break"></div>
 
     <div class="row">
       <div class="col-12 col-md-3">
@@ -152,10 +142,9 @@
       </div>
     </div>
 
-    <br />
-
-    <div class="row">
+    <!--div class="row">
       <div class="col-12 col-md-11">
+        <h6>General comments</h6>
         <q-input
           filled
           autogrow
@@ -174,37 +163,50 @@
           </template>
         </q-input>
       </div>
-    </div>
+    </div-->
 
     <div class="row">
       <div class="col-12 col-md-11">
+        <div class="row">
+          <h6>Board comments</h6>
+        </div>
+
         <q-input
+          v-if="isBoardApprover"
           filled
           autogrow
           type="textarea"
           label="Board comments"
           stack-label
-          v-model="boardComments"
+          v-model="boardCommentsInput"
+          class="board-inputs"
         >
           <template v-slot:append>
-            <div class="text-caption" v-text="boardDate"></div>
+            <q-btn
+              label="Update"
+              color="accent"
+              @click="updateBoardComments()"
+            />
           </template>
         </q-input>
+
+        <br />
+
+        <div class="text-body-1" v-text="boardDate"></div>
+        <div
+          class="text-body-1"
+          v-text="boardComments"
+          style="width: 100%; overflow-wrap: break-word; white-space: pre-wrap"
+        ></div>
       </div>
     </div>
 
-    <div class="row">
-      <q-btn
-        v-if="isBoardApprover"
-        label="Update"
-        color="accent"
-        @click="updateBoardComments()"
-      />
-    </div>
-
-    <br />
-
-    <div v-if="isChangeRequestActive" style="width: 400px">
+    <!--TODO: investigate why buttons disappear for board approver-->
+    <div
+      v-if="isChangeRequestActive"
+      style="width: 500px"
+      class="change-request-action"
+    >
       <q-btn
         class="q-mr-md"
         label="Approve"
@@ -219,6 +221,13 @@
         style="width: 30%"
         @click="denyChangeRequest()"
       />
+      <q-btn
+        class="q-mr-md"
+        label="Print"
+        color="primary"
+        style="width: 30%"
+        @click="printChangeRequest()"
+      />
     </div>
   </q-page>
 </template>
@@ -229,6 +238,7 @@ import { supabase } from "../supabase";
 import { logText, showErrorMessage, showSuccessMessage } from "../logger";
 import { useRoute } from "vue-router";
 import { useQuasar } from "quasar";
+import { store } from "src/store";
 
 export default {
   name: "ViewChangeRequestPage",
@@ -259,6 +269,7 @@ export default {
     const status = ref(null);
     const approvalDate = ref(null);
     const generalComments = ref(null);
+    const boardCommentsInput = ref(null);
     const boardComments = ref(null);
     const boardDate = ref(null);
 
@@ -391,15 +402,17 @@ export default {
         const { error } = await supabase
           .from("change_requests")
           .update({
-            board_recommendations: boardComments.value,
+            board_recommendations: boardCommentsInput.value,
             board_date: today,
           })
           .match({ id: changeRequest.value.id });
 
+        boardComments.value = boardCommentsInput.value;
         boardDate.value = formatDate(today);
 
         if (error) throw error;
         showSuccessMessage("Recommendations updated", $q);
+        boardCommentsInput.value = "";
       } catch (error) {
         logText(error.message);
       }
@@ -456,6 +469,16 @@ export default {
       } else {
         showErrorMessage("You don't have the permissions to do this", $q);
       }
+    }
+
+    function printChangeRequest() {
+      closeLeftDrawer().then((_) => {
+        window.print();
+      });
+    }
+
+    async function closeLeftDrawer() {
+      store.isLeftDrawerOpen = false;
     }
 
     function requiresBoardApproval() {
@@ -527,6 +550,7 @@ export default {
       status,
       approvalDate,
       generalComments,
+      boardCommentsInput,
       boardComments,
       boardDate,
 
@@ -534,6 +558,7 @@ export default {
       updateBoardComments,
       approveChangeRequest,
       denyChangeRequest,
+      printChangeRequest,
     };
   },
 };
