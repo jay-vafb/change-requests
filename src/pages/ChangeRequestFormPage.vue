@@ -205,7 +205,7 @@ import { useQuasar } from "quasar";
 import { ref } from "vue";
 import { supabase } from "../supabase";
 import { logText, showSuccessMessage } from "../logger";
-import emailjs from "@emailjs/browser";
+import axios from "axios";
 
 export default {
   name: "ChangeRequestFormPage",
@@ -266,7 +266,9 @@ export default {
       }
     }
 
-    function sendEmailToReviewer() {}
+    async function sendEmailToReviewer() {
+      logText("Eventually sends an email to the reviewer");
+    }
 
     function setLoading(loading) {
       isLoading.value = loading;
