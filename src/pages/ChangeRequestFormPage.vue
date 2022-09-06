@@ -205,7 +205,6 @@ import { useQuasar } from "quasar";
 import { ref } from "vue";
 import { supabase } from "../supabase";
 import { logText, showSuccessMessage } from "../logger";
-import axios from "axios";
 
 export default {
   name: "ChangeRequestFormPage",
