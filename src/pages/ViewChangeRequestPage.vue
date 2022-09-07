@@ -192,7 +192,10 @@
 
         <br />
 
-        <div class="text-body-1" v-text="boardDate"></div>
+        <div
+          class="text-body-1"
+          v-text="'Board date: ' + (boardDate ? boardDate : '')"
+        ></div>
         <div
           class="text-body-1"
           v-text="boardComments"
@@ -403,19 +406,15 @@ export default {
     }
 
     async function updateBoardComments() {
-      const today = new Date();
-
       try {
         const { error } = await supabase
           .from("change_requests")
           .update({
             board_recommendations: boardCommentsInput.value,
-            board_date: today,
           })
           .match({ id: changeRequest.value.id });
 
         boardComments.value = boardCommentsInput.value;
-        boardDate.value = formatDate(today);
 
         if (error) throw error;
         showSuccessMessage("Recommendations updated", $q);
@@ -434,9 +433,9 @@ export default {
         if (requiresBoardApproval()) {
           updateChangeRequestStatus("Pending board approval");
         } else {
-          isChangeRequestActive.value = false;
           updateChangeRequestStatus("Approved");
         }
+        isChangeRequestActive.value = false;
       } else if (
         isReviewer.value &&
         (changeRequest.value.status === "Under review" ||
@@ -448,6 +447,7 @@ export default {
         isBoardApprover.value &&
         changeRequest.value.status === "Pending board approval"
       ) {
+        updateChangeRequestBoardDate();
         isChangeRequestActive.value = false;
         updateChangeRequestStatus("Board approved");
       } else {
@@ -505,6 +505,21 @@ export default {
           .match({ id: changeRequest.value.id });
 
         approvalDate.value = formatDate(today);
+        if (error) throw error;
+      } catch (error) {
+        logText(error.message);
+      }
+    }
+
+    async function updateChangeRequestBoardDate() {
+      const today = new Date();
+      try {
+        const { error } = await supabase
+          .from("change_requests")
+          .update({ board_date: today })
+          .match({ id: changeRequest.value.id });
+
+        boardDate.value = formatDate(today);
         if (error) throw error;
       } catch (error) {
         logText(error.message);
