@@ -76,6 +76,40 @@
     </div>
 
     <div class="row">
+      <div class="col-12 col-md-3 q-mb-sm">
+        <q-input
+          outlined
+          label="Approving manager"
+          stack-label
+          readonly
+          v-model="approvingManager"
+        />
+      </div>
+
+      <div class="col-12 col-md-4 offset-md-1 q-mb-sm">
+        <q-input
+          outlined
+          label="Status"
+          stack-label
+          readonly
+          v-model="status"
+        />
+      </div>
+
+      <div class="col-12 col-md-2 offset-md-1 q-mb-sm">
+        <q-input
+          outlined
+          label="Approval date"
+          stack-label
+          readonly
+          v-model="approvalDate"
+        />
+      </div>
+    </div>
+
+    <div class="print-break"></div>
+
+    <div class="row">
       <div class="col-12 col-md-11">
         <h6>Description</h6>
         <div
@@ -105,40 +139,6 @@
           v-text="recoveryPlan"
           style="width: 100%; overflow-wrap: break-word; white-space: pre-wrap"
         ></div>
-      </div>
-    </div>
-
-    <div class="print-break"></div>
-
-    <div class="row">
-      <div class="col-12 col-md-3 q-mb-sm">
-        <q-input
-          outlined
-          label="Approving manager"
-          stack-label
-          readonly
-          v-model="approvingManager"
-        />
-      </div>
-
-      <div class="col-12 col-md-4 offset-md-1 q-mb-sm">
-        <q-input
-          outlined
-          label="Status"
-          stack-label
-          readonly
-          v-model="status"
-        />
-      </div>
-
-      <div class="col-12 col-md-2 offset-md-1 q-mb-sm">
-        <q-input
-          outlined
-          label="Approval date"
-          stack-label
-          readonly
-          v-model="approvalDate"
-        />
       </div>
     </div>
 
