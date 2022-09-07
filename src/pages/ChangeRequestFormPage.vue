@@ -4,6 +4,7 @@
       <div class="row">
         <div class="col-12 col-md-6">
           <q-input
+            class="q-mb-sm"
             outlined
             v-model="subjectInput"
             label="Subject"
@@ -31,6 +32,7 @@
       <div class="row">
         <div class="col-12 col-md-2">
           <q-input
+            class="q-mb-sm"
             outlined
             v-model="trackingNumberInput"
             label="Tracking number"
@@ -43,6 +45,7 @@
         </div>
         <div class="col-12 col-md-3 offset-md-1">
           <q-select
+            class="q-mb-sm"
             outlined
             v-model="requestorDropdown"
             :options="requestorOptions"
@@ -71,6 +74,7 @@
       <div class="row">
         <div class="col-12 col-md-3">
           <q-select
+            class="q-mb-sm"
             outlined
             v-model="processingSpeedDropdown"
             :options="processingOptions"
@@ -84,6 +88,7 @@
         </div>
         <div class="col-12 col-md-3 offset-md-1">
           <q-select
+            class="q-mb-sm"
             outlined
             v-model="riskSeverityDropdown"
             :options="riskAndImpactOptions"
@@ -180,18 +185,20 @@
         </div>
       </div>
 
-      <div>
+      <div style="width: 300px">
         <q-btn
           class="q-mr-md"
           type="submit"
           label="Submit"
           color="primary"
+          style="width: 40%"
         ></q-btn>
         <q-btn
           class="q-mr-md"
           type="reset"
           label="Reset"
           color="secondary"
+          style="width: 40%"
         ></q-btn>
 
         <q-spinner-oval v-if="isLoading" color="secondary" size="2em" />
