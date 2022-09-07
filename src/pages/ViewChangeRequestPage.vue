@@ -142,29 +142,6 @@
       </div>
     </div>
 
-    <!--div class="row">
-      <div class="col-12 col-md-11">
-        <h6>General comments</h6>
-        <q-input
-          filled
-          autogrow
-          type="textarea"
-          label="General comments"
-          stack-label
-          v-model="generalComments"
-        >
-          <template v-slot:append>
-            <q-btn
-              v-if="isApprovingManager || isReviewer || isBoardApprover"
-              label="Update"
-              color="accent"
-              @click="updateGeneralComments()"
-            />
-          </template>
-        </q-input>
-      </div>
-    </div-->
-
     <div class="row">
       <div class="col-12 col-md-11">
         <div class="row">
@@ -179,7 +156,7 @@
           label="Board comments"
           stack-label
           v-model="boardCommentsInput"
-          class="board-inputs"
+          class="board-inputs q-mb-md"
         >
           <template v-slot:append>
             <q-btn
@@ -189,8 +166,6 @@
             />
           </template>
         </q-input>
-
-        <br />
 
         <div
           class="text-body-1"
@@ -203,6 +178,39 @@
         ></div>
       </div>
     </div>
+
+    <div class="row">
+      <div class="col-12 col-md-11">
+        <h6>General comments</h6>
+        <q-input
+          filled
+          autogrow
+          type="textarea"
+          label="Comment"
+          stack-label
+          v-model="generalCommentsInput"
+        >
+          <template v-slot:append>
+            <q-btn
+              label="Create"
+              color="accent"
+              @click="createGeneralComment()"
+            />
+          </template>
+        </q-input>
+      </div>
+    </div>
+
+    <q-input
+      v-for="item in generalComments.value"
+      :key="item.id"
+      outlined
+      readonly
+      stack-label
+      autogrow
+      :label="item.commenter + ' - ' + item.created_at"
+      :placeholder="item.body"
+    />
 
     <div class="change-request-action">
       <div v-if="isChangeRequestActive" class="row">
@@ -238,7 +246,7 @@
 </template>
 
 <script>
-import { onBeforeMount, ref } from "vue";
+import { onBeforeMount, ref, reactive } from "vue";
 import { supabase } from "../supabase";
 import { logText, showErrorMessage, showSuccessMessage } from "../logger";
 import { useRoute } from "vue-router";
@@ -273,7 +281,8 @@ export default {
     const approvingManager = ref(null);
     const status = ref(null);
     const approvalDate = ref(null);
-    const generalComments = ref(null);
+    const generalCommentsInput = ref(null);
+    const generalComments = reactive({});
     const boardCommentsInput = ref(null);
     const boardComments = ref(null);
     const boardDate = ref(null);
@@ -282,6 +291,7 @@ export default {
       setUserRole()
         .then((_) => {
           getChangeRequest(route.params.id);
+          getChangeRequestComments(route.params.id);
         })
         .catch((error) => {
           logText(error);
@@ -371,6 +381,21 @@ export default {
       );
     }
 
+    async function getChangeRequestComments(id) {
+      try {
+        const { data, error } = await supabase
+          .from("comments")
+          .select()
+          .match({ change_request_id: id });
+        if (data.length > 0) {
+          generalComments.value = data;
+        }
+        if (error) throw error;
+      } catch (error) {
+        logText(error.message);
+      }
+    }
+
     function populateFormFields() {
       subject.value = changeRequest.value.subject;
       date.value = changeRequest.value.request_date;
@@ -386,20 +411,26 @@ export default {
       approvingManager.value = changeRequest.value.approving_manager;
       status.value = changeRequest.value.status;
       approvalDate.value = changeRequest.value.approval_date;
-      generalComments.value = changeRequest.value.general_comments;
+
       boardComments.value = changeRequest.value.board_recommendations;
       boardDate.value = changeRequest.value.board_date;
     }
 
-    async function updateGeneralComments() {
+    async function createGeneralComment() {
+      const today = new Date();
       try {
+        const commentData = {
+          change_request_id: changeRequest.value.id,
+          created_at: today,
+          commenter: user.email,
+          body: generalCommentsInput.value,
+        };
         const { error } = await supabase
-          .from("change_requests")
-          .update({ general_comments: generalComments.value })
-          .match({ id: changeRequest.value.id });
-
+          .from("comments")
+          .insert(commentData, { returning: "minimal" });
         if (error) throw error;
-        showSuccessMessage("Comment updated", $q);
+        generalCommentsInput.value = "";
+        showSuccessMessage("Comment created", $q);
       } catch (error) {
         logText(error.message);
       }
@@ -417,8 +448,8 @@ export default {
         boardComments.value = boardCommentsInput.value;
 
         if (error) throw error;
-        showSuccessMessage("Recommendations updated", $q);
         boardCommentsInput.value = "";
+        showSuccessMessage("Recommendations updated", $q);
       } catch (error) {
         logText(error.message);
       }
@@ -571,13 +602,15 @@ export default {
       approvingManager,
       status,
       approvalDate,
+      generalCommentsInput,
       generalComments,
       boardCommentsInput,
       boardComments,
       boardDate,
 
-      updateGeneralComments,
+      createGeneralComment,
       updateBoardComments,
+      getChangeRequestComments,
       approveChangeRequest,
       denyChangeRequest,
       printChangeRequest,
