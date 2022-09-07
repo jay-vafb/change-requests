@@ -201,30 +201,34 @@
       </div>
     </div>
 
-    <div v-if="isChangeRequestActive" class="row change-request-action">
-      <div class="col-12 col-md-2 q-mr-sm q-mb-sm">
-        <q-btn
-          label="Approve"
-          color="accent"
-          style="width: 100%"
-          @click="approveChangeRequest()"
-        />
+    <div class="change-request-action">
+      <div v-if="isChangeRequestActive" class="row">
+        <div class="col-12 col-md-2 q-mb-sm q-pr-sm">
+          <q-btn
+            label="Approve"
+            color="accent"
+            style="width: 100%"
+            @click="approveChangeRequest()"
+          />
+        </div>
+        <div class="col-12 col-md-2 q-mb-sm q-pr-sm">
+          <q-btn
+            label="Deny"
+            color="secondary"
+            style="width: 100%"
+            @click="denyChangeRequest()"
+          />
+        </div>
       </div>
-      <div class="col-12 col-md-2 q-mr-sm q-mb-sm">
-        <q-btn
-          label="Deny"
-          color="secondary"
-          style="width: 100%"
-          @click="denyChangeRequest()"
-        />
-      </div>
-      <div class="col-12 col-md-2">
-        <q-btn
-          label="Print"
-          color="primary"
-          style="width: 100%"
-          @click="printChangeRequest()"
-        />
+      <div class="row">
+        <div class="col-12 col-md-4 q-pr-sm">
+          <q-btn
+            label="Print"
+            color="primary"
+            style="width: 100%"
+            @click="printChangeRequest()"
+          />
+        </div>
       </div>
     </div>
   </q-page>
@@ -332,7 +336,6 @@ export default {
       } else {
         isChangeRequestActive.value = true;
       }
-      logText(isChangeRequestActive.value);
     }
 
     function isApprovedOrDenied(status) {
