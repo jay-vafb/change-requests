@@ -1,7 +1,7 @@
 <template>
   <q-page class="q-pa-md q-gutter-md" style="max-width: 1000px">
     <div class="row">
-      <div class="col-12 col-md-6">
+      <div class="col-12 col-md-6 q-mb-sm">
         <q-input
           outlined
           label="Subject"
@@ -16,7 +16,7 @@
     </div>
 
     <div class="row">
-      <div class="col-12 col-md-2">
+      <div class="col-12 col-md-2 q-mb-sm">
         <q-input
           outlined
           label="Tracking number"
@@ -25,7 +25,7 @@
           v-model="trackingNumber"
         />
       </div>
-      <div class="col-12 col-md-3 offset-md-1">
+      <div class="col-12 col-md-3 offset-md-1 q-mb-sm">
         <q-input
           outlined
           label="IS Requestor"
@@ -46,7 +46,7 @@
     </div>
 
     <div class="row">
-      <div class="col-12 col-md-3">
+      <div class="col-12 col-md-3 q-mb-sm">
         <q-input
           outlined
           label="Processing"
@@ -55,7 +55,7 @@
           v-model="processingSpeed"
         />
       </div>
-      <div class="col-12 col-md-3 offset-md-1">
+      <div class="col-12 col-md-3 offset-md-1 q-mb-sm">
         <q-input
           outlined
           label="Risk"
@@ -111,7 +111,7 @@
     <div class="print-break"></div>
 
     <div class="row">
-      <div class="col-12 col-md-3">
+      <div class="col-12 col-md-3 q-mb-sm">
         <q-input
           outlined
           label="Approving manager"
@@ -121,7 +121,7 @@
         />
       </div>
 
-      <div class="col-12 col-md-4 offset-md-1">
+      <div class="col-12 col-md-4 offset-md-1 q-mb-sm">
         <q-input
           outlined
           label="Status"
@@ -131,7 +131,7 @@
         />
       </div>
 
-      <div class="col-12 col-md-2 offset-md-1">
+      <div class="col-12 col-md-2 offset-md-1 q-mb-sm">
         <q-input
           outlined
           label="Approval date"
@@ -201,33 +201,31 @@
       </div>
     </div>
 
-    <!--TODO: investigate why buttons disappear for board approver-->
-    <div
-      v-if="isChangeRequestActive"
-      style="width: 500px"
-      class="change-request-action"
-    >
-      <q-btn
-        class="q-mr-md"
-        label="Approve"
-        color="accent"
-        style="width: 30%"
-        @click="approveChangeRequest()"
-      />
-      <q-btn
-        class="q-mr-md"
-        label="Deny"
-        color="secondary"
-        style="width: 30%"
-        @click="denyChangeRequest()"
-      />
-      <q-btn
-        class="q-mr-md"
-        label="Print"
-        color="primary"
-        style="width: 30%"
-        @click="printChangeRequest()"
-      />
+    <div v-if="isChangeRequestActive" class="row change-request-action">
+      <div class="col-12 col-md-2 q-mr-sm q-mb-sm">
+        <q-btn
+          label="Approve"
+          color="accent"
+          style="width: 100%"
+          @click="approveChangeRequest()"
+        />
+      </div>
+      <div class="col-12 col-md-2 q-mr-sm q-mb-sm">
+        <q-btn
+          label="Deny"
+          color="secondary"
+          style="width: 100%"
+          @click="denyChangeRequest()"
+        />
+      </div>
+      <div class="col-12 col-md-2">
+        <q-btn
+          label="Print"
+          color="primary"
+          style="width: 100%"
+          @click="printChangeRequest()"
+        />
+      </div>
     </div>
   </q-page>
 </template>
@@ -274,8 +272,13 @@ export default {
     const boardDate = ref(null);
 
     onBeforeMount(() => {
-      setUserRole();
-      getChangeRequest(route.params.id);
+      setUserRole()
+        .then((_) => {
+          getChangeRequest(route.params.id);
+        })
+        .catch((error) => {
+          logText(error);
+        });
     });
 
     async function setUserRole() {
@@ -329,6 +332,7 @@ export default {
       } else {
         isChangeRequestActive.value = true;
       }
+      logText(isChangeRequestActive.value);
     }
 
     function isApprovedOrDenied(status) {
@@ -356,7 +360,7 @@ export default {
 
     function isUnderReview(status) {
       return (
-        status === "Under review" &&
+        (status === "Under review" || status === "Needs changes") &&
         (isApprovingManager.value || isBoardApprover.value)
       );
     }
