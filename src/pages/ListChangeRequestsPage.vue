@@ -77,17 +77,6 @@
                   white-space: pre-wrap;
                 "
               >
-                <h6>General comments</h6>
-                {{ props.row.general_comments }}
-              </div>
-
-              <div
-                style="
-                  width: 100%;
-                  overflow-wrap: break-word;
-                  white-space: pre-wrap;
-                "
-              >
                 <h6>Board comments</h6>
                 {{ props.row.board_recommendations }}
               </div>
@@ -218,10 +207,6 @@ export default {
 
     const rows = ref([]);
 
-    const generalCommentsInput = reactive({});
-    const boardRecommendationsInput = reactive({});
-    const boardDatePicker = reactive({});
-
     onMounted(() => {
       getAllChangeRequests();
     });
@@ -246,9 +231,6 @@ export default {
     return {
       columns,
       rows,
-      generalCommentsInput,
-      boardRecommendationsInput,
-      boardDatePicker,
 
       openChangeRequest,
     };
