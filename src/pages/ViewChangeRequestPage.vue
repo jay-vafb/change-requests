@@ -417,7 +417,6 @@ export default {
     }
 
     async function createGeneralComment() {
-      const today = new Date();
       try {
         const { error } = await supabase
           .from("comments")
@@ -426,7 +425,11 @@ export default {
           });
         if (error) throw error;
 
-        generalComments.value.push(getCommentData(true));
+        if (!commentsExist()) {
+          generalComments.value = { 0: getCommentData(true) };
+        } else {
+          generalComments.value.push(getCommentData(true));
+        }
         generalCommentsInput.value = "";
 
         showSuccessMessage("Comment created", $q);
@@ -443,6 +446,10 @@ export default {
         commenter: user.email,
         body: generalCommentsInput.value,
       };
+    }
+
+    function commentsExist() {
+      return generalComments.value ? true : false;
     }
 
     async function updateBoardComments() {
