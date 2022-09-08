@@ -189,6 +189,7 @@
           label="Comment"
           stack-label
           v-model="generalCommentsInput"
+          class="general-comments-input"
         >
           <template v-slot:append>
             <q-btn
@@ -201,16 +202,15 @@
       </div>
     </div>
 
-    <q-input
-      v-for="item in generalComments.value"
-      :key="item.id"
-      outlined
-      readonly
-      stack-label
-      autogrow
-      :label="item.commenter + ' - ' + item.created_at"
-      :placeholder="item.body"
-    />
+    <div class="row" v-for="item in generalComments.value" :key="item.id">
+      <div
+        class="col-12 col-md-11 text-caption q-pa-sm"
+        style="border: 1px solid lightgray"
+      >
+        {{ item.commenter + " - " + item.created_at }}
+        <div class="text-body2">{{ item.body }}</div>
+      </div>
+    </div>
 
     <div class="change-request-action">
       <div v-if="isChangeRequestActive" class="row">
