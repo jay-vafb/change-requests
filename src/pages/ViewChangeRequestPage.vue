@@ -419,21 +419,30 @@ export default {
     async function createGeneralComment() {
       const today = new Date();
       try {
-        const commentData = {
-          change_request_id: changeRequest.value.id,
-          created_at: today,
-          commenter: user.email,
-          body: generalCommentsInput.value,
-        };
         const { error } = await supabase
           .from("comments")
-          .insert(commentData, { returning: "minimal" });
+          .insert(getCommentData(false), {
+            returning: "minimal",
+          });
         if (error) throw error;
+
+        generalComments.value.push(getCommentData(true));
         generalCommentsInput.value = "";
+
         showSuccessMessage("Comment created", $q);
       } catch (error) {
         logText(error.message);
       }
+    }
+
+    function getCommentData(dateFormatted) {
+      const today = new Date();
+      return {
+        change_request_id: changeRequest.value.id,
+        created_at: dateFormatted ? formatDate(today) : today,
+        commenter: user.email,
+        body: generalCommentsInput.value,
+      };
     }
 
     async function updateBoardComments() {
