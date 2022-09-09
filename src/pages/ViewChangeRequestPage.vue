@@ -389,6 +389,8 @@ export default {
           .match({ change_request_id: id });
         if (data.length > 0) {
           generalComments.value = data;
+          logText(generalComments);
+          logText(generalComments.value);
         }
         if (error) throw error;
       } catch (error) {
@@ -426,7 +428,7 @@ export default {
         if (error) throw error;
 
         if (!commentsExist()) {
-          generalComments.value = { 0: getCommentData(true) };
+          generalComments.value = new Array(getCommentData(true));
         } else {
           generalComments.value.push(getCommentData(true));
         }
