@@ -212,6 +212,7 @@ import { useQuasar } from "quasar";
 import { ref } from "vue";
 import { supabase } from "../supabase";
 import { logText, showSuccessMessage } from "../logger";
+import axios from "axios";
 
 export default {
   name: "ChangeRequestFormPage",
@@ -273,7 +274,30 @@ export default {
     }
 
     async function sendEmailToReviewer() {
-      logText("Eventually sends an email to the reviewer");
+      logText("Eventually sends email");
+      /*axios
+        .post(
+          "https://api.sendgrid.com/v3/mail/send",
+          {
+            data: {
+              personalizations: [{ to: [{ email: "jbcallv@gmail.com" }] }],
+              from: { email: "jbcallv@gmail.com" },
+              subject: "Hello, World!",
+              content: [{ type: "text/plain", value: "Heya!" }],
+            },
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${import.meta.env.VITE_SENDGRID_API_KEY}`,
+            },
+          }
+        )
+        .then((result) => {
+          logText("Message sent");
+        })
+        .catch((error) => {
+          logText(error);
+        });*/
     }
 
     function setLoading(loading) {
