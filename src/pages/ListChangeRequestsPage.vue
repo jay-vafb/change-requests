@@ -6,7 +6,8 @@
       :columns="columns"
       row-key="id"
       :wrap-cells="true"
-      :rows-per-page-options="[100]"
+      :rows-per-page-options="[30]"
+      :sort-method="sortByStatus"
     >
       <template v-slot:header="props">
         <q-tr :props="props">
@@ -100,9 +101,8 @@
 <script>
 import { supabase } from "../supabase";
 import { logText } from "../logger";
-import { onMounted, ref, reactive } from "vue";
+import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
-import { useQuasar } from "quasar";
 
 const columns = [
   {
@@ -202,10 +202,18 @@ export default {
   name: "ListChangeRequestsPage",
 
   setup() {
-    const $q = useQuasar();
     const router = useRouter();
-
     const rows = ref([]);
+    const states = {
+      "Pending board approval": 0,
+      "Pending approval": 1,
+      "Under review": 2,
+      "Needs changes": 3,
+      "Board approved": 4,
+      Approved: 5,
+      "Board denied": 6,
+      Denied: 7,
+    };
 
     onMounted(() => {
       getAllChangeRequests();
@@ -228,11 +236,43 @@ export default {
       router.push({ path: "/viewChangeRequest/" + id });
     }
 
+    function sortByStatus(rows, sortBy, descending) {
+      const data = [...rows];
+
+      if (sortBy) {
+        data.sort((a, b) => {
+          const x = descending ? b : a;
+          const y = descending ? a : b;
+
+          if (sortBy === "status") {
+            return compareAB(x, y);
+          } else {
+            return parseFloat(x[sortBy]) - parseFloat(y[sortBy]);
+          }
+        });
+      }
+      return data;
+    }
+
+    function compareAB(a, b) {
+      const aStatus = a["status"];
+      const bStatus = b["status"];
+
+      if (states[aStatus] < states[bStatus]) {
+        return -1;
+      }
+      if (states[aStatus] > states[bStatus]) {
+        return 1;
+      }
+      return 0;
+    }
+
     return {
       columns,
       rows,
 
       openChangeRequest,
+      sortByStatus,
     };
   },
 };
