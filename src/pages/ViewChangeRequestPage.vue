@@ -202,13 +202,19 @@
       </div>
     </div>
 
-    <div class="row" v-for="item in generalComments.value" :key="item.id">
+    <div
+      id="comments"
+      class="row"
+      v-for="item in generalComments.value"
+      :key="item.id"
+    >
       <div
+        id="comments"
         class="col-12 col-md-11 text-caption q-pa-sm"
         style="border: 1px solid lightgray"
       >
         {{ item.commenter + " - " + item.created_at }}
-        <div class="text-body2">{{ item.body }}</div>
+        <div id="comments" class="text-body2">{{ item.body }}</div>
       </div>
     </div>
 

@@ -257,13 +257,11 @@ export default {
         setLoading(true);
         const changeRequestData = createChangeRequest();
 
-        const { error } = await supabase
+        const { data, error } = await supabase
           .from("change_requests")
-          .insert(changeRequestData, {
-            returning: "minimal",
-          });
+          .insert(changeRequestData);
 
-        sendEmailToReviewer();
+        sendEmailToReviewer(data[0].id);
         if (error) throw error;
         showSuccessMessage("Change request created", $q);
       } catch (error) {
@@ -273,10 +271,11 @@ export default {
       }
     }
 
-    async function sendEmailToReviewer() {
-      logText("Eventually sends email");
+    async function sendEmailToReviewer(changeRequestId) {
       axios
-        .post("https://test-email-server1.herokuapp.com/sendEmail")
+        .post(
+          `https://test-email-server1.herokuapp.com/email/${changeRequestId}`
+        )
         .then((result) => {
           logText("Message sent");
         })

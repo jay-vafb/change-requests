@@ -5,6 +5,10 @@
 }
 
 @media print {
+  div {
+    break-inside: avoid;
+  }
+
   .header {
     display: none;
   }
