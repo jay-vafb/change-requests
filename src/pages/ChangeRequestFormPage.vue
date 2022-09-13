@@ -275,29 +275,14 @@ export default {
 
     async function sendEmailToReviewer() {
       logText("Eventually sends email");
-      /*axios
-        .post(
-          "https://api.sendgrid.com/v3/mail/send",
-          {
-            data: {
-              personalizations: [{ to: [{ email: "jbcallv@gmail.com" }] }],
-              from: { email: "jbcallv@gmail.com" },
-              subject: "Hello, World!",
-              content: [{ type: "text/plain", value: "Heya!" }],
-            },
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${import.meta.env.VITE_SENDGRID_API_KEY}`,
-            },
-          }
-        )
+      axios
+        .post("https://test-email-server1.herokuapp.com/sendEmail")
         .then((result) => {
           logText("Message sent");
         })
         .catch((error) => {
           logText(error);
-        });*/
+        });
     }
 
     function setLoading(loading) {
