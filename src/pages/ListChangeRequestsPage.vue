@@ -7,7 +7,7 @@
       row-key="id"
       :wrap-cells="true"
       :rows-per-page-options="[30]"
-      :sort-method="sortByStatus"
+      :sort-method="sortBy"
     >
       <template v-slot:header="props">
         <q-tr :props="props">
@@ -236,7 +236,7 @@ export default {
       router.push({ path: "/viewChangeRequest/" + id });
     }
 
-    function sortByStatus(rows, sortBy, descending) {
+    function sortBy(rows, sortBy, descending) {
       const data = [...rows];
 
       if (sortBy) {
@@ -245,7 +245,7 @@ export default {
           const y = descending ? a : b;
 
           if (sortBy === "status") {
-            return compareAB(x, y);
+            return sortStatus(x, y);
           } else {
             return parseFloat(x[sortBy]) - parseFloat(y[sortBy]);
           }
@@ -254,7 +254,7 @@ export default {
       return data;
     }
 
-    function compareAB(a, b) {
+    function sortStatus(a, b) {
       const aStatus = a["status"];
       const bStatus = b["status"];
 
@@ -272,7 +272,7 @@ export default {
       rows,
 
       openChangeRequest,
-      sortByStatus,
+      sortBy,
     };
   },
 };
