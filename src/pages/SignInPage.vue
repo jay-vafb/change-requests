@@ -65,7 +65,7 @@ import { ref } from "vue";
 import { useQuasar } from "quasar";
 import { supabase } from "../supabase";
 import { showErrorMessage } from "../logger";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 
 export default {
   name: "SignInPage",
@@ -77,11 +77,14 @@ export default {
   setup() {
     const $q = useQuasar();
     const router = useRouter();
+    const route = useRoute();
 
     const emailInput = ref(null);
     const passwordInput = ref(null);
     const isLoading = ref(false);
     const showPassword = ref(true);
+
+    const redirect = route.query.redirect;
 
     function onSubmit() {
       isLoading.value = true;
@@ -97,8 +100,12 @@ export default {
 
         if (error || !session) throw error;
 
-        // go to home page if login event successful
-        if (user) router.push("/");
+        // pick the next page based on query parameter
+        if (user && redirect) {
+          router.push(redirect);
+        } else if (user) {
+          router.push("/");
+        }
       } catch (error) {
         showErrorMessage(error.message, $q);
       } finally {

@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 import { supabase } from "./supabase";
 
 export default {
@@ -11,10 +11,14 @@ export default {
 
   setup() {
     const router = useRouter();
+    const route = useRoute();
 
     router.beforeEach(async (to, from) => {
       // to.path must be checked to prevent infinite redirection
-      if (
+      if (!supabase.auth.user() && to.path.includes("/viewChangeRequest")) {
+        // email link clicked
+        return { path: "/auth", query: { redirect: to.path } };
+      } else if (
         !supabase.auth.user() &&
         to.path !== "/auth" &&
         to.path !== "/register"
