@@ -145,8 +145,30 @@
     <div class="row">
       <div class="col-12 col-md-11">
         <div class="row">
-          <h6>Board comments</h6>
+          <h6>Board information</h6>
         </div>
+
+        <q-select
+          v-if="isBoardApprover"
+          class="board-inputs q-mb-sm"
+          name="board"
+          v-model="boardAttendeesInput"
+          multiple
+          :options="boardAttendeesOptions"
+          color="primary"
+          filled
+          clearable
+          label="Board attendees"
+          stack-label
+        />
+
+        <q-btn
+          v-if="isBoardApprover"
+          class="board-inputs q-mb-md"
+          label="Update"
+          color="accent"
+          @click="updateBoardAttendees()"
+        />
 
         <q-input
           v-if="isBoardApprover"
@@ -156,24 +178,31 @@
           label="Board comments"
           stack-label
           v-model="boardCommentsInput"
-          class="board-inputs q-mb-md"
-        >
-          <template v-slot:append>
-            <q-btn
-              label="Update"
-              color="accent"
-              @click="updateBoardComments()"
-            />
-          </template>
-        </q-input>
+          class="board-inputs q-mb-sm"
+        />
+
+        <q-btn
+          v-if="isBoardApprover"
+          class="board-inputs q-mb-sm"
+          label="Update"
+          color="accent"
+          @click="updateBoardComments()"
+        />
 
         <div
-          class="text-body-1"
+          class="text-body-1 q-mb-md"
           v-text="'Board date: ' + (boardDate ? boardDate : '')"
         ></div>
         <div
+          class="text-body-1 q-mb-md"
+          style="overflow-wrap: break-word; white-space: pre-wrap"
+          v-text="
+            'Board attendees:\n' + (boardAttendees ? boardAttendees : 'hi')
+          "
+        ></div>
+        <div
           class="text-body-1"
-          v-text="boardComments"
+          v-text="'Board comments:\n' + (boardComments ? boardComments : '')"
           style="width: 100%; overflow-wrap: break-word; white-space: pre-wrap"
         ></div>
       </div>
@@ -258,6 +287,7 @@ import { logText, showErrorMessage, showSuccessMessage } from "../logger";
 import { useRoute } from "vue-router";
 import { useQuasar } from "quasar";
 import { store } from "src/store";
+import axios from "axios";
 
 export default {
   name: "ViewChangeRequestPage",
@@ -289,9 +319,18 @@ export default {
     const approvalDate = ref(null);
     const generalCommentsInput = ref(null);
     const generalComments = reactive({});
+    const boardAttendeesInput = ref(null);
     const boardCommentsInput = ref(null);
+    const boardAttendees = ref(null);
     const boardComments = ref(null);
     const boardDate = ref(null);
+
+    const boardAttendeesOptions = [
+      "Karen Clarke",
+      "Neil Gill",
+      "Kyle Shover",
+      "Theresa Richardson",
+    ];
 
     onBeforeMount(() => {
       setUserRole()
@@ -418,11 +457,13 @@ export default {
       status.value = changeRequest.value.status;
       approvalDate.value = changeRequest.value.approval_date;
 
+      boardAttendees.value = changeRequest.value.board_attendees;
       boardComments.value = changeRequest.value.board_recommendations;
       boardDate.value = changeRequest.value.board_date;
     }
 
     async function createGeneralComment() {
+      if (!generalCommentsInput.value) return;
       try {
         const { error } = await supabase
           .from("comments")
@@ -458,6 +499,33 @@ export default {
       return generalComments.value ? true : false;
     }
 
+    async function updateBoardAttendees() {
+      const formattedBoardAttendees = formatBoardAttendees();
+
+      try {
+        const { error } = await supabase
+          .from("change_requests")
+          .update({ board_attendees: formattedBoardAttendees })
+          .match({ id: changeRequest.value.id });
+
+        boardAttendees.value = formattedBoardAttendees;
+
+        if (error) throw error;
+        boardAttendeesInput.value = null;
+        showSuccessMessage("Board attendees updated", $q);
+      } catch (error) {
+        logText(error.message);
+      }
+    }
+
+    function formatBoardAttendees() {
+      return JSON.stringify(boardAttendeesInput.value)
+        .replaceAll("[", "")
+        .replaceAll("]", "")
+        .replaceAll('"', "")
+        .replaceAll(",", "\n");
+    }
+
     async function updateBoardComments() {
       try {
         const { error } = await supabase
@@ -471,7 +539,7 @@ export default {
 
         if (error) throw error;
         boardCommentsInput.value = "";
-        showSuccessMessage("Recommendations updated", $q);
+        showSuccessMessage("Board comments updated", $q);
       } catch (error) {
         logText(error.message);
       }
@@ -484,8 +552,10 @@ export default {
       ) {
         updateChangeRequestApprovalDate();
         if (requiresBoardApproval()) {
+          sendStatusChangeEmail("Pending board approval");
           updateChangeRequestStatus("Pending board approval");
         } else {
+          sendStatusChangeEmail("Approved");
           updateChangeRequestStatus("Approved");
         }
         isChangeRequestActive.value = false;
@@ -495,6 +565,7 @@ export default {
           changeRequest.value.status === "Needs changes")
       ) {
         isChangeRequestActive.value = false;
+        sendStatusChangeEmail("Pending approval");
         updateChangeRequestStatus("Pending approval");
       } else if (
         isBoardApprover.value &&
@@ -502,6 +573,7 @@ export default {
       ) {
         updateChangeRequestBoardDate();
         isChangeRequestActive.value = false;
+        sendStatusChangeEmail("Board approved");
         updateChangeRequestStatus("Board approved");
       } else {
         showErrorMessage("You don't have the permissions to do this", $q);
@@ -514,21 +586,40 @@ export default {
         changeRequest.value.status === "Pending approval"
       ) {
         isChangeRequestActive.value = false;
+        sendStatusChangeEmail("Denied");
         updateChangeRequestStatus("Denied");
       } else if (
         isReviewer.value &&
         changeRequest.value.status === "Under review"
       ) {
+        sendStatusChangeEmail("Needs changes");
         updateChangeRequestStatus("Needs changes");
       } else if (
         isBoardApprover.value &&
         changeRequest.value.status === "Pending board approval"
       ) {
         isChangeRequestActive.value = false;
+        sendStatusChangeEmail("Board denied");
         updateChangeRequestStatus("Board denied");
       } else {
         showErrorMessage("You don't have the permissions to do this", $q);
       }
+    }
+
+    function sendStatusChangeEmail(newStatus) {
+      axios
+        .post(
+          `https://test-email-server1.herokuapp.com/email/changeState/${changeRequest.value.id}`,
+          {
+            newStatus,
+          }
+        )
+        .then((result) => {
+          logText("Message sent");
+        })
+        .catch((error) => {
+          logText(error);
+        });
     }
 
     function printChangeRequest() {
@@ -629,8 +720,12 @@ export default {
       boardCommentsInput,
       boardComments,
       boardDate,
+      boardAttendeesInput,
+      boardAttendeesOptions,
+      boardAttendees,
 
       createGeneralComment,
+      updateBoardAttendees,
       updateBoardComments,
       getChangeRequestComments,
       approveChangeRequest,
