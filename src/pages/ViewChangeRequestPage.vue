@@ -196,9 +196,7 @@
         <div
           class="text-body-1 q-mb-md"
           style="overflow-wrap: break-word; white-space: pre-wrap"
-          v-text="
-            'Board attendees:\n' + (boardAttendees ? boardAttendees : 'hi')
-          "
+          v-text="'Board attendees:\n' + (boardAttendees ? boardAttendees : '')"
         ></div>
         <div
           class="text-body-1"
@@ -332,16 +330,16 @@ export default {
       "Theresa Richardson",
     ];
 
-    onBeforeMount(() => {
-      setUserRole()
-        .then((_) => {
-          getChangeRequest(route.params.id);
-          getChangeRequestComments(route.params.id);
-        })
-        .catch((error) => {
-          logText(error);
-        });
-    });
+    //onBeforeMount(() => {
+    setUserRole()
+      .then((_) => {
+        getChangeRequest(route.params.id);
+        getChangeRequestComments(route.params.id);
+      })
+      .catch((error) => {
+        logText(error);
+      });
+    //});
 
     async function setUserRole() {
       try {
