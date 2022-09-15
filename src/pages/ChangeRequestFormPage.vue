@@ -218,6 +218,7 @@ export default {
   name: "ChangeRequestFormPage",
   setup() {
     const $q = useQuasar();
+    const user = supabase.auth.user();
 
     const subjectInput = ref(null);
     const datePicker = ref(null);
@@ -274,7 +275,10 @@ export default {
     async function sendEmailToReviewer(changeRequestId) {
       axios
         .post(
-          `https://test-email-server1.herokuapp.com/email/create/${changeRequestId}`
+          `https://test-email-server1.herokuapp.com/email/create/${changeRequestId}`,
+          {
+            requestor: { email: user.email, name: "Me" },
+          }
         )
         .then((result) => {
           logText("Message sent");

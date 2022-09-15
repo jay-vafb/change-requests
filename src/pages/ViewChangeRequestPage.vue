@@ -279,7 +279,7 @@
 </template>
 
 <script>
-import { onBeforeMount, ref, reactive } from "vue";
+import { ref, reactive } from "vue";
 import { supabase } from "../supabase";
 import { logText, showErrorMessage, showSuccessMessage } from "../logger";
 import { useRoute } from "vue-router";
@@ -330,7 +330,6 @@ export default {
       "Theresa Richardson",
     ];
 
-    //onBeforeMount(() => {
     setUserRole()
       .then((_) => {
         getChangeRequest(route.params.id);
@@ -339,7 +338,6 @@ export default {
       .catch((error) => {
         logText(error);
       });
-    //});
 
     async function setUserRole() {
       try {
@@ -609,6 +607,7 @@ export default {
         .post(
           `https://test-email-server1.herokuapp.com/email/changeState/${changeRequest.value.id}`,
           {
+            requestor: { email: user.email, name: "Me" },
             newStatus,
           }
         )
