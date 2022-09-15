@@ -495,6 +495,23 @@ export default {
       return generalComments.value ? true : false;
     }
 
+    // TODO: get and pass in original requestor name
+    function sendCommentEmail() {
+      axios
+        .post(
+          `https://test-email-server1.herokuapp.com/email/comment/${changeRequest.value.id}`,
+          {
+            requestor: { email: user.email, name: "Me" },
+          }
+        )
+        .then((result) => {
+          logText("Message sent");
+        })
+        .catch((error) => {
+          logText(error);
+        });
+    }
+
     async function updateBoardAttendees() {
       const formattedBoardAttendees = formatBoardAttendees();
 
@@ -535,6 +552,7 @@ export default {
 
         if (error) throw error;
         boardCommentsInput.value = "";
+        sendCommentEmail();
         showSuccessMessage("Board comments updated", $q);
       } catch (error) {
         logText(error.message);
