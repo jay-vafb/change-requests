@@ -475,6 +475,7 @@ export default {
         }
         generalCommentsInput.value = "";
 
+        sendCommentEmail();
         showSuccessMessage("Comment created", $q);
       } catch (error) {
         logText(error.message);
