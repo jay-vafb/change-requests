@@ -500,10 +500,7 @@ export default {
     function sendCommentEmail() {
       axios
         .post(
-          `https://test-email-server1.herokuapp.com/email/comment/${changeRequest.value.id}`,
-          {
-            requestor: { email: user.email, name: "Me" },
-          }
+          `https://test-email-server1.herokuapp.com/email/comment/${changeRequest.value.id}`
         )
         .then((result) => {
           logText("Message sent");
