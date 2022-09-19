@@ -117,54 +117,27 @@
 
       <div class="row">
         <div class="col-12 col-md-11">
-          <q-input
+          <q-editor
             v-model="changeDescriptionInput"
-            filled
-            autogrow
-            clearable
-            type="textarea"
-            label="Description of change"
-            hint="Briefly describe the change request"
-            lazy-rules
-            :rules="[
-              (val) => (val && val.length > 0) || 'Please type something',
-            ]"
+            placeholder="Description of change"
           />
         </div>
       </div>
 
       <div class="row">
         <div class="col-12 col-md-11">
-          <q-input
+          <q-editor
             v-model="testingDetailsInput"
-            filled
-            autogrow
-            clearable
-            type="textarea"
-            label="Testing details"
-            hint="Briefly describe the testing procedure"
-            lazy-rules
-            :rules="[
-              (val) => (val && val.length > 0) || 'Please type something',
-            ]"
+            placeholder="Testing details"
           />
         </div>
       </div>
 
       <div class="row">
         <div class="col-12 col-md-11">
-          <q-input
+          <q-editor
             v-model="recoveryPlanInput"
-            filled
-            autogrow
-            clearable
-            type="textarea"
-            label="Backout/Recovery plan"
-            hint="Briefly describe the recovery plan"
-            lazy-rules
-            :rules="[
-              (val) => (val && val.length > 0) || 'Please type something',
-            ]"
+            placeholder="Backout/Recovery plan"
           />
         </div>
       </div>

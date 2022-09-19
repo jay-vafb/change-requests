@@ -114,7 +114,7 @@
         <h6>Description</h6>
         <div
           class="text-body-1"
-          v-text="description"
+          v-html="description"
           style="width: 100%; overflow-wrap: break-word; white-space: pre-wrap"
         ></div>
       </div>
@@ -125,7 +125,7 @@
         <h6>Testing details</h6>
         <div
           class="text-body-1"
-          v-text="testingDetails"
+          v-html="testingDetails"
           style="width: 100%; overflow-wrap: break-word; white-space: pre-wrap"
         ></div>
       </div>
@@ -136,7 +136,7 @@
         <h6>Recovery plan</h6>
         <div
           class="text-body-1"
-          v-text="recoveryPlan"
+          v-html="recoveryPlan"
           style="width: 100%; overflow-wrap: break-word; white-space: pre-wrap"
         ></div>
       </div>

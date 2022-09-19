@@ -44,10 +44,8 @@
                   overflow-wrap: break-word;
                   white-space: pre-wrap;
                 "
-              >
-                <h6>Description</h6>
-                {{ props.row.description }}
-              </div>
+                v-html="'<h6>Description</h6>' + props.row.description"
+              ></div>
 
               <div
                 style="
@@ -55,10 +53,8 @@
                   overflow-wrap: break-word;
                   white-space: pre-wrap;
                 "
-              >
-                <h6>Testing details</h6>
-                {{ props.row.testing_details }}
-              </div>
+                v-html="'<h6>Testing details</h6>' + props.row.testing_details"
+              ></div>
 
               <div
                 style="
@@ -66,10 +62,8 @@
                   overflow-wrap: break-word;
                   white-space: pre-wrap;
                 "
-              >
-                <h6>Recovery plan</h6>
-                {{ props.row.recovery_plan }}
-              </div>
+                v-html="'<h6>Recovery plan</h6>' + props.row.recovery_plan"
+              ></div>
 
               <div
                 style="
@@ -77,10 +71,13 @@
                   overflow-wrap: break-word;
                   white-space: pre-wrap;
                 "
-              >
-                <h6>Board comments</h6>
-                {{ props.row.board_recommendations }}
-              </div>
+                v-html="
+                  '<h6>Board comments</h6>' +
+                  (props.row.board_recommendations
+                    ? props.row.board_recommendations
+                    : '')
+                "
+              ></div>
 
               <div>
                 <q-btn
