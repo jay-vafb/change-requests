@@ -1,6 +1,7 @@
 <template>
   <q-page padding>
     <!-- content -->
+    Hello
   </q-page>
 </template>
 
