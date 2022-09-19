@@ -15,9 +15,11 @@ export default {
 
     router.beforeEach(async (to, from) => {
       // to.path must be checked to prevent infinite redirection
-      console.log(from.path);
-      console.log(to.path);
-      if (!supabase.auth.user() && to.path.includes("/viewChangeRequest")) {
+      if (
+        !supabase.auth.user() &&
+        to.path.includes("/viewChangeRequest") &&
+        !from.path.includes("/viewChangeRequest")
+      ) {
         // email link clicked
         return { path: "/auth", query: { redirect: to.path } };
       } else if (
