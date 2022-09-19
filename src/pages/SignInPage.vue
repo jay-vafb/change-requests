@@ -101,6 +101,7 @@ export default {
         if (error || !session) throw error;
 
         // pick the next page based on query parameter
+        console.log(redirect);
         if (user && redirect) {
           router.push(redirect);
         } else if (user) {

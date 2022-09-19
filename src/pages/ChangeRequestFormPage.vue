@@ -201,9 +201,9 @@ export default {
     const processingSpeedDropdown = ref("Normal");
     const riskSeverityDropdown = ref("Low");
     const impactSeverityDropdown = ref("Low");
-    const changeDescriptionInput = ref(null);
-    const testingDetailsInput = ref(null);
-    const recoveryPlanInput = ref(null);
+    const changeDescriptionInput = ref("");
+    const testingDetailsInput = ref("");
+    const recoveryPlanInput = ref("");
     const approvingManagerDropdown = ref(null);
     const isLoading = ref(false);
 
