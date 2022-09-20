@@ -63,17 +63,18 @@
 <script>
 import { ref } from "vue";
 import { useQuasar } from "quasar";
-import { supabase } from "../supabase";
 import { showErrorMessage } from "../logger";
 import { useRouter, useRoute } from "vue-router";
+import {
+  signInWithEmailAndPassword,
+  setPersistence,
+  browserSessionPersistence,
+} from "@firebase/auth";
 import { auth } from "src/firebaseConfig";
+import { store } from "src/store";
 
 export default {
   name: "SignInPage",
-
-  async mounted() {
-    supabase.auth.user();
-  },
 
   setup() {
     const $q = useQuasar();
@@ -93,25 +94,31 @@ export default {
     }
 
     async function handleLogin() {
-      try {
-        const { user, error, session } = await supabase.auth.signIn({
-          email: emailInput.value,
-          password: passwordInput.value,
+      signInWithEmailAndPassword(auth, emailInput.value, passwordInput.value)
+        .then((userCredential) => {
+          const user = userCredential.user;
+          store.user = user;
+
+          if (!user.emailVerified) {
+            showErrorMessage(
+              "You must verify your account before logging in",
+              $q
+            );
+            return;
+          }
+
+          if (user && redirect) {
+            router.push(redirect);
+          } else if (user) {
+            router.push("/");
+          }
+        })
+        .catch((error) => {
+          showErrorMessage(error.message, $q);
+        })
+        .finally((_) => {
+          isLoading.value = false;
         });
-
-        if (error || !session) throw error;
-
-        // pick the next page based on query parameter
-        if (user && redirect) {
-          router.push(redirect);
-        } else if (user) {
-          router.push("/");
-        }
-      } catch (error) {
-        showErrorMessage(error.message, $q);
-      } finally {
-        isLoading.value = false;
-      }
     }
 
     return {

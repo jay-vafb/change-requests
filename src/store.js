@@ -5,4 +5,5 @@ export const store = reactive({
   setLeftDrawerState(state) {
     this.isLeftDrawerOpen = state;
   },
+  user: {},
 });

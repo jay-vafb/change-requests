@@ -77,8 +77,12 @@
 <script>
 import { ref } from "vue";
 import { useQuasar } from "quasar";
-import { supabase } from "../supabase";
-import { showSuccessMessage, showErrorMessage } from "../logger";
+import { showSuccessMessage, showErrorMessage, logText } from "../logger";
+import {
+  createUserWithEmailAndPassword,
+  sendEmailVerification,
+} from "@firebase/auth";
+import { auth } from "src/firebaseConfig";
 
 export default {
   name: "RegisterPage",
@@ -97,22 +101,32 @@ export default {
     }
 
     async function handleRegister() {
-      try {
-        const { error } = await supabase.auth.signUp({
-          email: emailInput.value,
-          password: passwordInput.value,
-        });
+      createUserWithEmailAndPassword(
+        auth,
+        emailInput.value,
+        passwordInput.value
+      )
+        .then((userCredential) => {
+          const user = userCredential.user;
 
-        if (error) throw error;
-        showSuccessMessage(
-          "Please check your email to verify your account",
-          $q
-        );
-      } catch (error) {
-        showErrorMessage(error.message, $q);
-      } finally {
-        isLoading.value = false;
-      }
+          sendEmailVerification(user)
+            .then((_) => {
+              showSuccessMessage(
+                "Please check your email to verify your account",
+                $q
+              );
+            })
+            .catch((error) => {
+              logText(`FAuth - error: ${error.message}`);
+            });
+        })
+        .catch((error) => {
+          showErrorMessage(error.message, $q);
+        })
+        .finally((_) => {
+          isLoading.value = false;
+          auth.signOut();
+        });
     }
 
     return {

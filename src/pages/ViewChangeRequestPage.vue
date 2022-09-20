@@ -292,7 +292,7 @@ export default {
 
   setup() {
     const $q = useQuasar();
-    const user = supabase.auth.user();
+    const user = store.user;
     const route = useRoute();
 
     const isApprovingManager = ref(false);
@@ -344,8 +344,9 @@ export default {
         const { data, error } = await supabase
           .from("profiles")
           .select("user_role")
-          .match({ id: user.id });
+          .match({ username: user.email });
 
+        logText(data);
         if (error) throw error;
 
         if (data[0].user_role === "approving_manager") {
