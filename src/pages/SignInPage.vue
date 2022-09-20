@@ -66,6 +66,7 @@ import { useQuasar } from "quasar";
 import { supabase } from "../supabase";
 import { showErrorMessage } from "../logger";
 import { useRouter, useRoute } from "vue-router";
+import { auth } from "src/firebaseConfig";
 
 export default {
   name: "SignInPage",
