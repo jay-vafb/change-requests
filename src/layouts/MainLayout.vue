@@ -1,6 +1,6 @@
 <template>
   <q-layout view="hHh lpR fFf">
-    <q-header bordered class="header bg-primary text-white">
+    <q-header bordered class="bg-primary text-white print-hide">
       <q-toolbar>
         <q-btn
           color="secondary"
@@ -21,7 +21,7 @@
       v-model="leftDrawerOpen"
       side="left"
       bordered
-      class="sidebar"
+      class="print-hide"
     >
       <EssentialLink
         title="Home"

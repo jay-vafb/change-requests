@@ -150,7 +150,7 @@
 
         <q-select
           v-if="isBoardApprover"
-          class="board-inputs q-mb-sm"
+          class="print-hide q-mb-sm"
           name="board"
           v-model="boardAttendeesInput"
           multiple
@@ -164,7 +164,7 @@
 
         <q-btn
           v-if="isBoardApprover"
-          class="board-inputs q-mb-md"
+          class="print-hide q-mb-md"
           label="Update"
           color="accent"
           @click="updateBoardAttendees()"
@@ -178,12 +178,12 @@
           label="Board comments"
           stack-label
           v-model="boardCommentsInput"
-          class="board-inputs q-mb-sm"
+          class="print-hide q-mb-sm"
         />
 
         <q-btn
           v-if="isBoardApprover"
-          class="board-inputs q-mb-sm"
+          class="print-hide q-mb-sm"
           label="Update"
           color="accent"
           @click="updateBoardComments()"
@@ -216,7 +216,7 @@
           label="Comment"
           stack-label
           v-model="generalCommentsInput"
-          class="general-comments-input"
+          class="print-hide"
         >
           <template v-slot:append>
             <q-btn
@@ -245,7 +245,7 @@
       </div>
     </div>
 
-    <div class="change-request-action">
+    <div class="print-hide">
       <div v-if="isChangeRequestActive" class="row">
         <div class="col-12 col-md-2 q-mb-sm q-pr-sm">
           <q-btn
