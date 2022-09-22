@@ -7,7 +7,11 @@
       </q-card-section>
 
       <q-card-section class="flex justify-right items-center">
-        <q-avatar :color="color" text-color="primary" :icon="icon" />
+        <q-avatar
+          :color="color"
+          :text-color="color.replace('5', '10')"
+          :icon="icon"
+        />
       </q-card-section>
     </q-card-section>
   </q-card>

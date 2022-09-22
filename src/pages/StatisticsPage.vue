@@ -6,7 +6,7 @@
           title="Monthly Change Requests"
           :value="monthlyChangeRequests"
           icon="calendar_month"
-          color="positive"
+          color="brown-5"
         />
       </div>
 
@@ -15,7 +15,7 @@
           title="Yearly Change Requests"
           :value="yearlyChangeRequests"
           icon="calendar_month"
-          color="info"
+          color="blue-5"
         />
       </div>
     </div>
@@ -26,7 +26,7 @@
           title="Total Approved"
           :value="totalApprovedChangeRequests"
           icon="done"
-          color="accent"
+          color="green-5"
         />
       </div>
 
@@ -35,6 +35,7 @@
           title="Total Denied"
           :value="totalDeniedChangeRequests"
           icon="close"
+          color="red-5"
         />
       </div>
     </div>
@@ -45,7 +46,7 @@
           title="Average Approval Time"
           :value="averageApprovalTime"
           icon="timer"
-          color="negative"
+          color="purple-5"
         />
       </div>
 
@@ -54,7 +55,7 @@
           title="Total Change Requests"
           :value="totalChangeRequests"
           icon="add"
-          color="warning"
+          color="yellow-5"
         />
       </div>
     </div>
