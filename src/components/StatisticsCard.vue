@@ -15,7 +15,7 @@
 
 <script>
 export default {
-  name: "StatisticsCard",
+  name: "StatisticsCardComponent",
   props: {
     title: {
       type: String,

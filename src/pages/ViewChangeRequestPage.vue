@@ -229,21 +229,13 @@
       </div>
     </div>
 
-    <div
-      id="comments"
-      class="row"
+    <Comment
       v-for="item in generalComments.value"
       :key="item.id"
-    >
-      <div
-        id="comments"
-        class="col-12 col-md-11 text-caption q-pa-sm"
-        style="border: 1px solid lightgray"
-      >
-        {{ item.commenter + " - " + item.created_at }}
-        <div id="comments" class="text-body2">{{ item.body }}</div>
-      </div>
-    </div>
+      :author="item.commenter"
+      :createdAt="item.created_at"
+      :body="item.body"
+    />
 
     <div class="print-hide">
       <div v-if="isChangeRequestActive" class="row">
@@ -286,20 +278,18 @@ import { useRoute } from "vue-router";
 import { useQuasar } from "quasar";
 import { store } from "src/store";
 import axios from "axios";
+import Comment from "src/components/Comment.vue";
 
 export default {
   name: "ViewChangeRequestPage",
-
   setup() {
     const $q = useQuasar();
     const user = store.user;
     const route = useRoute();
-
     const isApprovingManager = ref(false);
     const isReviewer = ref(false);
     const isBoardApprover = ref(false);
     const isChangeRequestActive = ref(false);
-
     const changeRequest = ref(null);
     const subject = ref(null);
     const date = ref(null);
@@ -322,14 +312,12 @@ export default {
     const boardAttendees = ref(null);
     const boardComments = ref(null);
     const boardDate = ref(null);
-
     const boardAttendeesOptions = [
       "Karen Clarke",
       "Neil Gill",
       "Kyle Shover",
       "Theresa Richardson",
     ];
-
     setUserRole()
       .then((_) => {
         getChangeRequest(route.params.id);
@@ -338,16 +326,13 @@ export default {
       .catch((error) => {
         logText(error);
       });
-
     async function setUserRole() {
       try {
         const { data, error } = await supabase
           .from("profiles")
           .select("user_role")
           .match({ username: user.email });
-
         if (error) throw error;
-
         if (data[0].user_role === "approving_manager") {
           isApprovingManager.value = true;
         } else if (data[0].user_role === "reviewer") {
@@ -359,26 +344,22 @@ export default {
         logText(error.message);
       }
     }
-
     async function getChangeRequest(id) {
       try {
         const { data, error } = await supabase
           .from("change_requests")
           .select()
           .match({ id });
-
         if (data.length > 0) {
           changeRequest.value = data[0];
           await setChangeRequestActive(data[0].status);
           populateFormFields();
         }
-
         if (error) throw error;
       } catch (error) {
         logText(error.message);
       }
     }
-
     async function setChangeRequestActive(status) {
       if (
         isApprovedOrDenied(status) ||
@@ -391,7 +372,6 @@ export default {
         isChangeRequestActive.value = true;
       }
     }
-
     function isApprovedOrDenied(status) {
       return (
         status === "Board approved" ||
@@ -400,28 +380,24 @@ export default {
         status === "Denied"
       );
     }
-
     function isPendingManagerApproval(status) {
       return (
         status === "Pending approval" &&
         (isReviewer.value || isBoardApprover.value)
       );
     }
-
     function isPendingBoardApproval(status) {
       return (
         status === "Pending board approval" &&
         (isApprovingManager.value || isReviewer.value)
       );
     }
-
     function isUnderReview(status) {
       return (
         (status === "Under review" || status === "Needs changes") &&
         (isApprovingManager.value || isBoardApprover.value)
       );
     }
-
     async function getChangeRequestComments(id) {
       try {
         const { data, error } = await supabase
@@ -436,7 +412,6 @@ export default {
         logText(error.message);
       }
     }
-
     function populateFormFields() {
       subject.value = changeRequest.value.subject;
       date.value = changeRequest.value.request_date;
@@ -452,12 +427,10 @@ export default {
       approvingManager.value = changeRequest.value.approving_manager;
       status.value = changeRequest.value.status;
       approvalDate.value = changeRequest.value.approval_date;
-
       boardAttendees.value = changeRequest.value.board_attendees;
       boardComments.value = changeRequest.value.board_recommendations;
       boardDate.value = changeRequest.value.board_date;
     }
-
     async function createGeneralComment() {
       if (!generalCommentsInput.value) return;
       try {
@@ -467,21 +440,18 @@ export default {
             returning: "minimal",
           });
         if (error) throw error;
-
         if (!commentsExist()) {
           generalComments.value = new Array(getCommentData(true));
         } else {
           generalComments.value.push(getCommentData(true));
         }
         generalCommentsInput.value = "";
-
         sendCommentEmail();
         showSuccessMessage("Comment created", $q);
       } catch (error) {
         logText(error.message);
       }
     }
-
     function getCommentData(dateFormatted) {
       const today = new Date();
       return {
@@ -491,11 +461,9 @@ export default {
         body: generalCommentsInput.value,
       };
     }
-
     function commentsExist() {
       return generalComments.value ? true : false;
     }
-
     // TODO: get and pass in original requestor name
     function sendCommentEmail() {
       axios
@@ -509,18 +477,14 @@ export default {
           logText(error);
         });
     }
-
     async function updateBoardAttendees() {
       const formattedBoardAttendees = formatBoardAttendees();
-
       try {
         const { error } = await supabase
           .from("change_requests")
           .update({ board_attendees: formattedBoardAttendees })
           .match({ id: changeRequest.value.id });
-
         boardAttendees.value = formattedBoardAttendees;
-
         if (error) throw error;
         boardAttendeesInput.value = null;
         showSuccessMessage("Board attendees updated", $q);
@@ -528,7 +492,6 @@ export default {
         logText(error.message);
       }
     }
-
     function formatBoardAttendees() {
       return JSON.stringify(boardAttendeesInput.value)
         .replaceAll("[", "")
@@ -536,7 +499,6 @@ export default {
         .replaceAll('"', "")
         .replaceAll(",", "\n");
     }
-
     async function updateBoardComments() {
       try {
         const { error } = await supabase
@@ -545,9 +507,7 @@ export default {
             board_recommendations: boardCommentsInput.value,
           })
           .match({ id: changeRequest.value.id });
-
         boardComments.value = boardCommentsInput.value;
-
         if (error) throw error;
         boardCommentsInput.value = "";
         sendCommentEmail();
@@ -556,7 +516,6 @@ export default {
         logText(error.message);
       }
     }
-
     function approveChangeRequest() {
       if (
         isApprovingManager.value &&
@@ -591,7 +550,6 @@ export default {
         showErrorMessage("You don't have the permissions to do this", $q);
       }
     }
-
     function denyChangeRequest() {
       if (
         isApprovingManager.value &&
@@ -617,7 +575,6 @@ export default {
         showErrorMessage("You don't have the permissions to do this", $q);
       }
     }
-
     function sendStatusChangeEmail(newStatus) {
       axios
         .post(
@@ -634,17 +591,14 @@ export default {
           logText(error);
         });
     }
-
     function printChangeRequest() {
       closeLeftDrawer().then((_) => {
         window.print();
       });
     }
-
     async function closeLeftDrawer() {
       store.isLeftDrawerOpen = false;
     }
-
     function requiresBoardApproval() {
       return (
         changeRequest.value.processing_speed !== "Normal" ||
@@ -652,7 +606,6 @@ export default {
         changeRequest.value.impact_severity !== "Low"
       );
     }
-
     async function updateChangeRequestApprovalDate() {
       const today = new Date();
       try {
@@ -660,14 +613,12 @@ export default {
           .from("change_requests")
           .update({ approval_date: today })
           .match({ id: changeRequest.value.id });
-
         approvalDate.value = formatDate(today);
         if (error) throw error;
       } catch (error) {
         logText(error.message);
       }
     }
-
     async function updateChangeRequestBoardDate() {
       const today = new Date();
       try {
@@ -675,14 +626,12 @@ export default {
           .from("change_requests")
           .update({ board_date: today })
           .match({ id: changeRequest.value.id });
-
         boardDate.value = formatDate(today);
         if (error) throw error;
       } catch (error) {
         logText(error.message);
       }
     }
-
     function formatDate(date) {
       return (
         date.getFullYear() +
@@ -692,14 +641,12 @@ export default {
         ("0" + date.getDate()).slice(-2)
       );
     }
-
     async function updateChangeRequestStatus(newStatus) {
       try {
         const { error } = await supabase
           .from("change_requests")
           .update({ status: newStatus })
           .match({ id: changeRequest.value.id });
-
         status.value = newStatus;
         changeRequest.value.status = newStatus;
         if (error) throw error;
@@ -708,7 +655,6 @@ export default {
         logText(error.message);
       }
     }
-
     return {
       isReviewer,
       isApprovingManager,
@@ -736,7 +682,6 @@ export default {
       boardAttendeesInput,
       boardAttendeesOptions,
       boardAttendees,
-
       createGeneralComment,
       updateBoardAttendees,
       updateBoardComments,
@@ -746,5 +691,6 @@ export default {
       printChangeRequest,
     };
   },
+  components: { Comment },
 };
 </script>
