@@ -88,9 +88,35 @@ export default {
     getAverageApprovalTime();
     getTotalChangeRequests();
 
-    async function getMonthlyChangeRequests() {}
+    async function getMonthlyChangeRequests() {
+      try {
+        const { data, error } = await supabase
+          .rpc("requests_per", {
+            date_type: "month",
+          })
+          .select("requests");
 
-    async function getYearlyChangeRequests() {}
+        if (error) throw error;
+        monthlyChangeRequests.value = data ? data[0].requests : 0;
+      } catch (error) {
+        logText(error.message);
+      }
+    }
+
+    async function getYearlyChangeRequests() {
+      try {
+        const { data, error } = await supabase
+          .rpc("requests_per", {
+            date_type: "year",
+          })
+          .select("requests");
+
+        if (error) throw error;
+        yearlyChangeRequests.value = data ? data[0].requests : 0;
+      } catch (error) {
+        logText(error.message);
+      }
+    }
 
     async function getTotalApprovedChangeRequests() {
       try {
