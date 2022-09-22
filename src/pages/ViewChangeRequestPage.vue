@@ -645,7 +645,7 @@ export default {
       try {
         const { error } = await supabase
           .from("change_requests")
-          .update({ status: newStatus })
+          .update({ status: newStatus, updated_at: new Date() })
           .match({ id: changeRequest.value.id });
         status.value = newStatus;
         changeRequest.value.status = newStatus;

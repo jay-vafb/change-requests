@@ -43,7 +43,7 @@
     <div class="row justify-center q-gutter-x-md">
       <div class="col-12 col-md-5 q-mb-sm">
         <StatisticsCard
-          title="Average Approval Time"
+          title="Average Approval Time (minutes)"
           :value="averageApprovalTime"
           icon="timer"
           color="purple-5"
@@ -97,7 +97,7 @@ export default {
         const { data, error } = await supabase
           .from("change_requests")
           .select("id", { count: "exact" })
-          .eq("status", "Approved");
+          .or("status.eq.Approved, status.eq.Board approved");
 
         if (error) throw error;
         totalApprovedChangeRequests.value = data ? data.length : 0;
@@ -111,7 +111,7 @@ export default {
         const { data, error } = await supabase
           .from("change_requests")
           .select("id", { count: "exact" })
-          .eq("status", "Denied");
+          .or("status.eq.Denied, status.eq.Board denied");
 
         if (error) throw error;
         totalDeniedChangeRequests.value = data ? data.length : 0;
@@ -126,15 +126,20 @@ export default {
         const { data, error } = await supabase
           .from("change_requests")
           .select("id, inserted_at, updated_at")
-          .eq("status", "Approved");
+          .or("status.eq.Approved, status.eq.Board approved");
 
         if (error) throw error;
 
-        // calculate approval time for each entry
         data.forEach((changeRequest) => {
           calculateApprovalTime(changeRequest);
         });
-        logText(data);
+
+        const average =
+          data.reduce((a, b) => {
+            return a + b.approvalTime;
+          }, 0) / data.length;
+
+        averageApprovalTime.value = average;
       } catch (error) {
         logText(error.message);
       }
