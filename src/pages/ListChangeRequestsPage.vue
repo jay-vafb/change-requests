@@ -222,6 +222,7 @@ export default {
         if (error) throw error;
 
         if (data) {
+          data.sort((a, b) => sortStatus(a, b));
           rows.value = data;
         }
       } catch (error) {
