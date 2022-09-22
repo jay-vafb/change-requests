@@ -5,34 +5,30 @@
         <div class="q-gutter-y-md column" style="max-width: 300px">
           <div class="flex" style="justify-content: center">
             <h5>VAFB Change Requests</h5>
-            <h5>Sign In</h5>
+            <h5>LOGIN</h5>
           </div>
           <q-input
+            filled
             v-model="emailInput"
             type="email"
-            prefix="Email:"
+            label="Email"
             lazy-rules
             :rules="[
               (val) => (val && val.length > 0) || 'Please type something',
             ]"
           >
-            <template v-slot:prepend>
-              <q-icon name="mail" />
-            </template>
           </q-input>
 
           <q-input
+            filled
             v-model="passwordInput"
             :type="showPassword ? 'password' : 'text'"
-            prefix="Password:"
+            label="Password"
             lazy-rules
             :rules="[
               (val) => (val && val.length >= 0) || 'Please type something',
             ]"
           >
-            <template v-slot:prepend>
-              <q-icon name="lock" />
-            </template>
             <template v-slot:append>
               <q-icon
                 :name="showPassword ? 'visibility_off' : 'visibility'"

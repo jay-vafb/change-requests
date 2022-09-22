@@ -8,23 +8,22 @@
             <h5>Register</h5>
           </div>
           <q-input
+            filled
             v-model="emailInput"
             type="email"
-            prefix="Email:"
+            label="Email"
             lazy-rules
             :rules="[
               (val) => (val && val.length > 0) || 'Please type something',
             ]"
           >
-            <template v-slot:prepend>
-              <q-icon name="mail" />
-            </template>
           </q-input>
 
           <q-input
+            filled
             v-model="passwordInput"
             :type="showPassword ? 'password' : 'text'"
-            prefix="Password:"
+            label="Password"
             lazy-rules
             :rules="[
               (val) =>
@@ -44,9 +43,6 @@
                 'Password must include at least one special character',
             ]"
           >
-            <template v-slot:prepend>
-              <q-icon name="lock" />
-            </template>
             <template v-slot:append>
               <q-icon
                 :name="showPassword ? 'visibility_off' : 'visibility'"
