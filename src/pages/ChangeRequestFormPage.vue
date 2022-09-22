@@ -184,6 +184,7 @@
 import { useQuasar } from "quasar";
 import { ref } from "vue";
 import { supabase } from "../supabase";
+import { store } from "src/store";
 import { logText, showSuccessMessage } from "../logger";
 import axios from "axios";
 
@@ -191,7 +192,7 @@ export default {
   name: "ChangeRequestFormPage",
   setup() {
     const $q = useQuasar();
-    const user = supabase.auth.user();
+    const user = store.user;
 
     const subjectInput = ref(null);
     const datePicker = ref(null);

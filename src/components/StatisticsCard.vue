@@ -3,7 +3,7 @@
     <q-card-section horizontal>
       <q-card-section style="width: 100%">
         <div class="text-caption text-grey">{{ title.toUpperCase() }}</div>
-        <div class="text-h4 q-pt-xs">{{ value.toLocaleString() }}</div>
+        <div class="text-h4 q-pt-xs" v-text="value"></div>
       </q-card-section>
 
       <q-card-section class="flex justify-right items-center">
