@@ -346,7 +346,6 @@ export default {
           .select("user_role")
           .match({ username: user.email });
 
-        logText(data);
         if (error) throw error;
 
         if (data[0].user_role === "approving_manager") {

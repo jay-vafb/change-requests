@@ -4,6 +4,8 @@
 
 <script>
 import { useRouter } from "vue-router";
+import { onAuthStateChanged } from "@firebase/auth";
+import { auth } from "./firebaseConfig";
 import { store } from "./store";
 
 export default {
@@ -12,8 +14,23 @@ export default {
   setup() {
     const router = useRouter();
 
+    // refactored from: https://stackoverflow.com/questions/72734392/use-firebase-auth-with-vue-3-route-guard
+    async function getCurrentUser() {
+      return new Promise((resolve, reject) => {
+        const unsubscribe = onAuthStateChanged(
+          auth,
+          (user) => {
+            store.user = user;
+            unsubscribe();
+            resolve(user);
+          },
+          reject
+        );
+      });
+    }
+
     router.beforeEach(async (to, from) => {
-      const user = store.user.email;
+      const user = await getCurrentUser();
 
       // to.path must be checked to prevent infinite redirection
       if (
