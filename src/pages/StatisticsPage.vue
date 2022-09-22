@@ -120,7 +120,31 @@ export default {
       }
     }
 
-    async function getAverageApprovalTime() {}
+    async function getAverageApprovalTime() {
+      // get approved requests from db
+      try {
+        const { data, error } = await supabase
+          .from("change_requests")
+          .select("id, inserted_at, updated_at")
+          .eq("status", "Approved");
+
+        if (error) throw error;
+
+        // calculate approval time for each entry
+        data.forEach((changeRequest) => {
+          calculateApprovalTime(changeRequest);
+        });
+        logText(data);
+      } catch (error) {
+        logText(error.message);
+      }
+    }
+
+    function calculateApprovalTime(changeRequest) {
+      changeRequest.approvalTime =
+        new Date(changeRequest.updated_at).getMinutes() -
+        new Date(changeRequest.inserted_at).getMinutes();
+    }
 
     async function getTotalChangeRequests() {
       try {
