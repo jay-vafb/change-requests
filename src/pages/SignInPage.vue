@@ -5,7 +5,7 @@
         <div class="q-gutter-y-md column" style="max-width: 300px">
           <div class="flex" style="justify-content: center">
             <h5>VAFB Change Requests</h5>
-            <h5>LOGIN</h5>
+            <h5>Sign In</h5>
           </div>
           <q-input
             filled
