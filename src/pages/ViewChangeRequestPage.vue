@@ -594,6 +594,7 @@ export default {
     }
 
     function approveChangeRequest() {
+      needsChanges.value = false;
       if (
         isApprovingManager.value &&
         changeRequest.value.status === "Pending approval"

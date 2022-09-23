@@ -44,16 +44,16 @@
           />
         </div>
         <div class="col-12 col-md-3 offset-md-1">
-          <q-select
+          <q-input
             class="q-mb-sm"
             outlined
-            v-model="requestorDropdown"
-            :options="requestorOptions"
+            v-model="requestorName"
             label="IS requestor"
             hint="Requestor's name"
+            :readonly="isVafbEmail"
             lazy-rules
             :rules="[
-              (val) => (val && val.length > 0) || 'Please make a selection',
+              (val) => (val && val.length > 0) || 'Please type something',
             ]"
           />
         </div>
@@ -197,7 +197,7 @@ export default {
     const subjectInput = ref(null);
     const datePicker = ref(null);
     const trackingNumberInput = ref(null);
-    const requestorDropdown = ref(null);
+    const requestorName = ref(null);
     const changeDatePicker = ref(null);
     const processingSpeedDropdown = ref("Normal");
     const riskSeverityDropdown = ref("Low");
@@ -207,6 +207,31 @@ export default {
     const recoveryPlanInput = ref("");
     const approvingManagerDropdown = ref(null);
     const isLoading = ref(false);
+    const isVafbEmail = ref(true);
+
+    setRequestorName();
+
+    function setRequestorName() {
+      const parsed_email = user.email.split("@");
+
+      if (parsed_email[1] !== "vafb.com") {
+        isVafbEmail.value = false;
+        return;
+      }
+
+      // capitalizes name properly
+      const full_name = parsed_email[0]
+        .split(".")
+        .join(" ")
+        .toLowerCase()
+        .split(" ")
+        .map((word) => {
+          return word.charAt(0).toUpperCase() + word.slice(1);
+        })
+        .join(" ");
+
+      requestorName.value = full_name;
+    }
 
     function onSubmit() {
       saveChangeRequest();
@@ -216,7 +241,7 @@ export default {
       subjectInput.value = null;
       datePicker.value = null;
       trackingNumberInput.value = null;
-      requestorDropdown.value = null;
+      requestorName.value = null;
       changeDatePicker.value = null;
       processingSpeedDropdown.value = "Normal";
       riskSeverityDropdown.value = "Low";
@@ -251,7 +276,7 @@ export default {
         subject: subjectInput.value,
         request_date: new Date(datePicker.value),
         tracking_number: trackingNumberInput.value,
-        requestor: requestorDropdown.value,
+        requestor: requestorName.value,
         requestor_email: user.email,
         change_date: new Date(changeDatePicker.value),
         processing_speed: processingSpeedDropdown.value,
@@ -269,7 +294,7 @@ export default {
       const details = {
         trackingNumber: trackingNumberInput.value,
         status: "Under review",
-        requestorName: requestorDropdown.value,
+        requestorName: requestorName.value,
         approvingManager: approvingManagerDropdown.value,
         changeDate: changeDatePicker.value,
         processingSpeed: processingSpeedDropdown.value,
@@ -298,7 +323,7 @@ export default {
       subjectInput,
       datePicker,
       trackingNumberInput,
-      requestorDropdown,
+      requestorName,
       changeDatePicker,
       processingSpeedDropdown,
       riskSeverityDropdown,
@@ -308,8 +333,8 @@ export default {
       recoveryPlanInput,
       approvingManagerDropdown,
       isLoading,
+      isVafbEmail,
 
-      requestorOptions: ["Chad Nelson", "Sripal Adamala", "Jay Call"],
       processingOptions: [
         "Normal",
         "Urgent",
