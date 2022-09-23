@@ -6,7 +6,7 @@
           outlined
           label="Subject"
           stack-label
-          readonly
+          :readonly="!(isOriginalRequestor && needsChanges)"
           v-model="subject"
         />
       </div>
@@ -21,7 +21,7 @@
           outlined
           label="Tracking number"
           stack-label
-          readonly
+          :readonly="!(isOriginalRequestor && needsChanges)"
           v-model="trackingNumber"
         />
       </div>
@@ -47,42 +47,62 @@
 
     <div class="row">
       <div class="col-12 col-md-3 q-mb-sm">
-        <q-input
+        <q-select
+          class="q-ma-none q-pa-none"
           outlined
-          label="Processing"
-          stack-label
-          readonly
           v-model="processingSpeed"
+          :readonly="!(isOriginalRequestor && needsChanges)"
+          :options="processingOptions"
+          label="Processing speed"
+          lazy-rules
+          :rules="[
+            (val) => (val && val.length > 0) || 'Please make a selection',
+          ]"
         />
       </div>
       <div class="col-12 col-md-3 offset-md-1 q-mb-sm">
-        <q-input
+        <q-select
+          class="q-ma-none q-pa-none"
           outlined
-          label="Risk"
-          stack-label
-          readonly
           v-model="riskSeverity"
+          :readonly="!(isOriginalRequestor && needsChanges)"
+          :options="riskAndImpactOptions"
+          label="Risk severity"
+          lazy-rules
+          :rules="[
+            (val) => (val && val.length > 0) || 'Please make a selection',
+          ]"
         />
       </div>
       <div class="col-12 col-md-3 offset-md-1">
-        <q-input
+        <q-select
+          class="q-ma-none q-pa-none"
           outlined
-          label="Impact"
-          stack-label
-          readonly
           v-model="impactSeverity"
+          :readonly="!(isOriginalRequestor && needsChanges)"
+          :options="riskAndImpactOptions"
+          label="Impact severity"
+          lazy-rules
+          :rules="[
+            (val) => (val && val.length > 0) || 'Please make a selection',
+          ]"
         />
       </div>
     </div>
 
     <div class="row">
       <div class="col-12 col-md-3 q-mb-sm">
-        <q-input
+        <q-select
+          class="q-ma-none q-pa-none"
           outlined
-          label="Approving manager"
-          stack-label
-          readonly
           v-model="approvingManager"
+          :readonly="!(isOriginalRequestor && needsChanges)"
+          :options="approvingManagerOptions"
+          label="Approving manager"
+          lazy-rules
+          :rules="[
+            (val) => (val && val.length > 0) || 'Please make a selection',
+          ]"
         />
       </div>
 
@@ -238,6 +258,17 @@
     />
 
     <div class="print-hide">
+      <div class="row">
+        <div class="col-12 col-md-4 q-mb-sm q-pr-sm">
+          <q-btn
+            v-if="needsChanges && isOriginalRequestor"
+            label="Update"
+            color="primary"
+            style="width: 100%"
+            @click="updateChangeRequest()"
+          />
+        </div>
+      </div>
       <div v-if="isChangeRequestActive" class="row">
         <div class="col-12 col-md-2 q-mb-sm q-pr-sm">
           <q-btn
@@ -286,6 +317,8 @@ export default {
     const $q = useQuasar();
     const user = store.user;
     const route = useRoute();
+    const needsChanges = ref(false);
+    const isOriginalRequestor = ref(false);
     const isApprovingManager = ref(false);
     const isReviewer = ref(false);
     const isBoardApprover = ref(false);
@@ -354,6 +387,8 @@ export default {
           changeRequest.value = data[0];
           await setChangeRequestActive(data[0].status);
           populateFormFields();
+          setNeedsChanges();
+          setIsOriginalRequestor();
         }
         if (error) throw error;
       } catch (error) {
@@ -412,6 +447,16 @@ export default {
         logText(error.message);
       }
     }
+
+    function setNeedsChanges() {
+      needsChanges.value = changeRequest.value.status === "Needs changes";
+    }
+
+    function setIsOriginalRequestor() {
+      isOriginalRequestor.value =
+        user.email === changeRequest.value.requestor_email;
+    }
+
     function populateFormFields() {
       subject.value = changeRequest.value.subject;
       date.value = changeRequest.value.request_date;
@@ -464,7 +509,6 @@ export default {
     function commentsExist() {
       return generalComments.value ? true : false;
     }
-    // TODO: get and pass in original requestor name
     function sendCommentEmail() {
       axios
         .post(
@@ -520,6 +564,33 @@ export default {
         logText(error.message);
       }
     }
+
+    async function updateChangeRequest() {
+      try {
+        const { error } = await supabase
+          .from("change_requests")
+          .update({
+            subject: subject.value,
+            tracking_number: trackingNumber.value,
+            processing_speed: processingSpeed.value,
+            risk_severity: riskSeverity.value,
+            impact_severity: impactSeverity.value,
+            approving_manager: approvingManager.value,
+            status: "Under review",
+            board_recommendations: boardCommentsInput.value,
+          })
+          .match({ id: changeRequest.value.id });
+
+        if (error) throw error;
+        needsChanges.value = false;
+        status.value = "Under review";
+        sendStatusChangeEmail("Under review");
+        showSuccessMessage("Change request updated", $q);
+      } catch (error) {
+        logText(error.message);
+      }
+    }
+
     function approveChangeRequest() {
       if (
         isApprovingManager.value &&
@@ -661,6 +732,8 @@ export default {
       }
     }
     return {
+      needsChanges,
+      isOriginalRequestor,
       isReviewer,
       isApprovingManager,
       isBoardApprover,
@@ -687,10 +760,21 @@ export default {
       boardAttendeesInput,
       boardAttendeesOptions,
       boardAttendees,
+
+      processingOptions: [
+        "Normal",
+        "Urgent",
+        "Emergency",
+        "Pre-Approved by CCB",
+      ],
+      riskAndImpactOptions: ["High", "Medium", "Low"],
+      approvingManagerOptions: ["Karen Clarke", "Neil Gill"],
+
       createGeneralComment,
       updateBoardAttendees,
       updateBoardComments,
       getChangeRequestComments,
+      updateChangeRequest,
       approveChangeRequest,
       denyChangeRequest,
       printChangeRequest,
