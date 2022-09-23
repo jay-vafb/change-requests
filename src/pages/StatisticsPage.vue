@@ -147,7 +147,6 @@ export default {
     }
 
     async function getAverageApprovalTime() {
-      // get approved requests from db
       try {
         const { data, error } = await supabase
           .from("change_requests")
@@ -165,7 +164,7 @@ export default {
             return a + b.approvalTime;
           }, 0) / data.length;
 
-        averageApprovalTime.value = average;
+        averageApprovalTime.value = average.toPrecision(5);
       } catch (error) {
         logText(error.message);
       }
