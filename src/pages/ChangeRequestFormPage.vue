@@ -246,6 +246,25 @@ export default {
       }
     }
 
+    function createChangeRequest() {
+      return {
+        subject: subjectInput.value,
+        request_date: new Date(datePicker.value),
+        tracking_number: trackingNumberInput.value,
+        requestor: requestorDropdown.value,
+        requestor_email: user.email,
+        change_date: new Date(changeDatePicker.value),
+        processing_speed: processingSpeedDropdown.value,
+        risk_severity: riskSeverityDropdown.value,
+        impact_severity: impactSeverityDropdown.value,
+        description: changeDescriptionInput.value,
+        testing_details: testingDetailsInput.value,
+        recovery_plan: recoveryPlanInput.value,
+        approving_manager: approvingManagerDropdown.value,
+        status: "Under review",
+      };
+    }
+
     async function sendEmailToReviewer(changeRequestId) {
       axios
         .post(
@@ -261,24 +280,6 @@ export default {
 
     function setLoading(loading) {
       isLoading.value = loading;
-    }
-
-    function createChangeRequest() {
-      return {
-        subject: subjectInput.value,
-        request_date: new Date(datePicker.value),
-        tracking_number: trackingNumberInput.value,
-        requestor: requestorDropdown.value,
-        change_date: new Date(changeDatePicker.value),
-        processing_speed: processingSpeedDropdown.value,
-        risk_severity: riskSeverityDropdown.value,
-        impact_severity: impactSeverityDropdown.value,
-        description: changeDescriptionInput.value,
-        testing_details: testingDetailsInput.value,
-        recovery_plan: recoveryPlanInput.value,
-        approving_manager: approvingManagerDropdown.value,
-        status: "Under review",
-      };
     }
 
     return {
