@@ -266,9 +266,21 @@ export default {
     }
 
     async function sendEmailToReviewer(changeRequestId) {
+      const details = {
+        trackingNumber: trackingNumberInput.value,
+        status: "Under review",
+        requestorName: requestorDropdown.value,
+        approvingManager: approvingManagerDropdown.value,
+        changeDate: changeDatePicker.value,
+        processingSpeed: processingSpeedDropdown.value,
+        riskSeverity: riskSeverityDropdown.value,
+        impactSeverity: impactSeverityDropdown.value,
+      };
+
       axios
         .post(
-          `https://test-email-server1.herokuapp.com/email/create/${changeRequestId}`
+          `https://test-email-server1.herokuapp.com/email/create/${changeRequestId}`,
+          details
         )
         .then((result) => {
           logText("Message sent");

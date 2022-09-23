@@ -510,13 +510,15 @@ export default {
       return generalComments.value ? true : false;
     }
     function sendCommentEmail() {
+      const details = {
+        requestorName: changeRequest.value.requestor,
+        approvingManager: changeRequest.value.approving_manager,
+        commenter: user.email,
+      };
       axios
         .post(
           `https://test-email-server1.herokuapp.com/email/comment/${changeRequest.value.id}`,
-          {
-            requestorName: changeRequest.value.requestor,
-            approvingManager: changeRequest.value.approving_manager,
-          }
+          details
         )
         .then((result) => {
           logText("Message sent");
@@ -651,14 +653,20 @@ export default {
       }
     }
     function sendStatusChangeEmail(newStatus) {
+      const details = {
+        trackingNumber: changeRequest.value.tracking_number,
+        status: newStatus,
+        requestorName: changeRequest.value.requestor,
+        approvingManager: changeRequest.value.approving_manager,
+        changeDate: changeRequest.value.change_date,
+        processingSpeed: changeRequest.value.processing_speed,
+        riskSeverity: changeRequest.value.risk_severity,
+        impactSeverity: changeRequest.value.impact_severity,
+      };
       axios
         .post(
           `https://test-email-server1.herokuapp.com/email/changeState/${changeRequest.value.id}`,
-          {
-            requestorName: changeRequest.value.requestor,
-            approvingManager: changeRequest.value.approving_manager,
-            newStatus,
-          }
+          details
         )
         .then((result) => {
           logText("Message sent");
