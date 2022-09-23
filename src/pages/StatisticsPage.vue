@@ -97,7 +97,7 @@ export default {
           .select("requests");
 
         if (error) throw error;
-        monthlyChangeRequests.value = data ? data[0].requests : 0;
+        monthlyChangeRequests.value = data[0] ? data[0].requests : 0;
       } catch (error) {
         logText(error.message);
       }
@@ -112,7 +112,7 @@ export default {
           .select("requests");
 
         if (error) throw error;
-        yearlyChangeRequests.value = data ? data[0].requests : 0;
+        yearlyChangeRequests.value = data[0] ? data[0].requests : 0;
       } catch (error) {
         logText(error.message);
       }
@@ -154,6 +154,8 @@ export default {
           .or("status.eq.Approved, status.eq.Board approved");
 
         if (error) throw error;
+
+        if (!data[0]) return;
 
         data.forEach((changeRequest) => {
           calculateApprovalTime(changeRequest);
