@@ -468,7 +468,11 @@ export default {
     function sendCommentEmail() {
       axios
         .post(
-          `https://test-email-server1.herokuapp.com/email/comment/${changeRequest.value.id}`
+          `https://test-email-server1.herokuapp.com/email/comment/${changeRequest.value.id}`,
+          {
+            requestorName: changeRequest.value.requestor,
+            approvingManager: changeRequest.value.approving_manager,
+          }
         )
         .then((result) => {
           logText("Message sent");
@@ -580,7 +584,8 @@ export default {
         .post(
           `https://test-email-server1.herokuapp.com/email/changeState/${changeRequest.value.id}`,
           {
-            requestor: { email: user.email, name: "Me" },
+            requestorName: changeRequest.value.requestor,
+            approvingManager: changeRequest.value.approving_manager,
             newStatus,
           }
         )

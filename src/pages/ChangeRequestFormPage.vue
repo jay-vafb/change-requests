@@ -249,10 +249,7 @@ export default {
     async function sendEmailToReviewer(changeRequestId) {
       axios
         .post(
-          `https://test-email-server1.herokuapp.com/email/create/${changeRequestId}`,
-          {
-            requestor: { email: user.email, name: "Me" },
-          }
+          `https://test-email-server1.herokuapp.com/email/create/${changeRequestId}`
         )
         .then((result) => {
           logText("Message sent");
