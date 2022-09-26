@@ -220,7 +220,12 @@ export default {
       }
 
       // capitalizes name properly
-      const full_name = parsed_email[0]
+      const fullName = parsed_email[0];
+      requestorName.value = makeTitleCase(fullName);
+    }
+
+    function makeTitleCase(fullName) {
+      return fullName
         .split(".")
         .join(" ")
         .toLowerCase()
@@ -229,8 +234,6 @@ export default {
           return word.charAt(0).toUpperCase() + word.slice(1);
         })
         .join(" ");
-
-      requestorName.value = full_name;
     }
 
     function onSubmit() {
@@ -276,7 +279,7 @@ export default {
         subject: subjectInput.value,
         request_date: new Date(datePicker.value),
         tracking_number: trackingNumberInput.value,
-        requestor: requestorName.value,
+        requestor: makeTitleCase(requestorName.value),
         requestor_email: user.email,
         change_date: new Date(changeDatePicker.value),
         processing_speed: processingSpeedDropdown.value,
@@ -342,7 +345,12 @@ export default {
         "Pre-Approved by CCB",
       ],
       riskAndImpactOptions: ["High", "Medium", "Low"],
-      approvingManagerOptions: ["Karen Clarke", "Neil Gill"],
+      approvingManagerOptions: [
+        "Neil Gill",
+        "Karen Clarke",
+        "Theresa Richardson",
+        "Teresa Custalow",
+      ],
 
       onSubmit,
       onReset,
