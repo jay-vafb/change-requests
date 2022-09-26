@@ -73,11 +73,7 @@ import { ref } from "vue";
 import { useQuasar } from "quasar";
 import { showErrorMessage } from "../logger";
 import { useRouter, useRoute } from "vue-router";
-import {
-  signInWithEmailAndPassword,
-  setPersistence,
-  browserSessionPersistence,
-} from "@firebase/auth";
+import { signInWithEmailAndPassword } from "@firebase/auth";
 import { auth } from "src/firebaseConfig";
 import { store } from "src/store";
 
