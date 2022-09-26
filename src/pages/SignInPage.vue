@@ -7,6 +7,7 @@
             <h5>VAFB Change Requests</h5>
             <h5>Sign In</h5>
           </div>
+
           <q-input
             filled
             v-model="emailInput"
@@ -20,6 +21,7 @@
           </q-input>
 
           <q-input
+            class="q-pb-xs"
             filled
             v-model="passwordInput"
             :type="showPassword ? 'password' : 'text'"
@@ -38,6 +40,16 @@
             </template>
           </q-input>
 
+          <div class="flex q-pa-none q-ma-none" style="justify-content: right">
+            <q-btn
+              flat
+              no-caps
+              padding="none"
+              @click="$router.push('/forgotPassword')"
+              >Forgot password</q-btn
+            >
+          </div>
+
           <q-btn
             :loading="isLoading"
             type="submit"
@@ -45,7 +57,7 @@
             label="Sign in"
           />
 
-          <div class="flex" style="justify-content: center">
+          <div class="flex q-ma-xs" style="justify-content: center">
             <q-btn flat no-caps @click="$router.push('/register')"
               >Don't have an account? Register</q-btn
             >

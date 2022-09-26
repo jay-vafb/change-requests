@@ -7,6 +7,7 @@ import StatisticsPage from "../pages/StatisticsPage.vue";
 import AuthenticationLayout from "../layouts/AuthenticationLayout.vue";
 import SignInPage from "../pages/SignInPage.vue";
 import RegisterPage from "../pages/RegisterPage.vue";
+import ResetPasswordPage from "../pages/ResetPasswordPage.vue";
 import ErrorNotFound from "../pages/ErrorNotFound.vue";
 
 const routes = [
@@ -53,6 +54,10 @@ const routes = [
       {
         path: "/register",
         component: RegisterPage,
+      },
+      {
+        path: "/forgotPassword",
+        component: ResetPasswordPage,
       },
     ],
   },

@@ -59,7 +59,7 @@
             label="Register"
           />
 
-          <div class="flex" style="justify-content: center">
+          <div class="flex q-ma-xs" style="justify-content: center">
             <q-btn flat no-caps @click="$router.push('/auth')"
               >Already have an account? Sign in</q-btn
             >

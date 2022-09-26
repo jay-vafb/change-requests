@@ -40,9 +40,19 @@ export default {
       ) {
         // email link clicked
         return { path: "/auth", query: { redirect: to.path } };
-      } else if (!user && to.path !== "/auth" && to.path !== "/register") {
+      } else if (
+        !user &&
+        to.path !== "/auth" &&
+        to.path !== "/register" &&
+        to.path !== "/forgotPassword"
+      ) {
         return { path: "/auth" };
-      } else if (user && (to.path === "/auth" || to.path === "/register")) {
+      } else if (
+        user &&
+        (to.path === "/auth" ||
+          to.path === "/register" ||
+          to.path === "/forgotPassword")
+      ) {
         return { path: "/" };
       }
     });
