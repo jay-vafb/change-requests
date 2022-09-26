@@ -264,7 +264,8 @@ export default {
           .from("change_requests")
           .insert(changeRequestData);
 
-        sendEmailToReviewer(data[0].id);
+        // TODO: uncomment when Sendgrid account and subscription are chosen
+        // sendEmailToReviewer(data[0].id);
         if (error) throw error;
         showSuccessMessage("Change request created", $q);
       } catch (error) {

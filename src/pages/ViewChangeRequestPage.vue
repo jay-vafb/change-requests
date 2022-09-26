@@ -510,7 +510,8 @@ export default {
       return generalComments.value ? true : false;
     }
     function sendCommentEmail() {
-      const details = {
+      // TODO: uncomment when Sendgrid account and subscription are chosen
+      /*const details = {
         requestorName: changeRequest.value.requestor,
         approvingManager: changeRequest.value.approving_manager,
         commenter: user.email,
@@ -525,7 +526,8 @@ export default {
         })
         .catch((error) => {
           logText(error);
-        });
+        });*/
+      logText("Upgrade Sendgrid subscription for emails");
     }
     async function updateBoardAttendees() {
       const formattedBoardAttendees = formatBoardAttendees();
@@ -654,7 +656,8 @@ export default {
       }
     }
     function sendStatusChangeEmail(newStatus) {
-      const details = {
+      // TODO: uncomment when Sendgrid account and subscription are chosen
+      /*const details = {
         trackingNumber: changeRequest.value.tracking_number,
         status: newStatus,
         requestorName: changeRequest.value.requestor,
@@ -674,7 +677,8 @@ export default {
         })
         .catch((error) => {
           logText(error);
-        });
+        });*/
+      logText("Upgrade Sendgrid subscription for emails");
     }
     function printChangeRequest() {
       closeLeftDrawer().then((_) => {
