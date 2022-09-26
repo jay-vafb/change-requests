@@ -7,8 +7,24 @@
       row-key="id"
       :wrap-cells="true"
       :rows-per-page-options="[30]"
+      no-data-label="No active change requests"
       :sort-method="sortBy"
+      :filter="filter"
     >
+      <template v-slot:top-right>
+        <q-input
+          borderless
+          dense
+          debounce="300"
+          v-model="filter"
+          placeholder="Search"
+        >
+          <template v-slot:append>
+            <q-icon name="search" />
+          </template>
+        </q-input>
+      </template>
+
       <template v-slot:header="props">
         <q-tr :props="props">
           <q-th auto-width />
@@ -201,6 +217,7 @@ export default {
   setup() {
     const router = useRouter();
     const rows = ref([]);
+    const filter = ref("");
     const states = {
       "Pending board approval": 0,
       "Pending approval": 1,
@@ -266,6 +283,7 @@ export default {
     }
 
     return {
+      filter,
       columns,
       rows,
 
