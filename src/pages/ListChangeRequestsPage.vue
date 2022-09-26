@@ -8,6 +8,7 @@
       :wrap-cells="true"
       :rows-per-page-options="[30]"
       no-data-label="No active change requests"
+      no-results-label="No change requests match the specified criteria"
       :sort-method="sortBy"
       :filter="filter"
     >
