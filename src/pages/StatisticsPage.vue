@@ -166,7 +166,7 @@ export default {
             return a + b.approvalTime;
           }, 0) / data.length;
 
-        averageApprovalTime.value = average.toPrecision(5);
+        averageApprovalTime.value = parseInt(Math.floor(average));
       } catch (error) {
         logText(error.message);
       }
