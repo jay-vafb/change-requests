@@ -290,15 +290,17 @@ export default {
     }
 
     async function getRowNumberCount(filter) {
-      try {
-        const { data, error, count } = await supabase
-          .from("change_requests")
-          .select("*", { count: "exact" });
+      if (!filter) {
+        try {
+          const { data, error, count } = await supabase
+            .from("change_requests")
+            .select("*", { count: "exact", head: true });
 
-        if (error) throw error;
-        return count;
-      } catch (error) {
-        logText(error.message);
+          if (error) throw error;
+          return count;
+        } catch (error) {
+          logText(error.message);
+        }
       }
     }
 
