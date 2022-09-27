@@ -1,16 +1,20 @@
 <template>
   <q-page padding>
     <q-table
+      ref="changeRequestsTable"
       title="Change requests"
       :rows="rows"
       :columns="columns"
       row-key="id"
       :wrap-cells="true"
       :rows-per-page-options="[30]"
+      v-model:pagination="pagination"
+      :loading="isLoading"
       no-data-label="No active change requests"
       no-results-label="No change requests match the specified criteria"
-      :sort-method="sortBy"
+      :sort-method="sortRows"
       :filter="filter"
+      @request="onRequest"
     >
       <template v-slot:top-right>
         <q-input
@@ -117,6 +121,7 @@ import { supabase } from "../supabase";
 import { logText } from "../logger";
 import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
+import { Loading } from "quasar";
 
 const columns = [
   {
@@ -217,8 +222,16 @@ export default {
 
   setup() {
     const router = useRouter();
+    const changeRequestsTable = ref(null);
     const rows = ref([]);
     const filter = ref("");
+    const isLoading = ref(false);
+    const pagination = ref({
+      sortBy: "status",
+      descending: false,
+      page: 1,
+      rowsPerPage: 29,
+    });
     const states = {
       "Pending board approval": 0,
       "Pending approval": 1,
@@ -231,28 +244,87 @@ export default {
     };
 
     onMounted(() => {
-      getAllChangeRequests();
+      changeRequestsTable.value.requestServerInteraction();
     });
-
-    async function getAllChangeRequests() {
-      try {
-        const { data, error } = await supabase.from("change_requests").select();
-        if (error) throw error;
-
-        if (data) {
-          data.sort((a, b) => sortStatus(a, b));
-          rows.value = data;
-        }
-      } catch (error) {
-        logText(error.message);
-      }
-    }
 
     function openChangeRequest(id) {
       router.push({ path: "/viewChangeRequest/" + id });
     }
 
-    function sortBy(rows, sortBy, descending) {
+    async function onRequest(props) {
+      const { page, rowsPerPage, sortBy, descending } = props.pagination;
+      const filter = props.filter;
+
+      isLoading.value = true;
+
+      // update row count
+      pagination.value.rowsNumber = await getRowNumberCount(filter);
+
+      // get all rows if all is selected
+      const fetchCount =
+        rowsPerPage === 0 ? pagination.value.rowsNumber : rowsPerPage;
+
+      // calculate starting row of data
+      const startRow = (page - 1) * rowsPerPage;
+
+      // fetch data from server
+      const returnedData = await getChangeRequests(
+        startRow,
+        fetchCount,
+        filter,
+        sortBy,
+        descending
+      );
+
+      // clear out existing data and add new
+      rows.value.splice(0, rows.value.length, ...returnedData);
+
+      // update local pagination object
+      pagination.value.page = page;
+      pagination.value.rowsPerPage = rowsPerPage;
+      pagination.value.sortBy = sortBy;
+      pagination.value.descending = descending;
+
+      // stop loading indicator
+      isLoading.value = false;
+    }
+
+    async function getRowNumberCount(filter) {
+      try {
+        const { data, error, count } = await supabase
+          .from("change_requests")
+          .select("*", { count: "exact" });
+
+        if (error) throw error;
+        return count;
+      } catch (error) {
+        logText(error.message);
+      }
+    }
+
+    async function getChangeRequests(
+      startRow,
+      count,
+      filter,
+      sortBy,
+      descending
+    ) {
+      try {
+        const { data, error } = await supabase
+          .from("change_requests")
+          .select()
+          .range(startRow, startRow + count);
+
+        if (error) throw error;
+
+        const sortedData = sortRows(data, sortBy, descending);
+        return sortedData;
+      } catch (error) {
+        logText(error.message);
+      }
+    }
+
+    function sortRows(rows, sortBy, descending) {
       const data = [...rows];
 
       if (sortBy) {
@@ -284,12 +356,16 @@ export default {
     }
 
     return {
+      changeRequestsTable,
       filter,
       columns,
       rows,
+      isLoading,
+      pagination,
 
       openChangeRequest,
-      sortBy,
+      sortRows,
+      onRequest,
     };
   },
 };
