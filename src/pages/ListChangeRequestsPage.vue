@@ -230,7 +230,7 @@ export default {
       sortBy: "status",
       descending: false,
       page: 1,
-      rowsPerPage: 29,
+      rowsPerPage: 19,
     });
     const states = {
       "Pending board approval": 0,
