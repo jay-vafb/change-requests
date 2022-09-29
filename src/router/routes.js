@@ -4,6 +4,7 @@ import ChangeRequestFormPage from "../pages/ChangeRequestFormPage.vue";
 import ListChangeRequestsPage from "../pages/ListChangeRequestsPage.vue";
 import ViewChangeRequestPage from "../pages/ViewChangeRequestPage.vue";
 import StatisticsPage from "../pages/StatisticsPage.vue";
+import RoleAdministrationPage from "../pages/RoleAdministrationPage.vue";
 import AuthenticationLayout from "../layouts/AuthenticationLayout.vue";
 import SignInPage from "../pages/SignInPage.vue";
 import RegisterPage from "../pages/RegisterPage.vue";
@@ -39,6 +40,11 @@ const routes = [
         path: "/statistics",
         component: StatisticsPage,
         meta: { title: "Statistics" },
+      },
+      {
+        path: "/admin",
+        component: RoleAdministrationPage,
+        meta: { title: "Role administration" },
       },
     ],
   },
