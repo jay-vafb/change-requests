@@ -300,6 +300,19 @@ export default {
         } catch (error) {
           logText(error.message);
         }
+      } else {
+        try {
+          const { data, error, count } = await supabase
+            .rpc("filter_data", {
+              filter,
+            })
+            .select("*", { count: "exact", head: true });
+
+          if (error) throw error;
+          return count;
+        } catch (error) {
+          logText(error.message);
+        }
       }
     }
 
@@ -310,18 +323,36 @@ export default {
       sortBy,
       descending
     ) {
-      try {
-        const { data, error } = await supabase
-          .from("change_requests")
-          .select()
-          .range(startRow, startRow + count);
+      if (!filter) {
+        try {
+          const { data, error } = await supabase
+            .from("change_requests")
+            .select()
+            .range(startRow, startRow + count);
 
-        if (error) throw error;
+          if (error) throw error;
 
-        const sortedData = sortRows(data, sortBy, descending);
-        return sortedData;
-      } catch (error) {
-        logText(error.message);
+          const sortedData = sortRows(data, sortBy, descending);
+          return sortedData;
+        } catch (error) {
+          logText(error.message);
+        }
+      } else {
+        try {
+          const { data, error } = await supabase
+            .rpc("filter_data", {
+              filter,
+            })
+            .select()
+            .range(startRow, startRow + count);
+
+          if (error) throw error;
+
+          const sortedData = sortRows(data, sortBy, descending);
+          return sortedData;
+        } catch (error) {
+          logText(error.message);
+        }
       }
     }
 
