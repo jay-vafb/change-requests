@@ -1,64 +1,86 @@
 <template>
   <q-page padding>
-    <div class="row q-mb-sm">
-      <div class="col-12 col-md-3">
-        <q-input
-          filled
-          v-model="emailInput"
-          type="email"
-          label="Email"
-          lazy-rules
-          :rules="[(val) => (val && val.length > 0) || 'Please type something']"
-        />
+    <q-form @submit="onSubmit">
+      <div class="row q-mb-sm">
+        <div class="col-12 col-md-3">
+          <q-input
+            filled
+            v-model="emailInput"
+            type="email"
+            label="Email"
+            lazy-rules
+            :rules="[
+              (val) => (val && val.length > 0) || 'Please type something',
+            ]"
+          />
+        </div>
       </div>
-    </div>
 
-    <div class="row q-mb-sm">
-      <div class="col-12 col-md-3">
-        <q-select
-          class="q-mb-sm"
-          outlined
-          v-model="userRoleDropdown"
-          :options="userRoleOptions"
-          label="Role"
-          lazy-rules
-          :rules="[
-            (val) => {
-              (val && val.length > 0) || 'Please make a selection';
-              console.log('HI');
-            },
-          ]"
-        />
+      <div class="row q-mb-sm">
+        <div class="col-12 col-md-3">
+          <q-select
+            class="q-mb-sm"
+            outlined
+            v-model="userRoleDropdown"
+            :options="userRoleOptions"
+            label="Role"
+            lazy-rules
+            emit-value
+            map-options
+            :rules="[
+              (val) => (val && val.length > 0) || 'Please make a selection',
+            ]"
+          />
+        </div>
       </div>
-    </div>
 
-    <div class="row q-gutter-md">
-      <div class="col-3">
-        <q-btn
-          label="Set role"
-          color="primary"
-          style="width: 100%"
-          @click="setUserRole()"
-        />
+      <div class="row">
+        <div class="col-12 col-md-3">
+          <q-btn
+            type="submit"
+            label="Set role"
+            color="primary"
+            style="width: 100%"
+          />
+        </div>
       </div>
-    </div>
+    </q-form>
   </q-page>
 </template>
 
 <script>
-import { logText } from "src/logger";
+import { logText, showSuccessMessage } from "src/logger";
 import { ref } from "vue";
+import { useQuasar } from "quasar";
+import { supabase } from "src/supabase";
 
 export default {
   name: "UserAdministrationPage",
 
   setup() {
-    const emailInput = ref(null);
-    const userRoleDropdown = ref("");
+    const $q = useQuasar();
 
-    function setUserRole() {
+    const emailInput = ref(null);
+    const userRoleDropdown = ref(null);
+
+    function onSubmit() {
+      setUserRole();
+    }
+
+    async function setUserRole() {
       logText(emailInput.value);
       logText(userRoleDropdown.value);
+      try {
+        const { error } = await supabase.from("profiles").upsert({
+          username: emailInput.value,
+          user_role: userRoleDropdown.value,
+        });
+
+        if (error) throw error;
+        showSuccessMessage("User role set", $q);
+      } catch (error) {
+        logText(error.message);
+      }
     }
 
     return {
@@ -86,6 +108,7 @@ export default {
         },
       ],
 
+      onSubmit,
       setUserRole,
     };
   },
