@@ -73,7 +73,7 @@
 <script>
 import { ref } from "vue";
 import { useQuasar } from "quasar";
-import { showSuccessMessage, showErrorMessage, logText } from "../logger";
+import { showSuccessMessage, showErrorMessage, logText } from "src/logger";
 import {
   createUserWithEmailAndPassword,
   sendEmailVerification,

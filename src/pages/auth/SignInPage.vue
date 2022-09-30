@@ -71,7 +71,7 @@
 <script>
 import { ref } from "vue";
 import { useQuasar } from "quasar";
-import { showErrorMessage } from "../logger";
+import { showErrorMessage } from "src/logger";
 import { useRouter, useRoute } from "vue-router";
 import { signInWithEmailAndPassword } from "@firebase/auth";
 import { auth } from "src/firebaseConfig";

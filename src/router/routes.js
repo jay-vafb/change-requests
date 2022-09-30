@@ -6,9 +6,9 @@ import ViewChangeRequestPage from "../pages/ViewChangeRequestPage.vue";
 import StatisticsPage from "../pages/StatisticsPage.vue";
 import UserAdministrationPage from "../pages/UserAdministrationPage.vue";
 import AuthenticationLayout from "../layouts/AuthenticationLayout.vue";
-import SignInPage from "../pages/SignInPage.vue";
-import RegisterPage from "../pages/RegisterPage.vue";
-import ResetPasswordPage from "../pages/ResetPasswordPage.vue";
+import SignInPage from "../pages/auth/SignInPage.vue";
+import RegisterPage from "../pages/auth/RegisterPage.vue";
+import ResetPasswordPage from "../pages/auth/ResetPasswordPage.vue";
 import ErrorNotFound from "../pages/ErrorNotFound.vue";
 
 const routes = [
