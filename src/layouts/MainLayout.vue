@@ -50,6 +50,14 @@
       >
       </EssentialLink>
       <EssentialLink
+        v-if="userRole === 'admin'"
+        title="User Administration"
+        caption="Manage or add user roles to accounts"
+        link="/admin"
+        icon="manage_accounts"
+      >
+      </EssentialLink>
+      <EssentialLink
         title="Sign out"
         caption="Sign out of your account"
         icon="logout"
@@ -77,8 +85,8 @@ export default {
   setup() {
     const router = useRouter();
     const leftDrawerOpen = ref(false);
-    //const user = supabase.auth.user();
     const user = store.user;
+    const userRole = store.userRole;
 
     watch(
       () => store.isLeftDrawerOpen,
@@ -96,6 +104,7 @@ export default {
       signOut(auth)
         .then((_) => {
           store.user = {};
+          store.userRole = "";
           router.push("/auth");
         })
         .catch((_) => {
@@ -106,6 +115,7 @@ export default {
     return {
       leftDrawerOpen,
       user,
+      userRole,
       toggleLeftDrawer,
       firebaseSignOut,
     };

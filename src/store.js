@@ -6,4 +6,5 @@ export const store = reactive({
     this.isLeftDrawerOpen = state;
   },
   user: {},
+  userRole: "",
 });

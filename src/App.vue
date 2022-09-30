@@ -38,6 +38,7 @@ export default {
           .match({ username: user.email });
 
         if (error) throw error;
+        store.userRole = data[0] ? data[0].user_role : "other";
         return data[0] ? data[0].user_role : "other";
       } catch (error) {
         console.log(error.message);

@@ -360,21 +360,12 @@ export default {
         logText(error);
       });
     async function setUserRole() {
-      try {
-        const { data, error } = await supabase
-          .from("profiles")
-          .select("user_role")
-          .match({ username: user.email });
-        if (error) throw error;
-        if (data[0].user_role === "approving_manager") {
-          isApprovingManager.value = true;
-        } else if (data[0].user_role === "reviewer") {
-          isReviewer.value = true;
-        } else if (data[0].user_role === "board_approver") {
-          isBoardApprover.value = true;
-        }
-      } catch (error) {
-        logText(error.message);
+      if (store.userRole === "approving_manager") {
+        isApprovingManager.value = true;
+      } else if (store.userRole === "reviewer") {
+        isReviewer.value = true;
+      } else if (store.userRole === "board_approver") {
+        isBoardApprover.value = true;
       }
     }
     async function getChangeRequest(id) {
