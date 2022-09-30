@@ -8,7 +8,7 @@
 
 <script>
 export default {
-  name: "AuthenticationLayout",
+  name: "BasicLayout",
 
   setup() {
     return {};

@@ -5,10 +5,12 @@ import ListChangeRequestsPage from "../pages/ListChangeRequestsPage.vue";
 import ViewChangeRequestPage from "../pages/ViewChangeRequestPage.vue";
 import StatisticsPage from "../pages/StatisticsPage.vue";
 import UserAdministrationPage from "../pages/UserAdministrationPage.vue";
-import AuthenticationLayout from "../layouts/AuthenticationLayout.vue";
+import BasicLayout from "../layouts/BasicLayout.vue";
 import SignInPage from "../pages/auth/SignInPage.vue";
 import RegisterPage from "../pages/auth/RegisterPage.vue";
-import ResetPasswordPage from "../pages/auth/ResetPasswordPage.vue";
+import ForgotPasswordPage from "../pages/auth/ForgotPasswordPage.vue";
+import EmailVerificationPage from "../pages/acctmgmt/EmailVerificationPage.vue";
+import PasswordResetPage from "../pages/acctmgmt/PasswordResetPage.vue";
 import ErrorNotFound from "../pages/ErrorNotFound.vue";
 
 const routes = [
@@ -51,7 +53,7 @@ const routes = [
 
   {
     path: "/auth",
-    component: AuthenticationLayout,
+    component: BasicLayout,
     children: [
       {
         path: "",
@@ -63,7 +65,15 @@ const routes = [
       },
       {
         path: "/forgotPassword",
-        component: ResetPasswordPage,
+        component: ForgotPasswordPage,
+      },
+      {
+        path: "/verifyEmail",
+        component: EmailVerificationPage,
+      },
+      {
+        path: "/resetPassword",
+        component: PasswordResetPage,
       },
     ],
   },

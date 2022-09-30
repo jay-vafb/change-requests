@@ -50,7 +50,7 @@ import { auth } from "src/firebaseConfig";
 import { showSuccessMessage } from "src/logger";
 
 export default {
-  name: "ResetPasswordPage",
+  name: "ForgotPasswordPage",
 
   setup() {
     const $q = useQuasar();

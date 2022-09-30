@@ -62,14 +62,18 @@ export default {
         !user &&
         to.path !== "/auth" &&
         to.path !== "/register" &&
-        to.path !== "/forgotPassword"
+        to.path !== "/forgotPassword" &&
+        to.path !== "/verifyEmail" &&
+        to.path !== "/resetPassword"
       ) {
         return { path: "/auth" };
       } else if (
         user &&
         (to.path === "/auth" ||
           to.path === "/register" ||
-          to.path === "/forgotPassword")
+          to.path === "/forgotPassword" ||
+          to.path === "/verifyEmail" ||
+          to.path === "/resetPassword")
       ) {
         return { path: "/" };
       } else if (user && userRole !== "admin" && to.path === "/admin") {
