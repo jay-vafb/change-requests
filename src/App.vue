@@ -31,6 +31,7 @@ export default {
     }
 
     async function getUserRole(user) {
+      if (!user) return;
       try {
         const { data, error } = await supabase
           .from("profiles")
