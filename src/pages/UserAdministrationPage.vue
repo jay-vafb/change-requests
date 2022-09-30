@@ -2,7 +2,7 @@
   <q-page padding>
     <q-form @submit="onSubmit">
       <div class="row q-mb-sm">
-        <div class="col-12 col-md-3">
+        <div class="col-12 col-md-5">
           <q-input
             filled
             v-model="emailInput"
@@ -17,7 +17,7 @@
       </div>
 
       <div class="row q-mb-sm">
-        <div class="col-12 col-md-3">
+        <div class="col-12 col-md-5">
           <q-select
             class="q-mb-sm"
             outlined
@@ -35,7 +35,7 @@
       </div>
 
       <div class="row">
-        <div class="col-12 col-md-3">
+        <div class="col-12 col-md-5">
           <q-btn
             type="submit"
             label="Set role"
