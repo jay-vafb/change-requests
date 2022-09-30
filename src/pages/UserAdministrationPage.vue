@@ -68,8 +68,6 @@ export default {
     }
 
     async function setUserRole() {
-      logText(emailInput.value);
-      logText(userRoleDropdown.value);
       try {
         const { error } = await supabase.from("profiles").upsert({
           username: emailInput.value,
