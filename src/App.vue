@@ -5,6 +5,7 @@
 <script>
 import { useRouter } from "vue-router";
 import { onAuthStateChanged } from "@firebase/auth";
+import { supabase } from "./supabase";
 import { auth } from "./firebaseConfig";
 import { store } from "./store";
 
@@ -29,8 +30,23 @@ export default {
       });
     }
 
+    async function getUserRole(user) {
+      try {
+        const { data, error } = await supabase
+          .from("profiles")
+          .select("user_role")
+          .match({ username: user.email });
+
+        if (error) throw error;
+        return data[0] ? data[0].user_role : "other";
+      } catch (error) {
+        console.log(error.message);
+      }
+    }
+
     router.beforeEach(async (to, from) => {
       const user = await getCurrentUser();
+      const userRole = await getUserRole(user);
 
       // to.path must be checked to prevent infinite redirection
       if (
@@ -53,6 +69,8 @@ export default {
           to.path === "/register" ||
           to.path === "/forgotPassword")
       ) {
+        return { path: "/" };
+      } else if (user && userRole !== "admin" && to.path === "/admin") {
         return { path: "/" };
       }
     });
