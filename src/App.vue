@@ -50,8 +50,19 @@ export default {
       const user = await getCurrentUser();
       const userRole = await getUserRole(user);
 
-      // route to view change request page when email link is clicked
-      if (
+      // if user takes firebase action link to reset password
+      if (to.query.mode === "resetPassword" && to.path !== "/resetPassword") {
+        return { path: "/resetPassword" };
+
+        // if user takes firebase action link to verify email
+      } else if (
+        to.query.mode === "verifyEmail" &&
+        to.path !== "/verifyEmail"
+      ) {
+        return { path: "/verifyEmail" };
+
+        // route to view change request page when email link is clicked
+      } else if (
         !user &&
         to.path.includes("/viewChangeRequest") &&
         !from.path.includes("/viewChangeRequest")
