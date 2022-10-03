@@ -3,14 +3,16 @@
     <q-form @submit="onSubmit">
       <div class="row q-mb-sm">
         <div class="col-12 col-md-5">
-          <q-input
-            filled
-            v-model="emailInput"
-            type="email"
+          <q-select
+            outlined
+            v-model="userEmailDropdown"
+            :options="userEmailOptions"
             label="Email"
             lazy-rules
+            emit-value
+            map-options
             :rules="[
-              (val) => (val && val.length > 0) || 'Please type something',
+              (val) => (val && val.length > 0) || 'Please make a selection',
             ]"
           />
         </div>
@@ -60,8 +62,37 @@ export default {
   setup() {
     const $q = useQuasar();
 
-    const emailInput = ref(null);
     const userRoleDropdown = ref(null);
+    const userEmailDropdown = ref(null);
+    const userEmailOptions = ref([]);
+
+    getAllUsers().then((emailData) => {
+      userEmailOptions.value = emailData;
+    });
+
+    async function getAllUsers() {
+      try {
+        const { data, error } = await supabase
+          .from("profiles")
+          .select("username")
+          .not("user_role", "eq", "admin");
+
+        if (error) throw error;
+
+        const emailData = storeUsernamesInArray(data);
+        return emailData;
+      } catch (error) {
+        logText(error.message);
+      }
+    }
+
+    function storeUsernamesInArray(data) {
+      const emailArray = [];
+      data.forEach((email) => {
+        emailArray.push(email.username);
+      });
+      return emailArray;
+    }
 
     function onSubmit() {
       setUserRole();
@@ -69,8 +100,8 @@ export default {
 
     async function setUserRole() {
       try {
-        const { error } = await supabase.from("profiles").upsert({
-          username: emailInput.value,
+        const { error } = await supabase.from("profiles").update({
+          username: userEmailDropdown.value,
           user_role: userRoleDropdown.value,
         });
 
@@ -82,8 +113,9 @@ export default {
     }
 
     return {
-      emailInput,
       userRoleDropdown,
+      userEmailDropdown,
+      userEmailOptions,
 
       userRoleOptions: [
         {
