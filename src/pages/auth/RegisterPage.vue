@@ -79,6 +79,7 @@ import {
   sendEmailVerification,
 } from "@firebase/auth";
 import { auth } from "src/firebaseConfig";
+import { supabase } from "src/supabase";
 
 export default {
   name: "RegisterPage",
@@ -107,6 +108,7 @@ export default {
 
           sendEmailVerification(user)
             .then((_) => {
+              saveUser();
               showSuccessMessage(
                 "Please check your email to verify your account",
                 $q
@@ -123,6 +125,18 @@ export default {
           isLoading.value = false;
           auth.signOut();
         });
+    }
+
+    async function saveUser() {
+      try {
+        const { data, error } = await supabase
+          .from("profiles")
+          .insert({ username: emailInput.value });
+
+        if (error) throw error;
+      } catch (error) {
+        logText(error.message);
+      }
     }
 
     return {
