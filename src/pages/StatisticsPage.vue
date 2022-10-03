@@ -160,7 +160,6 @@ export default {
         data.forEach((changeRequest) => {
           changeRequest.approvalTime = calculateApprovalTime(changeRequest);
         });
-        logText(data);
 
         const average =
           data.reduce((a, b) => {
