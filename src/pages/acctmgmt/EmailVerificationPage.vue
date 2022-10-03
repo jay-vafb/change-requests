@@ -1,5 +1,5 @@
 <template>
-  <q-page padding> Email verification </q-page>
+  <q-page class="flex flex-center"> Email verified </q-page>
 </template>
 
 <script>

@@ -50,14 +50,15 @@ export default {
       const user = await getCurrentUser();
       const userRole = await getUserRole(user);
 
-      // to.path must be checked to prevent infinite redirection
+      // route to view change request page when email link is clicked
       if (
         !user &&
         to.path.includes("/viewChangeRequest") &&
         !from.path.includes("/viewChangeRequest")
       ) {
-        // email link clicked
         return { path: "/auth", query: { redirect: to.path } };
+
+        // if user is not logged in, restrict access to any non-authentication page
       } else if (
         !user &&
         to.path !== "/auth" &&
@@ -67,6 +68,8 @@ export default {
         to.path !== "/resetPassword"
       ) {
         return { path: "/auth" };
+
+        // if user is not logged in, prevent auth / account management access
       } else if (
         user &&
         (to.path === "/auth" ||
@@ -76,6 +79,8 @@ export default {
           to.path === "/resetPassword")
       ) {
         return { path: "/" };
+
+        // only let admin reach admin page
       } else if (user && userRole !== "admin" && to.path === "/admin") {
         return { path: "/" };
       }
