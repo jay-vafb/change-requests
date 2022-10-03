@@ -43,7 +43,7 @@
     <div class="row justify-center q-gutter-x-md">
       <div class="col-12 col-md-5 q-mb-sm">
         <StatisticsCard
-          title="Average Approval Time (minutes)"
+          title="Average Approval Time (hours)"
           :value="averageApprovalTime"
           icon="timer"
           color="purple-5"
@@ -158,24 +158,42 @@ export default {
         if (!data[0]) return;
 
         data.forEach((changeRequest) => {
-          calculateApprovalTime(changeRequest);
+          changeRequest.approvalTime = calculateApprovalTime(changeRequest);
         });
+        logText(data);
 
         const average =
           data.reduce((a, b) => {
             return a + b.approvalTime;
           }, 0) / data.length;
 
-        averageApprovalTime.value = parseInt(Math.floor(average));
+        averageApprovalTime.value = Math.round(average * 10) / 10;
       } catch (error) {
         logText(error.message);
       }
     }
 
     function calculateApprovalTime(changeRequest) {
-      changeRequest.approvalTime =
-        new Date(changeRequest.updated_at).getMinutes() -
-        new Date(changeRequest.inserted_at).getMinutes();
+      const updatedDate = new Date(changeRequest.updated_at);
+      const insertedDate = new Date(changeRequest.inserted_at);
+
+      const utcUpdatedDate = Date.UTC(
+        updatedDate.getFullYear(),
+        updatedDate.getMonth(),
+        updatedDate.getDate(),
+        updatedDate.getHours(),
+        updatedDate.getMinutes()
+      );
+
+      const utcInsertedDate = Date.UTC(
+        insertedDate.getFullYear(),
+        insertedDate.getMonth(),
+        insertedDate.getDate(),
+        insertedDate.getHours(),
+        insertedDate.getMinutes()
+      );
+
+      return (utcUpdatedDate - utcInsertedDate) / 36e5;
     }
 
     async function getTotalChangeRequests() {
