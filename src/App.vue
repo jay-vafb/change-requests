@@ -59,14 +59,14 @@ export default {
         to.query.mode === "resetPassword" &&
         to.path !== "/resetPassword"
       ) {
-        return { path: "/resetPassword" };
+        return { path: "/resetPassword", query: to.query };
 
         // if user takes firebase action link to verify email
       } else if (
         to.query.mode === "verifyEmail" &&
         to.path !== "/verifyEmail"
       ) {
-        return { path: "/verifyEmail" };
+        return { path: "/verifyEmail", query: to.query };
 
         // route to view change request page when email link is clicked
       } else if (
