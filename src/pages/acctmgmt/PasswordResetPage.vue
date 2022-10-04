@@ -100,6 +100,7 @@ export default {
     const isLoading = ref(false);
 
     function onSubmit() {
+      isLoading.value = true;
       verifyPasswordResetCode(auth, route.query.oobCode)
         .then((_) => {
           resetPassword();
@@ -115,7 +116,8 @@ export default {
     function resetPassword() {
       confirmPasswordReset(auth, route.query.oobCode, passwordInput.value)
         .then((_) => {
-          showSuccessMessage("Your password was reset");
+          showSuccessMessage("Your password was reset", $q);
+          isLoading.value = false;
         })
         .catch((error) => {
           logText(error.message);
