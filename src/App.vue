@@ -9,13 +9,11 @@ import { supabase } from "./supabase";
 import { auth } from "./firebaseConfig";
 import { store } from "./store";
 import { useQuasar } from "quasar";
-import { showErrorMessage } from "./logger";
 
 export default {
   name: "App",
 
   setup() {
-    const $q = useQuasar();
     const router = useRouter();
 
     // refactored from: https://stackoverflow.com/questions/72734392/use-firebase-auth-with-vue-3-route-guard

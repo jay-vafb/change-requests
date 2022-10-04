@@ -122,7 +122,6 @@ export default {
           if (user && redirect) {
             router.push(redirect);
           } else if (user) {
-            logText("in 1");
             router.push("/");
           }
         })
