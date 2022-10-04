@@ -77,6 +77,7 @@ import { showSuccessMessage, showErrorMessage, logText } from "src/logger";
 import {
   createUserWithEmailAndPassword,
   sendEmailVerification,
+  signOut,
 } from "@firebase/auth";
 import { auth } from "src/firebaseConfig";
 import { supabase } from "src/supabase";
@@ -123,7 +124,13 @@ export default {
         })
         .finally((_) => {
           isLoading.value = false;
-          auth.signOut();
+          signOut(auth)
+            .then((_) => {
+              logText("Success");
+            })
+            .catch((error) => {
+              logText(error.message);
+            });
         });
     }
 

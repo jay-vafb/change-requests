@@ -71,9 +71,9 @@
 <script>
 import { ref } from "vue";
 import { useQuasar } from "quasar";
-import { showErrorMessage } from "src/logger";
+import { logText, showErrorMessage } from "src/logger";
 import { useRouter, useRoute } from "vue-router";
-import { signInWithEmailAndPassword } from "@firebase/auth";
+import { signInWithEmailAndPassword, signOut } from "@firebase/auth";
 import { auth } from "src/firebaseConfig";
 import { store } from "src/store";
 
@@ -104,6 +104,14 @@ export default {
           store.user = user;
 
           if (!user.emailVerified) {
+            signOut(auth)
+              .then((_) => {
+                logText("Success");
+              })
+              .catch((error) => {
+                logText(error.message);
+              });
+
             showErrorMessage(
               "You must verify your account before logging in",
               $q
@@ -114,6 +122,7 @@ export default {
           if (user && redirect) {
             router.push(redirect);
           } else if (user) {
+            logText("in 1");
             router.push("/");
           }
         })

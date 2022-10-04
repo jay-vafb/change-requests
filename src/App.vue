@@ -96,7 +96,7 @@ export default {
           to.path === "/verifyEmail" ||
           to.path === "/resetPassword")
       ) {
-        return { path: "/" };
+        return { path: from.path };
 
         // only let admin reach admin page
       } else if (user && userRole !== "admin" && to.path === "/admin") {
