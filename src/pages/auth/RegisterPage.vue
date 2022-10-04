@@ -119,7 +119,7 @@ export default {
             });
         })
         .catch((error) => {
-          showErrorMessage(error.message, $q);
+          handleFirebaseErrors(error);
         })
         .finally((_) => {
           isLoading.value = false;
@@ -136,6 +136,17 @@ export default {
         if (error) throw error;
       } catch (error) {
         logText(error.message);
+      }
+    }
+
+    function handleFirebaseErrors(error) {
+      switch (error.code) {
+        case "auth/email-already-in-use":
+          showErrorMessage("This email is already in use by an account", $q);
+          break;
+        default:
+          showErrorMessage(`FAuth - ${error.message}`);
+          break;
       }
     }
 

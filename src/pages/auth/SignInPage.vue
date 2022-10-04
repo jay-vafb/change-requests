@@ -71,7 +71,7 @@
 <script>
 import { ref } from "vue";
 import { useQuasar } from "quasar";
-import { showErrorMessage } from "src/logger";
+import { logText, showErrorMessage } from "src/logger";
 import { useRouter, useRoute } from "vue-router";
 import { signInWithEmailAndPassword } from "@firebase/auth";
 import { auth } from "src/firebaseConfig";
@@ -118,11 +118,25 @@ export default {
           }
         })
         .catch((error) => {
-          showErrorMessage(error.message, $q);
+          handleFirebaseErrors(error);
         })
         .finally((_) => {
           isLoading.value = false;
         });
+    }
+
+    function handleFirebaseErrors(error) {
+      switch (error.code) {
+        case "auth/user-not-found":
+          showErrorMessage("This email is not associated with an account", $q);
+          break;
+        case "auth/wrong-password":
+          showErrorMessage("Incorrect password. Please try again", $q);
+          break;
+        default:
+          showErrorMessage(`FAuth - ${error.message}`, $q);
+          break;
+      }
     }
 
     return {
