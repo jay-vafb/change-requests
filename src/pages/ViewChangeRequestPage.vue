@@ -313,10 +313,12 @@ import Comment from "src/components/Comment.vue";
 
 export default {
   name: "ViewChangeRequestPage",
+
   setup() {
     const $q = useQuasar();
     const user = store.user;
     const route = useRoute();
+
     const needsChanges = ref(false);
     const isOriginalRequestor = ref(false);
     const isApprovingManager = ref(false);
@@ -345,12 +347,14 @@ export default {
     const boardAttendees = ref(null);
     const boardComments = ref(null);
     const boardDate = ref(null);
+
     const boardAttendeesOptions = [
       "Karen Clarke",
       "Neil Gill",
       "Kyle Shover",
       "Theresa Richardson",
     ];
+
     setUserRole()
       .then((_) => {
         getChangeRequest(route.params.id);
@@ -359,6 +363,7 @@ export default {
       .catch((error) => {
         logText(error);
       });
+
     async function setUserRole() {
       if (store.userRole === "approving_manager") {
         isApprovingManager.value = true;
@@ -368,12 +373,14 @@ export default {
         isBoardApprover.value = true;
       }
     }
+
     async function getChangeRequest(id) {
       try {
         const { data, error } = await supabase
           .from("change_requests")
           .select()
           .match({ id });
+
         if (data.length > 0) {
           changeRequest.value = data[0];
           await setChangeRequestActive(data[0].status);
@@ -381,11 +388,13 @@ export default {
           setNeedsChanges();
           setIsOriginalRequestor();
         }
+
         if (error) throw error;
       } catch (error) {
         logText(error.message);
       }
     }
+
     async function setChangeRequestActive(status) {
       if (
         isApprovedOrDenied(status) ||
@@ -398,6 +407,7 @@ export default {
         isChangeRequestActive.value = true;
       }
     }
+
     function isApprovedOrDenied(status) {
       return (
         status === "Board approved" ||
@@ -406,33 +416,39 @@ export default {
         status === "Denied"
       );
     }
+
     function isPendingManagerApproval(status) {
       return (
         status === "Pending approval" &&
         (isReviewer.value || isBoardApprover.value)
       );
     }
+
     function isPendingBoardApproval(status) {
       return (
         status === "Pending board approval" &&
         (isApprovingManager.value || isReviewer.value)
       );
     }
+
     function isUnderReview(status) {
       return (
         (status === "Under review" || status === "Needs changes") &&
         (isApprovingManager.value || isBoardApprover.value)
       );
     }
+
     async function getChangeRequestComments(id) {
       try {
         const { data, error } = await supabase
           .from("comments")
           .select()
           .match({ change_request_id: id });
+
         if (data.length > 0) {
           generalComments.value = data;
         }
+
         if (error) throw error;
       } catch (error) {
         logText(error.message);
@@ -467,29 +483,37 @@ export default {
       boardComments.value = changeRequest.value.board_recommendations;
       boardDate.value = changeRequest.value.board_date;
     }
+
     async function createGeneralComment() {
       if (!generalCommentsInput.value) return;
+
       try {
         const { error } = await supabase
           .from("comments")
           .insert(getCommentData(false), {
             returning: "minimal",
           });
+
         if (error) throw error;
+
         if (!commentsExist()) {
           generalComments.value = new Array(getCommentData(true));
         } else {
           generalComments.value.push(getCommentData(true));
         }
+
         generalCommentsInput.value = "";
+
         sendCommentEmail();
         showSuccessMessage("Comment created", $q);
       } catch (error) {
         logText(error.message);
       }
     }
+
     function getCommentData(dateFormatted) {
       const today = new Date();
+
       return {
         change_request_id: changeRequest.value.id,
         created_at: dateFormatted ? formatDate(today) : today,
@@ -497,9 +521,11 @@ export default {
         body: generalCommentsInput.value,
       };
     }
+
     function commentsExist() {
       return generalComments.value ? true : false;
     }
+
     function sendCommentEmail() {
       // TODO: uncomment when Sendgrid account and subscription are chosen
       /*const details = {
@@ -520,21 +546,27 @@ export default {
         });*/
       logText("Upgrade Sendgrid subscription for emails");
     }
+
     async function updateBoardAttendees() {
       const formattedBoardAttendees = formatBoardAttendees();
+
       try {
         const { error } = await supabase
           .from("change_requests")
           .update({ board_attendees: formattedBoardAttendees })
           .match({ id: changeRequest.value.id });
+
         boardAttendees.value = formattedBoardAttendees;
+
         if (error) throw error;
+
         boardAttendeesInput.value = null;
         showSuccessMessage("Board attendees updated", $q);
       } catch (error) {
         logText(error.message);
       }
     }
+
     function formatBoardAttendees() {
       return JSON.stringify(boardAttendeesInput.value)
         .replaceAll("[", "")
@@ -542,6 +574,7 @@ export default {
         .replaceAll('"', "")
         .replaceAll(",", "\n");
     }
+
     async function updateBoardComments() {
       try {
         const { error } = await supabase
@@ -550,8 +583,11 @@ export default {
             board_recommendations: boardCommentsInput.value,
           })
           .match({ id: changeRequest.value.id });
+
         boardComments.value = boardCommentsInput.value;
+
         if (error) throw error;
+
         boardCommentsInput.value = "";
         sendCommentEmail();
         showSuccessMessage("Board comments updated", $q);
@@ -577,8 +613,10 @@ export default {
           .match({ id: changeRequest.value.id });
 
         if (error) throw error;
+
         needsChanges.value = false;
         status.value = "Under review";
+
         sendStatusChangeEmail("Under review");
         showSuccessMessage("Change request updated", $q);
       } catch (error) {
@@ -588,6 +626,7 @@ export default {
 
     function approveChangeRequest() {
       needsChanges.value = false;
+
       if (
         isApprovingManager.value &&
         changeRequest.value.status === "Pending approval"
@@ -621,6 +660,7 @@ export default {
         showErrorMessage("You don't have the permissions to do this", $q);
       }
     }
+
     function denyChangeRequest() {
       if (
         isApprovingManager.value &&
@@ -646,6 +686,7 @@ export default {
         showErrorMessage("You don't have the permissions to do this", $q);
       }
     }
+
     function sendStatusChangeEmail(newStatus) {
       // TODO: uncomment when Sendgrid account and subscription are chosen
       /*const details = {
@@ -671,14 +712,17 @@ export default {
         });*/
       logText("Upgrade Sendgrid subscription for emails");
     }
+
     function printChangeRequest() {
       closeLeftDrawer().then((_) => {
         window.print();
       });
     }
+
     async function closeLeftDrawer() {
       store.isLeftDrawerOpen = false;
     }
+
     function requiresBoardApproval() {
       return (
         changeRequest.value.processing_speed !== "Normal" ||
@@ -686,32 +730,41 @@ export default {
         changeRequest.value.impact_severity !== "Low"
       );
     }
+
     async function updateChangeRequestApprovalDate() {
       const today = new Date();
+
       try {
         const { error } = await supabase
           .from("change_requests")
           .update({ approval_date: today })
           .match({ id: changeRequest.value.id });
+
         approvalDate.value = formatDate(today);
+
         if (error) throw error;
       } catch (error) {
         logText(error.message);
       }
     }
+
     async function updateChangeRequestBoardDate() {
       const today = new Date();
+
       try {
         const { error } = await supabase
           .from("change_requests")
           .update({ board_date: today })
           .match({ id: changeRequest.value.id });
+
         boardDate.value = formatDate(today);
+
         if (error) throw error;
       } catch (error) {
         logText(error.message);
       }
     }
+
     function formatDate(date) {
       return (
         date.getFullYear() +
@@ -721,20 +774,24 @@ export default {
         ("0" + date.getDate()).slice(-2)
       );
     }
+
     async function updateChangeRequestStatus(newStatus) {
       try {
         const { error } = await supabase
           .from("change_requests")
           .update({ status: newStatus, updated_at: new Date() })
           .match({ id: changeRequest.value.id });
+
         status.value = newStatus;
         changeRequest.value.status = newStatus;
+
         if (error) throw error;
         showSuccessMessage("Change request updated", $q);
       } catch (error) {
         logText(error.message);
       }
     }
+
     return {
       needsChanges,
       isOriginalRequestor,
