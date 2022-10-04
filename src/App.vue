@@ -4,15 +4,18 @@
 
 <script>
 import { useRouter } from "vue-router";
-import { onAuthStateChanged } from "@firebase/auth";
+import { onAuthStateChanged, verifyPasswordResetCode } from "@firebase/auth";
 import { supabase } from "./supabase";
 import { auth } from "./firebaseConfig";
 import { store } from "./store";
+import { useQuasar } from "quasar";
+import { showErrorMessage } from "./logger";
 
 export default {
   name: "App",
 
   setup() {
+    const $q = useQuasar();
     const router = useRouter();
 
     // refactored from: https://stackoverflow.com/questions/72734392/use-firebase-auth-with-vue-3-route-guard
@@ -52,7 +55,16 @@ export default {
 
       // if user takes firebase action link to reset password
       if (to.query.mode === "resetPassword" && to.path !== "/resetPassword") {
-        return { path: "/resetPassword" };
+        verifyPasswordResetCode(auth, to.query.oobCode)
+          .then((_) => {
+            return { path: "/resetPassword" };
+          })
+          .catch((error) => {
+            showErrorMessage(
+              "Invalid or expired password reset token. Please try again",
+              $q
+            );
+          });
 
         // if user takes firebase action link to verify email
       } else if (
