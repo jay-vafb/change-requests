@@ -54,17 +54,12 @@ export default {
       const userRole = await getUserRole(user);
 
       // if user takes firebase action link to reset password
-      if (to.query.mode === "resetPassword" && to.path !== "/resetPassword") {
-        verifyPasswordResetCode(auth, to.query.oobCode)
-          .then((_) => {
-            return { path: "/resetPassword" };
-          })
-          .catch((error) => {
-            showErrorMessage(
-              "Invalid or expired password reset token. Please try again",
-              $q
-            );
-          });
+      if (
+        !user &&
+        to.query.mode === "resetPassword" &&
+        to.path !== "/resetPassword"
+      ) {
+        return { path: "/resetPassword" };
 
         // if user takes firebase action link to verify email
       } else if (

@@ -78,16 +78,18 @@
 </template>
 
 <script>
-import { logText, showSuccessMessage } from "src/logger";
+import { logText, showErrorMessage, showSuccessMessage } from "src/logger";
 import { ref } from "vue";
 import { auth } from "src/firebaseConfig";
-import { confirmPasswordReset } from "@firebase/auth";
+import { confirmPasswordReset, verifyPasswordResetCode } from "@firebase/auth";
 import { useRoute } from "vue-router";
+import { useQuasar } from "quasar";
 
 export default {
   name: "PasswordResetPage",
 
   setup() {
+    const $q = useQuasar();
     const route = useRoute();
 
     const passwordInput = ref(null);
@@ -98,7 +100,16 @@ export default {
     const isLoading = ref(false);
 
     function onSubmit() {
-      resetPassword();
+      verifyPasswordResetCode(auth, route.query.oobCode)
+        .then((_) => {
+          resetPassword();
+        })
+        .catch((error) => {
+          showErrorMessage(
+            "Invalid or expired password reset token. Please try again",
+            $q
+          );
+        });
     }
 
     function resetPassword() {
