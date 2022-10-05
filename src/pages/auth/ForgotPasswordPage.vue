@@ -48,12 +48,14 @@ import { useQuasar } from "quasar";
 import { sendPasswordResetEmail } from "@firebase/auth";
 import { auth } from "src/firebaseConfig";
 import { showSuccessMessage } from "src/logger";
+import { useRouter } from "vue-router";
 
 export default {
   name: "ForgotPasswordPage",
 
   setup() {
     const $q = useQuasar();
+    const router = useRouter();
 
     const isLoading = ref(false);
     const emailInput = ref(null);
@@ -66,6 +68,9 @@ export default {
     function resetPassword() {
       sendPasswordResetEmail(auth, emailInput.value).then(() => {
         isLoading.value = false;
+        setTimeout((_) => {
+          router.push("/auth");
+        }, 1000);
         showSuccessMessage(
           "Please check your email to reset your password",
           $q

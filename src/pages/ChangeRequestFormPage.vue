@@ -188,11 +188,13 @@ import { supabase } from "../supabase";
 import { store } from "src/store";
 import { logText, showSuccessMessage } from "../logger";
 import axios from "axios";
+import { useRouter } from "vue-router";
 
 export default {
   name: "ChangeRequestFormPage",
   setup() {
     const $q = useQuasar();
+    const router = useRouter();
     const user = store.user;
 
     const subjectInput = ref(null);
@@ -270,6 +272,10 @@ export default {
         // TODO: uncomment when Sendgrid account and subscription are chosen
         // sendEmailToReviewer(data[0].id);
         if (error) throw error;
+        setTimeout((_) => {
+          router.push(`/viewChangeRequest/${data[0].id}`);
+        }, 1000);
+
         showSuccessMessage("Change request created", $q);
       } catch (error) {
         logText(error.message);

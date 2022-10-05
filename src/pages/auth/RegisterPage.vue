@@ -103,12 +103,14 @@ import {
 } from "@firebase/auth";
 import { auth } from "src/firebaseConfig";
 import { supabase } from "src/supabase";
+import { useRouter } from "vue-router";
 
 export default {
   name: "RegisterPage",
 
   setup() {
     const $q = useQuasar();
+    const router = useRouter();
 
     const firstName = ref(null);
     const lastName = ref(null);
@@ -134,6 +136,11 @@ export default {
           sendEmailVerification(user)
             .then((_) => {
               saveUser();
+
+              setTimeout((_) => {
+                router.push("/auth");
+              }, 1000);
+
               showSuccessMessage(
                 "Please check your email to verify your account",
                 $q
