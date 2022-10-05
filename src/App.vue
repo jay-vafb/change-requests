@@ -8,7 +8,6 @@ import { onAuthStateChanged, verifyPasswordResetCode } from "@firebase/auth";
 import { supabase } from "./supabase";
 import { auth } from "./firebaseConfig";
 import { store } from "./store";
-import { useQuasar } from "quasar";
 
 export default {
   name: "App",
