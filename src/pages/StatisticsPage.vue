@@ -1,7 +1,7 @@
 <template>
   <q-page class="q-pa-lg q-gutter-sm">
     <div class="row justify-center q-gutter-x-md">
-      <div class="col-12 col-md-5 q-mb-sm">
+      <div class="col-12 col-md-3 q-mb-sm" style="min-width: 21rem">
         <StatisticsCard
           title="Monthly Change Requests"
           :value="monthlyChangeRequests"
@@ -9,7 +9,7 @@
         />
       </div>
 
-      <div class="col-12 col-md-5">
+      <div class="col-12 col-md-3" style="min-width: 21rem">
         <StatisticsCard
           title="Yearly Change Requests"
           :value="yearlyChangeRequests"
@@ -19,7 +19,7 @@
     </div>
 
     <div class="row justify-center q-gutter-x-md">
-      <div class="col-12 col-md-5 q-mb-sm">
+      <div class="col-12 col-md-3 q-mb-sm" style="min-width: 21rem">
         <StatisticsCard
           title="Total Approved"
           :value="totalApprovedChangeRequests"
@@ -27,7 +27,7 @@
         />
       </div>
 
-      <div class="col-12 col-md-5">
+      <div class="col-12 col-md-3" style="min-width: 21rem">
         <StatisticsCard
           title="Total Denied"
           :value="totalDeniedChangeRequests"
@@ -37,7 +37,7 @@
     </div>
 
     <div class="row justify-center q-gutter-x-md">
-      <div class="col-12 col-md-5 q-mb-sm">
+      <div class="col-12 col-md-3 q-mb-sm" style="min-width: 21rem">
         <StatisticsCard
           title="Average Approval Time (hours)"
           :value="averageApprovalTime"
@@ -45,7 +45,7 @@
         />
       </div>
 
-      <div class="col-12 col-md-5">
+      <div class="col-12 col-md-3" style="min-width: 21rem">
         <StatisticsCard
           title="Total Change Requests"
           :value="totalChangeRequests"

@@ -1,5 +1,5 @@
 <template>
-  <q-card flat bordered style="min-width: 18rem">
+  <q-card flat bordered>
     <q-card-section horizontal>
       <q-card-section style="width: 100%">
         <div class="text-caption text-grey">{{ title.toUpperCase() }}</div>
