@@ -9,6 +9,28 @@
           </div>
           <q-input
             filled
+            v-model="firstName"
+            label="First name"
+            lazy-rules
+            :rules="[
+              (val) => (val && val.length > 0) || 'Please type something',
+            ]"
+          >
+          </q-input>
+
+          <q-input
+            filled
+            v-model="lastName"
+            label="Last name"
+            lazy-rules
+            :rules="[
+              (val) => (val && val.length > 0) || 'Please type something',
+            ]"
+          >
+          </q-input>
+
+          <q-input
+            filled
             v-model="emailInput"
             type="email"
             label="Email"
@@ -88,6 +110,8 @@ export default {
   setup() {
     const $q = useQuasar();
 
+    const firstName = ref(null);
+    const lastName = ref(null);
     const emailInput = ref(null);
     const passwordInput = ref(null);
     const isLoading = ref(false);
@@ -138,12 +162,23 @@ export default {
       try {
         const { data, error } = await supabase
           .from("profiles")
-          .insert({ username: emailInput.value });
+          .insert({ username: emailInput.value, full_name: getFullName() });
 
         if (error) throw error;
       } catch (error) {
         logText(error.message);
       }
+    }
+
+    function getFullName() {
+      const formattedFirstName =
+        firstName.value.toLowerCase().charAt(0).toUpperCase() +
+        firstName.value.toLowerCase().slice(1);
+      const formattedLastName =
+        lastName.value.toLowerCase().charAt(0).toUpperCase() +
+        lastName.value.toLowerCase().slice(1);
+
+      return `${formattedFirstName} ${formattedLastName}`;
     }
 
     function handleFirebaseErrors(error) {
@@ -158,6 +193,8 @@ export default {
     }
 
     return {
+      firstName,
+      lastName,
       emailInput,
       passwordInput,
       isLoading,

@@ -44,16 +44,16 @@
           />
         </div>
         <div class="col-12 col-md-3 offset-md-1">
-          <q-input
+          <q-select
             class="q-mb-sm"
             outlined
-            v-model="requestorName"
-            label="IS requestor"
-            hint="Requestor's name"
-            :readonly="isVafbEmail"
+            v-model="requestorNameDropdown"
+            :options="requestorOptions"
+            label="IS Requestor"
+            hint="Your name"
             lazy-rules
             :rules="[
-              (val) => (val && val.length > 0) || 'Please type something',
+              (val) => (val && val.length > 0) || 'Please make a selection',
             ]"
           />
         </div>
@@ -197,7 +197,7 @@ export default {
     const subjectInput = ref(null);
     const datePicker = ref(null);
     const trackingNumberInput = ref(null);
-    const requestorName = ref(null);
+    const requestorNameDropdown = ref(null);
     const changeDatePicker = ref(null);
     const processingSpeedDropdown = ref("Normal");
     const riskSeverityDropdown = ref("Low");
@@ -209,31 +209,34 @@ export default {
     const isLoading = ref(false);
     const isVafbEmail = ref(true);
 
-    setRequestorName();
+    const requestorOptions = ref([]);
 
-    function setRequestorName() {
-      const parsed_email = user.email.split("@");
+    getAllUsers().then((emailData) => {
+      requestorOptions.value = emailData;
+    });
 
-      if (parsed_email[1] !== "vafb.com") {
-        isVafbEmail.value = false;
-        return;
+    async function getAllUsers() {
+      try {
+        const { data, error } = await supabase
+          .from("profiles")
+          .select("full_name");
+
+        if (error) throw error;
+
+        const emailData = storeNamesInArray(data);
+        return emailData;
+      } catch (error) {
+        logText(error.message);
       }
-
-      // capitalizes name properly
-      const fullName = parsed_email[0];
-      requestorName.value = makeTitleCase(fullName);
     }
 
-    function makeTitleCase(fullName) {
-      return fullName
-        .split(".")
-        .join(" ")
-        .toLowerCase()
-        .split(" ")
-        .map((word) => {
-          return word.charAt(0).toUpperCase() + word.slice(1);
-        })
-        .join(" ");
+    function storeNamesInArray(data) {
+      logText(data);
+      const nameList = [];
+      data.forEach((nameInformation) => {
+        nameList.push(nameInformation.full_name);
+      });
+      return nameList;
     }
 
     function onSubmit() {
@@ -244,7 +247,7 @@ export default {
       subjectInput.value = null;
       datePicker.value = null;
       trackingNumberInput.value = null;
-      requestorName.value = null;
+      requestorNameDropdown.value = null;
       changeDatePicker.value = null;
       processingSpeedDropdown.value = "Normal";
       riskSeverityDropdown.value = "Low";
@@ -280,7 +283,7 @@ export default {
         subject: subjectInput.value,
         request_date: new Date(datePicker.value),
         tracking_number: trackingNumberInput.value,
-        requestor: makeTitleCase(requestorName.value),
+        requestor: requestorNameDropdown.value,
         requestor_email: user.email,
         change_date: new Date(changeDatePicker.value),
         processing_speed: processingSpeedDropdown.value,
@@ -298,7 +301,7 @@ export default {
       const details = {
         trackingNumber: trackingNumberInput.value,
         status: "Under review",
-        requestorName: requestorName.value,
+        requestorName: requestorNameDropdown.value,
         approvingManager: approvingManagerDropdown.value,
         changeDate: changeDatePicker.value,
         processingSpeed: processingSpeedDropdown.value,
@@ -327,7 +330,7 @@ export default {
       subjectInput,
       datePicker,
       trackingNumberInput,
-      requestorName,
+      requestorNameDropdown,
       changeDatePicker,
       processingSpeedDropdown,
       riskSeverityDropdown,
@@ -338,6 +341,7 @@ export default {
       approvingManagerDropdown,
       isLoading,
       isVafbEmail,
+      requestorOptions,
 
       processingOptions: [
         "Normal",
