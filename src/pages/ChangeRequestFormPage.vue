@@ -18,7 +18,8 @@
         <div class="col-12 col-md-4 offset-md-1">
           <q-input
             v-model="datePicker"
-            filled
+            readonly
+            outlined
             type="date"
             hint="Date"
             lazy-rules
@@ -181,7 +182,7 @@
 </template>
 
 <script>
-import { useQuasar } from "quasar";
+import { date, useQuasar } from "quasar";
 import { ref } from "vue";
 import { supabase } from "../supabase";
 import { store } from "src/store";
@@ -195,7 +196,7 @@ export default {
     const user = store.user;
 
     const subjectInput = ref(null);
-    const datePicker = ref(null);
+    const datePicker = ref(date.formatDate(new Date(), "YYYY-MM-DD"));
     const trackingNumberInput = ref(null);
     const requestorNameDropdown = ref(null);
     const changeDatePicker = ref(null);
@@ -231,7 +232,6 @@ export default {
     }
 
     function storeNamesInArray(data) {
-      logText(data);
       const nameList = [];
       data.forEach((nameInformation) => {
         nameList.push(nameInformation.full_name);
