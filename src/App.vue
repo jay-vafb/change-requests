@@ -4,7 +4,7 @@
 
 <script>
 import { useRouter } from "vue-router";
-import { onAuthStateChanged, verifyPasswordResetCode } from "@firebase/auth";
+import { onAuthStateChanged } from "@firebase/auth";
 import { supabase } from "./supabase";
 import { auth } from "./firebaseConfig";
 import { store } from "./store";

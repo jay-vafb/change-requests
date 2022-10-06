@@ -1,7 +1,13 @@
 <template>
-  <q-page class="flex flex-center">
-    <h1>Home</h1>
-  </q-page>
+  <transition
+    appear
+    enter-active-class="animated fadeIn"
+    leave-active-class="animtaed fadeOut"
+  >
+    <q-page class="flex flex-center">
+      <h1>Home</h1>
+    </q-page>
+  </transition>
 </template>
 
 <script>

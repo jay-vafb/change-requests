@@ -1,184 +1,190 @@
 <template>
-  <div class="q-pa-md" style="max-width: 1000px">
-    <q-form @submit="onSubmit" @reset="onReset" class="q-gutter-md">
-      <div class="row">
-        <div class="col-12 col-md-6">
-          <q-input
-            class="q-mb-sm"
-            outlined
-            v-model="subjectInput"
-            label="Subject"
-            hint="Subject"
-            lazy-rules
-            :rules="[
-              (val) => (val && val.length > 0) || 'Please type something',
-            ]"
-          />
+  <transition
+    appear
+    enter-active-class="animated fadeIn"
+    leave-active-class="animtaed fadeOut"
+  >
+    <div class="q-pa-md" style="max-width: 1000px">
+      <q-form @submit="onSubmit" @reset="onReset" class="q-gutter-md">
+        <div class="row">
+          <div class="col-12 col-md-6">
+            <q-input
+              class="q-mb-sm"
+              outlined
+              v-model="subjectInput"
+              label="Subject"
+              hint="Subject"
+              lazy-rules
+              :rules="[
+                (val) => (val && val.length > 0) || 'Please type something',
+              ]"
+            />
+          </div>
+          <div class="col-12 col-md-4 offset-md-1">
+            <q-input
+              v-model="datePicker"
+              readonly
+              outlined
+              type="date"
+              hint="Date"
+              lazy-rules
+              :rules="[
+                (val) => (val && val.length > 0) || 'Please make a selection',
+              ]"
+            />
+          </div>
         </div>
-        <div class="col-12 col-md-4 offset-md-1">
-          <q-input
-            v-model="datePicker"
-            readonly
-            outlined
-            type="date"
-            hint="Date"
-            lazy-rules
-            :rules="[
-              (val) => (val && val.length > 0) || 'Please make a selection',
-            ]"
-          />
-        </div>
-      </div>
 
-      <div class="row">
-        <div class="col-12 col-md-2">
-          <q-input
-            class="q-mb-sm"
-            outlined
-            v-model="trackingNumberInput"
-            label="Tracking number"
-            hint="Tracking number"
-            lazy-rules
-            :rules="[
-              (val) => (val && val.length > 0) || 'Please type something',
-            ]"
-          />
+        <div class="row">
+          <div class="col-12 col-md-2">
+            <q-input
+              class="q-mb-sm"
+              outlined
+              v-model="trackingNumberInput"
+              label="Tracking number"
+              hint="Tracking number"
+              lazy-rules
+              :rules="[
+                (val) => (val && val.length > 0) || 'Please type something',
+              ]"
+            />
+          </div>
+          <div class="col-12 col-md-3 offset-md-1">
+            <q-select
+              class="q-mb-sm"
+              outlined
+              v-model="requestorNameDropdown"
+              :options="requestorOptions"
+              label="IS Requestor"
+              hint="Your name"
+              lazy-rules
+              :rules="[
+                (val) => (val && val.length > 0) || 'Please make a selection',
+              ]"
+            />
+          </div>
+          <div class="col-12 col-md-4 offset-md-1">
+            <q-input
+              v-model="changeDatePicker"
+              filled
+              type="date"
+              hint="Proposed change date"
+              lazy-rules
+              :rules="[
+                (val) => (val && val.length > 0) || 'Please make a selection',
+              ]"
+            />
+          </div>
         </div>
-        <div class="col-12 col-md-3 offset-md-1">
-          <q-select
-            class="q-mb-sm"
-            outlined
-            v-model="requestorNameDropdown"
-            :options="requestorOptions"
-            label="IS Requestor"
-            hint="Your name"
-            lazy-rules
-            :rules="[
-              (val) => (val && val.length > 0) || 'Please make a selection',
-            ]"
-          />
-        </div>
-        <div class="col-12 col-md-4 offset-md-1">
-          <q-input
-            v-model="changeDatePicker"
-            filled
-            type="date"
-            hint="Proposed change date"
-            lazy-rules
-            :rules="[
-              (val) => (val && val.length > 0) || 'Please make a selection',
-            ]"
-          />
-        </div>
-      </div>
 
-      <div class="row">
-        <div class="col-12 col-md-3">
-          <q-select
-            class="q-mb-sm"
-            outlined
-            v-model="processingSpeedDropdown"
-            :options="processingOptions"
-            label="Processing"
-            hint="Desired form processing speed"
-            lazy-rules
-            :rules="[
-              (val) => (val && val.length > 0) || 'Please make a selection',
-            ]"
-          />
+        <div class="row">
+          <div class="col-12 col-md-3">
+            <q-select
+              class="q-mb-sm"
+              outlined
+              v-model="processingSpeedDropdown"
+              :options="processingOptions"
+              label="Processing"
+              hint="Desired form processing speed"
+              lazy-rules
+              :rules="[
+                (val) => (val && val.length > 0) || 'Please make a selection',
+              ]"
+            />
+          </div>
+          <div class="col-12 col-md-3 offset-md-1">
+            <q-select
+              class="q-mb-sm"
+              outlined
+              v-model="riskSeverityDropdown"
+              :options="riskAndImpactOptions"
+              label="Risk"
+              hint="Risk severity"
+              lazy-rules
+              :rules="[
+                (val) => (val && val.length > 0) || 'Please make a selection',
+              ]"
+            />
+          </div>
+          <div class="col-12 col-md-3 offset-md-1">
+            <q-select
+              outlined
+              v-model="impactSeverityDropdown"
+              :options="riskAndImpactOptions"
+              label="Impact"
+              hint="Impact severity"
+              lazy-rules
+              :rules="[
+                (val) => (val && val.length > 0) || 'Please make a selection',
+              ]"
+            />
+          </div>
         </div>
-        <div class="col-12 col-md-3 offset-md-1">
-          <q-select
-            class="q-mb-sm"
-            outlined
-            v-model="riskSeverityDropdown"
-            :options="riskAndImpactOptions"
-            label="Risk"
-            hint="Risk severity"
-            lazy-rules
-            :rules="[
-              (val) => (val && val.length > 0) || 'Please make a selection',
-            ]"
-          />
-        </div>
-        <div class="col-12 col-md-3 offset-md-1">
-          <q-select
-            outlined
-            v-model="impactSeverityDropdown"
-            :options="riskAndImpactOptions"
-            label="Impact"
-            hint="Impact severity"
-            lazy-rules
-            :rules="[
-              (val) => (val && val.length > 0) || 'Please make a selection',
-            ]"
-          />
-        </div>
-      </div>
 
-      <div class="row">
-        <div class="col-12 col-md-11">
-          <q-editor
-            v-model="changeDescriptionInput"
-            placeholder="Description of change"
-          />
+        <div class="row">
+          <div class="col-12 col-md-11">
+            <q-editor
+              v-model="changeDescriptionInput"
+              placeholder="Description of change"
+            />
+          </div>
         </div>
-      </div>
 
-      <div class="row">
-        <div class="col-12 col-md-11">
-          <q-editor
-            v-model="testingDetailsInput"
-            placeholder="Testing details"
-          />
+        <div class="row">
+          <div class="col-12 col-md-11">
+            <q-editor
+              v-model="testingDetailsInput"
+              placeholder="Testing details"
+            />
+          </div>
         </div>
-      </div>
 
-      <div class="row">
-        <div class="col-12 col-md-11">
-          <q-editor
-            v-model="recoveryPlanInput"
-            placeholder="Backout/Recovery plan"
-          />
+        <div class="row">
+          <div class="col-12 col-md-11">
+            <q-editor
+              v-model="recoveryPlanInput"
+              placeholder="Backout/Recovery plan"
+            />
+          </div>
         </div>
-      </div>
 
-      <div class="row">
-        <div class="col-12 col-md-4">
-          <q-select
-            outlined
-            v-model="approvingManagerDropdown"
-            :options="approvingManagerOptions"
-            label="Approving manager"
-            hint="The manager who should view this request"
-            lazy-rules
-            :rules="[
-              (val) => (val && val.length > 0) || 'Please make a selection',
-            ]"
-          />
+        <div class="row">
+          <div class="col-12 col-md-4">
+            <q-select
+              outlined
+              v-model="approvingManagerDropdown"
+              :options="approvingManagerOptions"
+              label="Approving manager"
+              hint="The manager who should view this request"
+              lazy-rules
+              :rules="[
+                (val) => (val && val.length > 0) || 'Please make a selection',
+              ]"
+            />
+          </div>
         </div>
-      </div>
 
-      <div style="width: 300px">
-        <q-btn
-          class="q-mr-md"
-          type="submit"
-          label="Submit"
-          color="primary"
-          style="width: 40%"
-        ></q-btn>
-        <q-btn
-          class="q-mr-md"
-          type="reset"
-          label="Reset"
-          color="secondary"
-          style="width: 40%"
-        ></q-btn>
+        <div style="width: 300px">
+          <q-btn
+            class="q-mr-md"
+            type="submit"
+            label="Submit"
+            color="primary"
+            style="width: 40%"
+          ></q-btn>
+          <q-btn
+            class="q-mr-md"
+            type="reset"
+            label="Reset"
+            color="secondary"
+            style="width: 40%"
+          ></q-btn>
 
-        <q-spinner-oval v-if="isLoading" color="secondary" size="2em" />
-      </div>
-    </q-form>
-  </div>
+          <q-spinner-oval v-if="isLoading" color="secondary" size="2em" />
+        </div>
+      </q-form>
+    </div>
+  </transition>
 </template>
 
 <script>
