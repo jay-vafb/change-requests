@@ -302,14 +302,14 @@ export default {
         }
       } else {
         try {
-          const { data, error, count } = await supabase
+          const { data, error } = await supabase
             .rpc("filter_data", {
               filter,
             })
-            .select("*", { count: "exact", head: true });
+            .select();
 
           if (error) throw error;
-          return count;
+          return data[0] ? data.length : 0;
         } catch (error) {
           logText(error.message);
         }
