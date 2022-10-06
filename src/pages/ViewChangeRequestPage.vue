@@ -1,304 +1,328 @@
 <template>
-  <q-page class="q-pa-md q-gutter-md" style="max-width: 1000px">
-    <div class="row">
-      <div class="col-12 col-md-6 q-mb-sm">
-        <q-input
-          outlined
-          label="Subject"
-          stack-label
-          :readonly="!(isOriginalRequestor && needsChanges)"
-          v-model="subject"
-        />
-      </div>
-      <div class="col-12 col-md-4 offset-md-1">
-        <q-input outlined label="Date" stack-label readonly v-model="date" />
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="col-12 col-md-2 q-mb-sm">
-        <q-input
-          outlined
-          label="Tracking number"
-          stack-label
-          :readonly="!(isOriginalRequestor && needsChanges)"
-          v-model="trackingNumber"
-        />
-      </div>
-      <div class="col-12 col-md-3 offset-md-1 q-mb-sm">
-        <q-input
-          outlined
-          label="IS Requestor"
-          stack-label
-          readonly
-          v-model="requestorName"
-        />
-      </div>
-      <div class="col-12 col-md-4 offset-md-1">
-        <q-input
-          outlined
-          label="Change date"
-          stack-label
-          readonly
-          v-model="changeDate"
-        />
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="col-12 col-md-3 q-mb-sm">
-        <q-select
-          class="q-ma-none q-pa-none"
-          outlined
-          v-model="processingSpeed"
-          :readonly="!(isOriginalRequestor && needsChanges)"
-          :options="processingOptions"
-          label="Processing speed"
-          lazy-rules
-          :rules="[
-            (val) => (val && val.length > 0) || 'Please make a selection',
-          ]"
-        />
-      </div>
-      <div class="col-12 col-md-3 offset-md-1 q-mb-sm">
-        <q-select
-          class="q-ma-none q-pa-none"
-          outlined
-          v-model="riskSeverity"
-          :readonly="!(isOriginalRequestor && needsChanges)"
-          :options="riskAndImpactOptions"
-          label="Risk severity"
-          lazy-rules
-          :rules="[
-            (val) => (val && val.length > 0) || 'Please make a selection',
-          ]"
-        />
-      </div>
-      <div class="col-12 col-md-3 offset-md-1">
-        <q-select
-          class="q-ma-none q-pa-none"
-          outlined
-          v-model="impactSeverity"
-          :readonly="!(isOriginalRequestor && needsChanges)"
-          :options="riskAndImpactOptions"
-          label="Impact severity"
-          lazy-rules
-          :rules="[
-            (val) => (val && val.length > 0) || 'Please make a selection',
-          ]"
-        />
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="col-12 col-md-3 q-mb-sm">
-        <q-select
-          class="q-ma-none q-pa-none"
-          outlined
-          v-model="approvingManager"
-          :readonly="!(isOriginalRequestor && needsChanges)"
-          :options="approvingManagerOptions"
-          label="Approving manager"
-          lazy-rules
-          :rules="[
-            (val) => (val && val.length > 0) || 'Please make a selection',
-          ]"
-        />
+  <transition
+    appear
+    enter-active-class="animated fadeIn"
+    leave-active-class="animtaed fadeOut"
+  >
+    <q-page class="q-pa-md q-gutter-md" style="max-width: 1000px">
+      <div class="row">
+        <div class="col-12 col-md-6 q-mb-sm">
+          <q-input
+            outlined
+            label="Subject"
+            stack-label
+            :readonly="!(isOriginalRequestor && needsChanges)"
+            v-model="subject"
+          />
+        </div>
+        <div class="col-12 col-md-4 offset-md-1">
+          <q-input outlined label="Date" stack-label readonly v-model="date" />
+        </div>
       </div>
 
-      <div class="col-12 col-md-4 offset-md-1 q-mb-sm">
-        <q-input
-          outlined
-          label="Status"
-          stack-label
-          readonly
-          v-model="status"
-        />
+      <div class="row">
+        <div class="col-12 col-md-2 q-mb-sm">
+          <q-input
+            outlined
+            label="Tracking number"
+            stack-label
+            :readonly="!(isOriginalRequestor && needsChanges)"
+            v-model="trackingNumber"
+          />
+        </div>
+        <div class="col-12 col-md-3 offset-md-1 q-mb-sm">
+          <q-input
+            outlined
+            label="IS Requestor"
+            stack-label
+            readonly
+            v-model="requestorName"
+          />
+        </div>
+        <div class="col-12 col-md-4 offset-md-1">
+          <q-input
+            outlined
+            label="Change date"
+            stack-label
+            readonly
+            v-model="changeDate"
+          />
+        </div>
       </div>
 
-      <div class="col-12 col-md-2 offset-md-1 q-mb-sm">
-        <q-input
-          outlined
-          label="Approval date"
-          stack-label
-          readonly
-          v-model="approvalDate"
-        />
+      <div class="row">
+        <div class="col-12 col-md-3 q-mb-sm">
+          <q-select
+            class="q-ma-none q-pa-none"
+            outlined
+            v-model="processingSpeed"
+            :readonly="!(isOriginalRequestor && needsChanges)"
+            :options="processingOptions"
+            label="Processing speed"
+            lazy-rules
+            :rules="[
+              (val) => (val && val.length > 0) || 'Please make a selection',
+            ]"
+          />
+        </div>
+        <div class="col-12 col-md-3 offset-md-1 q-mb-sm">
+          <q-select
+            class="q-ma-none q-pa-none"
+            outlined
+            v-model="riskSeverity"
+            :readonly="!(isOriginalRequestor && needsChanges)"
+            :options="riskAndImpactOptions"
+            label="Risk severity"
+            lazy-rules
+            :rules="[
+              (val) => (val && val.length > 0) || 'Please make a selection',
+            ]"
+          />
+        </div>
+        <div class="col-12 col-md-3 offset-md-1">
+          <q-select
+            class="q-ma-none q-pa-none"
+            outlined
+            v-model="impactSeverity"
+            :readonly="!(isOriginalRequestor && needsChanges)"
+            :options="riskAndImpactOptions"
+            label="Impact severity"
+            lazy-rules
+            :rules="[
+              (val) => (val && val.length > 0) || 'Please make a selection',
+            ]"
+          />
+        </div>
       </div>
-    </div>
 
-    <div class="print-break"></div>
-
-    <div class="row">
-      <div class="col-12 col-md-11">
-        <h6>Description</h6>
-        <div
-          class="text-body-1"
-          v-html="description"
-          style="width: 100%; overflow-wrap: break-word; white-space: pre-wrap"
-        ></div>
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="col-12 col-md-11">
-        <h6>Testing details</h6>
-        <div
-          class="text-body-1"
-          v-html="testingDetails"
-          style="width: 100%; overflow-wrap: break-word; white-space: pre-wrap"
-        ></div>
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="col-12 col-md-11">
-        <h6>Recovery plan</h6>
-        <div
-          class="text-body-1"
-          v-html="recoveryPlan"
-          style="width: 100%; overflow-wrap: break-word; white-space: pre-wrap"
-        ></div>
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="col-12 col-md-11">
-        <div class="row">
-          <h6>Board information</h6>
+      <div class="row">
+        <div class="col-12 col-md-3 q-mb-sm">
+          <q-select
+            class="q-ma-none q-pa-none"
+            outlined
+            v-model="approvingManager"
+            :readonly="!(isOriginalRequestor && needsChanges)"
+            :options="approvingManagerOptions"
+            label="Approving manager"
+            lazy-rules
+            :rules="[
+              (val) => (val && val.length > 0) || 'Please make a selection',
+            ]"
+          />
         </div>
 
-        <q-select
-          v-if="isBoardApprover"
-          class="print-hide q-mb-sm"
-          name="board"
-          v-model="boardAttendeesInput"
-          multiple
-          :options="boardAttendeesOptions"
-          color="primary"
-          filled
-          clearable
-          label="Board attendees"
-          stack-label
-        />
+        <div class="col-12 col-md-4 offset-md-1 q-mb-sm">
+          <q-input
+            outlined
+            label="Status"
+            stack-label
+            readonly
+            v-model="status"
+          />
+        </div>
 
-        <q-btn
-          v-if="isBoardApprover"
-          class="print-hide q-mb-md"
-          label="Update"
-          color="accent"
-          @click="updateBoardAttendees()"
-        />
-
-        <q-input
-          v-if="isBoardApprover"
-          filled
-          autogrow
-          type="textarea"
-          label="Board comments"
-          stack-label
-          v-model="boardCommentsInput"
-          class="print-hide q-mb-sm"
-        />
-
-        <q-btn
-          v-if="isBoardApprover"
-          class="print-hide q-mb-sm"
-          label="Update"
-          color="accent"
-          @click="updateBoardComments()"
-        />
-
-        <div
-          class="text-body-1 q-mb-md"
-          v-text="'Board date: ' + (boardDate ? boardDate : '')"
-        ></div>
-        <div
-          class="text-body-1 q-mb-md"
-          style="overflow-wrap: break-word; white-space: pre-wrap"
-          v-text="'Board attendees:\n' + (boardAttendees ? boardAttendees : '')"
-        ></div>
-        <div
-          class="text-body-1"
-          v-text="'Board comments:\n' + (boardComments ? boardComments : '')"
-          style="width: 100%; overflow-wrap: break-word; white-space: pre-wrap"
-        ></div>
+        <div class="col-12 col-md-2 offset-md-1 q-mb-sm">
+          <q-input
+            outlined
+            label="Approval date"
+            stack-label
+            readonly
+            v-model="approvalDate"
+          />
+        </div>
       </div>
-    </div>
 
-    <div class="row">
-      <div class="col-12 col-md-11">
-        <h6>General comments</h6>
-        <q-input
-          filled
-          autogrow
-          type="textarea"
-          label="Comment"
-          stack-label
-          v-model="generalCommentsInput"
-          class="print-hide"
-        >
-          <template v-slot:append>
-            <q-btn
-              label="Create"
-              color="accent"
-              @click="createGeneralComment()"
-            />
-          </template>
-        </q-input>
-      </div>
-    </div>
+      <div class="print-break"></div>
 
-    <Comment
-      v-for="item in generalComments.value"
-      :key="item.id"
-      :author="item.commenter"
-      :createdAt="item.created_at"
-      :body="item.body"
-    />
-
-    <div class="print-hide">
       <div class="row">
-        <div class="col-12 col-md-4 q-mb-sm q-pr-sm">
+        <div class="col-12 col-md-11">
+          <h6>Description</h6>
+          <div
+            class="text-body-1"
+            v-html="description"
+            style="
+              width: 100%;
+              overflow-wrap: break-word;
+              white-space: pre-wrap;
+            "
+          ></div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-12 col-md-11">
+          <h6>Testing details</h6>
+          <div
+            class="text-body-1"
+            v-html="testingDetails"
+            style="
+              width: 100%;
+              overflow-wrap: break-word;
+              white-space: pre-wrap;
+            "
+          ></div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-12 col-md-11">
+          <h6>Recovery plan</h6>
+          <div
+            class="text-body-1"
+            v-html="recoveryPlan"
+            style="
+              width: 100%;
+              overflow-wrap: break-word;
+              white-space: pre-wrap;
+            "
+          ></div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-12 col-md-11">
+          <div class="row">
+            <h6>Board information</h6>
+          </div>
+
+          <q-select
+            v-if="isBoardApprover"
+            class="print-hide q-mb-sm"
+            name="board"
+            v-model="boardAttendeesInput"
+            multiple
+            :options="boardAttendeesOptions"
+            color="primary"
+            filled
+            clearable
+            label="Board attendees"
+            stack-label
+          />
+
           <q-btn
-            v-if="needsChanges && isOriginalRequestor"
+            v-if="isBoardApprover"
+            class="print-hide q-mb-md"
             label="Update"
-            color="primary"
-            style="width: 100%"
-            @click="updateChangeRequest()"
-          />
-        </div>
-      </div>
-      <div v-if="isChangeRequestActive" class="row">
-        <div class="col-12 col-md-2 q-mb-sm q-pr-sm">
-          <q-btn
-            label="Approve"
             color="accent"
-            style="width: 100%"
-            @click="approveChangeRequest()"
+            @click="updateBoardAttendees()"
           />
-        </div>
-        <div class="col-12 col-md-2 q-mb-sm q-pr-sm">
+
+          <q-input
+            v-if="isBoardApprover"
+            filled
+            autogrow
+            type="textarea"
+            label="Board comments"
+            stack-label
+            v-model="boardCommentsInput"
+            class="print-hide q-mb-sm"
+          />
+
           <q-btn
-            label="Deny"
-            color="secondary"
-            style="width: 100%"
-            @click="denyChangeRequest()"
+            v-if="isBoardApprover"
+            class="print-hide q-mb-sm"
+            label="Update"
+            color="accent"
+            @click="updateBoardComments()"
           />
+
+          <div
+            class="text-body-1 q-mb-md"
+            v-text="'Board date: ' + (boardDate ? boardDate : '')"
+          ></div>
+          <div
+            class="text-body-1 q-mb-md"
+            style="overflow-wrap: break-word; white-space: pre-wrap"
+            v-text="
+              'Board attendees:\n' + (boardAttendees ? boardAttendees : '')
+            "
+          ></div>
+          <div
+            class="text-body-1"
+            v-text="'Board comments:\n' + (boardComments ? boardComments : '')"
+            style="
+              width: 100%;
+              overflow-wrap: break-word;
+              white-space: pre-wrap;
+            "
+          ></div>
         </div>
       </div>
+
       <div class="row">
-        <div class="col-12 col-md-4 q-pr-sm">
-          <q-btn
-            label="Print"
-            color="primary"
-            style="width: 100%"
-            @click="printChangeRequest()"
-          />
+        <div class="col-12 col-md-11">
+          <h6>General comments</h6>
+          <q-input
+            filled
+            autogrow
+            type="textarea"
+            label="Comment"
+            stack-label
+            v-model="generalCommentsInput"
+            class="print-hide"
+          >
+            <template v-slot:append>
+              <q-btn
+                label="Create"
+                color="accent"
+                @click="createGeneralComment()"
+              />
+            </template>
+          </q-input>
         </div>
       </div>
-    </div>
-  </q-page>
+
+      <Comment
+        v-for="item in generalComments.value"
+        :key="item.id"
+        :author="item.commenter"
+        :createdAt="item.created_at"
+        :body="item.body"
+      />
+
+      <div class="print-hide">
+        <div class="row">
+          <div class="col-12 col-md-4 q-mb-sm q-pr-sm">
+            <q-btn
+              v-if="needsChanges && isOriginalRequestor"
+              label="Update"
+              color="primary"
+              style="width: 100%"
+              @click="updateChangeRequest()"
+            />
+          </div>
+        </div>
+        <div v-if="isChangeRequestActive" class="row">
+          <div class="col-12 col-md-2 q-mb-sm q-pr-sm">
+            <q-btn
+              label="Approve"
+              color="accent"
+              style="width: 100%"
+              @click="approveChangeRequest()"
+            />
+          </div>
+          <div class="col-12 col-md-2 q-mb-sm q-pr-sm">
+            <q-btn
+              label="Deny"
+              color="secondary"
+              style="width: 100%"
+              @click="denyChangeRequest()"
+            />
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-12 col-md-4 q-pr-sm">
+            <q-btn
+              label="Print"
+              color="primary"
+              style="width: 100%"
+              @click="printChangeRequest()"
+            />
+          </div>
+        </div>
+      </div>
+    </q-page>
+  </transition>
 </template>
 
 <script>
