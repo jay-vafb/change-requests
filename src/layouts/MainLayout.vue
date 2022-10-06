@@ -58,6 +58,7 @@
       >
       </EssentialLink>
       <EssentialLink
+        class="never-active"
         title="Sign out"
         caption="Sign out of your account"
         icon="logout"

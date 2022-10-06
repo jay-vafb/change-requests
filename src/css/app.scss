@@ -25,3 +25,13 @@
     display: none;
   }
 }
+
+.q-drawer {
+  .q-router-link--exact-active {
+    background-color: $grey-3;
+  }
+}
+
+.never-active {
+  background-color: white !important;
+}
