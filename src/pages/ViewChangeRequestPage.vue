@@ -132,8 +132,6 @@
         </div>
       </div>
 
-      <div class="print-break"></div>
-
       <div class="row">
         <div class="col-12 col-md-11">
           <h6>Description</h6>
