@@ -169,7 +169,11 @@ export default {
       try {
         const { data, error } = await supabase
           .from("profiles")
-          .insert({ username: emailInput.value, full_name: getFullName() });
+          .insert({
+            username: emailInput.value,
+            full_name: getFullName(),
+            user_role: "default",
+          });
 
         if (error) throw error;
       } catch (error) {

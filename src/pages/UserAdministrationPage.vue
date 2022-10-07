@@ -75,7 +75,7 @@ export default {
         const { data, error } = await supabase
           .from("profiles")
           .select("username")
-          .not("user_role", "eq", "admin");
+          .neq("user_role", "admin");
 
         if (error) throw error;
 
