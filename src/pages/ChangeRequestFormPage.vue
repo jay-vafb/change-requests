@@ -219,16 +219,35 @@ export default {
     const isVafbEmail = ref(true);
 
     const requestorOptions = ref([]);
+    const approvingManagerOptions = ref([]);
 
     getAllUsers().then((emailData) => {
       requestorOptions.value = emailData;
     });
 
+    getApprovingManagers().then((emailData) => {
+      approvingManagerOptions.value = emailData;
+    });
+
     async function getAllUsers() {
+      try {
+        const { data, error } = await supabase.from("profiles").select();
+
+        if (error) throw error;
+
+        const emailData = storeNamesInArray(data);
+        return emailData;
+      } catch (error) {
+        logText(error.message);
+      }
+    }
+
+    async function getApprovingManagers() {
       try {
         const { data, error } = await supabase
           .from("profiles")
-          .select("full_name");
+          .select()
+          .match({ user_role: "approving_manager" });
 
         if (error) throw error;
 
@@ -260,9 +279,9 @@ export default {
       processingSpeedDropdown.value = "Normal";
       riskSeverityDropdown.value = "Low";
       impactSeverityDropdown.value = "Low";
-      changeDescriptionInput.value = null;
-      testingDetailsInput.value = null;
-      recoveryPlanInput.value = null;
+      changeDescriptionInput.value = "";
+      testingDetailsInput.value = "";
+      recoveryPlanInput.value = "";
       approvingManagerDropdown.value = null;
     }
 
@@ -354,6 +373,7 @@ export default {
       isLoading,
       isVafbEmail,
       requestorOptions,
+      approvingManagerOptions,
 
       processingOptions: [
         "Normal",
@@ -362,12 +382,12 @@ export default {
         "Pre-Approved by CCB",
       ],
       riskAndImpactOptions: ["High", "Medium", "Low"],
-      approvingManagerOptions: [
+      /*approvingManagerOptions: [
         "Neil Gill",
         "Karen Clarke",
         "Theresa Richardson",
         "Teresa Custalow",
-      ],
+      ],*/
 
       onSubmit,
       onReset,
