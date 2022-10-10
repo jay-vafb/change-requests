@@ -33,7 +33,7 @@ export default {
       const user = supabase.auth.user();
       const userRole = await getUserRole(user);
 
-      // if user takes firebase action link to reset password
+      // if user takes supabase action link to reset password
       if (
         !user &&
         to.query.mode === "resetPassword" &&
@@ -41,11 +41,8 @@ export default {
       ) {
         return { path: "/resetPassword", query: to.query };
 
-        // if user takes firebase action link to verify email
-      } else if (
-        to.query.mode === "verifyEmail" &&
-        to.path !== "/verifyEmail"
-      ) {
+        // if user takes supabase action link to verify email
+      } else if (to.query.type === "signup" && to.path !== "/verifyEmail") {
         return { path: "/verifyEmail", query: to.query };
 
         // route to view change request page when email link is clicked
