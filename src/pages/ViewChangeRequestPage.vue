@@ -367,15 +367,55 @@ export default {
     const boardAttendeesInput = ref(null);
     const boardCommentsInput = ref(null);
     const boardAttendees = ref(null);
+    const boardAttendeesOptions = ref([]);
     const boardComments = ref(null);
     const boardDate = ref(null);
+    const approvingManagerOptions = ref([]);
 
-    const boardAttendeesOptions = [
-      "Karen Clarke",
-      "Neil Gill",
-      "Kyle Shover",
-      "Theresa Richardson",
-    ];
+    getApprovingManagers().then((nameData) => {
+      approvingManagerOptions.value = nameData;
+    });
+
+    getBoardAttendees().then((nameData) => {
+      boardAttendeesOptions.value = nameData;
+    });
+
+    async function getApprovingManagers() {
+      try {
+        const { data, error } = await supabase
+          .from("profiles")
+          .select()
+          .match({ user_role: "approving_manager" });
+
+        if (error) throw error;
+
+        const nameData = storeNamesInArray(data);
+        return nameData;
+      } catch (error) {
+        logText(error.message);
+      }
+    }
+
+    async function getBoardAttendees() {
+      try {
+        const { data, error } = await supabase.from("profiles").select();
+
+        if (error) throw error;
+
+        const nameData = storeNamesInArray(data);
+        return nameData;
+      } catch (error) {
+        logText(error.message);
+      }
+    }
+
+    function storeNamesInArray(data) {
+      const nameList = [];
+      data.forEach((nameInformation) => {
+        nameList.push(nameInformation.full_name);
+      });
+      return nameList;
+    }
 
     setUserRole()
       .then((_) => {
@@ -843,6 +883,7 @@ export default {
       boardAttendeesInput,
       boardAttendeesOptions,
       boardAttendees,
+      approvingManagerOptions,
 
       processingOptions: [
         "Normal",
@@ -851,7 +892,6 @@ export default {
         "Pre-Approved by CCB",
       ],
       riskAndImpactOptions: ["High", "Medium", "Low"],
-      approvingManagerOptions: ["Karen Clarke", "Neil Gill"],
 
       createGeneralComment,
       updateBoardAttendees,

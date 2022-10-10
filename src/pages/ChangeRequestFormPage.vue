@@ -50,11 +50,10 @@
             />
           </div>
           <div class="col-12 col-md-3 offset-md-1">
-            <q-select
-              class="q-mb-sm"
+            <q-input
               outlined
-              v-model="requestorNameDropdown"
-              :options="requestorOptions"
+              readonly
+              v-model="requestorName"
               label="IS Requestor"
               hint="Your name"
               lazy-rules
@@ -206,7 +205,7 @@ export default {
     const subjectInput = ref(null);
     const datePicker = ref(date.formatDate(new Date(), "YYYY-MM-DD"));
     const trackingNumberInput = ref(null);
-    const requestorNameDropdown = ref(null);
+    const requestorName = ref(null);
     const changeDatePicker = ref(null);
     const processingSpeedDropdown = ref("Normal");
     const riskSeverityDropdown = ref("Low");
@@ -221,22 +220,24 @@ export default {
     const requestorOptions = ref([]);
     const approvingManagerOptions = ref([]);
 
-    getAllUsers().then((emailData) => {
-      requestorOptions.value = emailData;
+    getUserName().then((nameData) => {
+      requestorName.value = nameData;
     });
 
-    getApprovingManagers().then((emailData) => {
-      approvingManagerOptions.value = emailData;
+    getApprovingManagers().then((nameData) => {
+      approvingManagerOptions.value = nameData;
     });
 
-    async function getAllUsers() {
+    async function getUserName() {
       try {
-        const { data, error } = await supabase.from("profiles").select();
+        const { data, error } = await supabase
+          .from("profiles")
+          .select("full_name")
+          .match({ username: user.email });
 
         if (error) throw error;
 
-        const emailData = storeNamesInArray(data);
-        return emailData;
+        return data[0] ? data[0].full_name : "Invalid session";
       } catch (error) {
         logText(error.message);
       }
@@ -251,8 +252,8 @@ export default {
 
         if (error) throw error;
 
-        const emailData = storeNamesInArray(data);
-        return emailData;
+        const nameData = storeNamesInArray(data);
+        return nameData;
       } catch (error) {
         logText(error.message);
       }
@@ -274,7 +275,7 @@ export default {
       subjectInput.value = null;
       datePicker.value = null;
       trackingNumberInput.value = null;
-      requestorNameDropdown.value = null;
+      requestorName.value = null;
       changeDatePicker.value = null;
       processingSpeedDropdown.value = "Normal";
       riskSeverityDropdown.value = "Low";
@@ -314,7 +315,7 @@ export default {
         subject: subjectInput.value,
         request_date: new Date(datePicker.value),
         tracking_number: trackingNumberInput.value,
-        requestor: requestorNameDropdown.value,
+        requestor: requestorName.value,
         requestor_email: user.email,
         change_date: new Date(changeDatePicker.value),
         processing_speed: processingSpeedDropdown.value,
@@ -332,7 +333,7 @@ export default {
       const details = {
         trackingNumber: trackingNumberInput.value,
         status: "Under review",
-        requestorName: requestorNameDropdown.value,
+        requestorName: requestorName.value,
         approvingManager: approvingManagerDropdown.value,
         changeDate: changeDatePicker.value,
         processingSpeed: processingSpeedDropdown.value,
@@ -361,7 +362,7 @@ export default {
       subjectInput,
       datePicker,
       trackingNumberInput,
-      requestorNameDropdown,
+      requestorName,
       changeDatePicker,
       processingSpeedDropdown,
       riskSeverityDropdown,
@@ -382,12 +383,6 @@ export default {
         "Pre-Approved by CCB",
       ],
       riskAndImpactOptions: ["High", "Medium", "Low"],
-      /*approvingManagerOptions: [
-        "Neil Gill",
-        "Karen Clarke",
-        "Theresa Richardson",
-        "Teresa Custalow",
-      ],*/
 
       onSubmit,
       onReset,
