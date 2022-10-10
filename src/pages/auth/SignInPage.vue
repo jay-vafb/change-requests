@@ -101,7 +101,6 @@ export default {
       signInWithEmailAndPassword(auth, emailInput.value, passwordInput.value)
         .then((userCredential) => {
           const user = userCredential.user;
-          store.user = user;
 
           if (!user.emailVerified) {
             signOut(auth)
