@@ -96,12 +96,6 @@
 import { ref } from "vue";
 import { useQuasar } from "quasar";
 import { showSuccessMessage, showErrorMessage, logText } from "src/logger";
-import {
-  createUserWithEmailAndPassword,
-  sendEmailVerification,
-  signOut,
-} from "@firebase/auth";
-import { auth } from "src/firebaseConfig";
 import { supabase } from "src/supabase";
 import { useRouter } from "vue-router";
 
@@ -147,44 +141,6 @@ export default {
       } finally {
         isLoading.value = false;
       }
-      /*createUserWithEmailAndPassword(
-        auth,
-        emailInput.value,
-        passwordInput.value
-      )
-        .then((userCredential) => {
-          const user = userCredential.user;
-
-          sendEmailVerification(user)
-            .then((_) => {
-              saveUser();
-
-              setTimeout((_) => {
-                router.push("/auth");
-              }, 1000);
-
-              showSuccessMessage(
-                "Please check your email to verify your account",
-                $q
-              );
-            })
-            .catch((error) => {
-              logText(`FAuth - error: ${error.message}`);
-            });
-        })
-        .catch((error) => {
-          handleFirebaseErrors(error);
-        })
-        .finally((_) => {
-          isLoading.value = false;
-          signOut(auth)
-            .then((_) => {
-              logText("Success");
-            })
-            .catch((error) => {
-              logText(error.message);
-            });
-        });*/
     }
 
     async function saveUser() {
@@ -210,17 +166,6 @@ export default {
         lastName.value.toLowerCase().slice(1);
 
       return `${formattedFirstName} ${formattedLastName}`;
-    }
-
-    function handleFirebaseErrors(error) {
-      switch (error.code) {
-        case "auth/email-already-in-use":
-          showErrorMessage("This email is already in use by an account", $q);
-          break;
-        default:
-          showErrorMessage(`FAuth - ${error.message}`);
-          break;
-      }
     }
 
     return {

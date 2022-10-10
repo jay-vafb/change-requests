@@ -4,9 +4,7 @@
 
 <script>
 import { useRouter } from "vue-router";
-import { onAuthStateChanged } from "@firebase/auth";
 import { supabase } from "./supabase";
-import { auth } from "./firebaseConfig";
 import { store } from "./store";
 
 export default {
@@ -14,21 +12,6 @@ export default {
 
   setup() {
     const router = useRouter();
-
-    // refactored from: https://stackoverflow.com/questions/72734392/use-firebase-auth-with-vue-3-route-guard
-    async function getCurrentUser() {
-      return new Promise((resolve, reject) => {
-        const unsubscribe = onAuthStateChanged(
-          auth,
-          (user) => {
-            store.user = user;
-            unsubscribe();
-            resolve(user);
-          },
-          reject
-        );
-      });
-    }
 
     async function getUserRole(user) {
       if (!user) return;
@@ -47,8 +30,7 @@ export default {
     }
 
     router.beforeEach(async (to, from) => {
-      const user = supabase.auth.user(); // await getCurrentUser();
-      console.log(user);
+      const user = supabase.auth.user();
       const userRole = await getUserRole(user);
 
       // if user takes firebase action link to reset password

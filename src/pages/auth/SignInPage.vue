@@ -70,11 +70,9 @@
 
 <script>
 import { ref } from "vue";
-import { Loading, useQuasar } from "quasar";
+import { useQuasar } from "quasar";
 import { logText, showErrorMessage } from "src/logger";
 import { useRouter, useRoute } from "vue-router";
-import { signInWithEmailAndPassword, signOut } from "@firebase/auth";
-import { auth } from "src/firebaseConfig";
 import { store } from "src/store";
 import { supabase } from "src/supabase";
 
@@ -118,52 +116,6 @@ export default {
         showErrorMessage(error.message || error.error_description, $q);
       } finally {
         isLoading.value = false;
-      }
-      /*signInWithEmailAndPassword(auth, emailInput.value, passwordInput.value)
-        .then((userCredential) => {
-          const user = userCredential.user;
-
-          if (!user.emailVerified) {
-            signOut(auth)
-              .then((_) => {
-                logText("Success");
-              })
-              .catch((error) => {
-                logText(error.message);
-              });
-
-            showErrorMessage(
-              "You must verify your account before logging in",
-              $q
-            );
-            return;
-          }
-
-          if (user && redirect) {
-            router.push(redirect);
-          } else if (user) {
-            router.push("/");
-          }
-        })
-        .catch((error) => {
-          handleFirebaseErrors(error);
-        })
-        .finally((_) => {
-          isLoading.value = false;
-        });*/
-    }
-
-    function handleFirebaseErrors(error) {
-      switch (error.code) {
-        case "auth/user-not-found":
-          showErrorMessage("This email is not associated with an account", $q);
-          break;
-        case "auth/wrong-password":
-          showErrorMessage("Incorrect password. Please try again", $q);
-          break;
-        default:
-          showErrorMessage(`FAuth - ${error.message}`, $q);
-          break;
       }
     }
 

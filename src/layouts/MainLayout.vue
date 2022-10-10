@@ -62,7 +62,7 @@
         title="Sign out"
         caption="Sign out of your account"
         icon="logout"
-        :click="firebaseSignOut"
+        :click="signOut"
       >
       </EssentialLink>
     </q-drawer>
@@ -79,8 +79,6 @@ import EssentialLink from "src/components/EssentialLink.vue";
 import { logText } from "../logger";
 import { useRouter } from "vue-router";
 import { store } from "src/store";
-import { signOut } from "@firebase/auth";
-import { auth } from "src/firebaseConfig";
 import { supabase } from "src/supabase";
 
 export default {
@@ -102,7 +100,7 @@ export default {
       store.setLeftDrawerState(leftDrawerOpen.value);
     }
 
-    async function firebaseSignOut() {
+    async function signOut() {
       try {
         const { error } = await supabase.auth.signOut();
         if (error) throw error;
@@ -111,15 +109,6 @@ export default {
       } catch (error) {
         logText(error.message);
       }
-      /*signOut(auth)
-        .then((_) => {
-          store.user = {};
-          store.userRole = "";
-          router.push("/auth");
-        })
-        .catch((_) => {
-          logText(error.message);
-        });*/
     }
 
     return {
@@ -127,7 +116,7 @@ export default {
       user,
       userRole,
       toggleLeftDrawer,
-      firebaseSignOut,
+      signOut,
     };
   },
   components: { EssentialLink },
