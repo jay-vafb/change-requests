@@ -70,12 +70,13 @@
 
 <script>
 import { ref } from "vue";
-import { useQuasar } from "quasar";
+import { Loading, useQuasar } from "quasar";
 import { logText, showErrorMessage } from "src/logger";
 import { useRouter, useRoute } from "vue-router";
 import { signInWithEmailAndPassword, signOut } from "@firebase/auth";
 import { auth } from "src/firebaseConfig";
 import { store } from "src/store";
+import { supabase } from "src/supabase";
 
 export default {
   name: "SignInPage",
@@ -98,7 +99,27 @@ export default {
     }
 
     async function handleLogin() {
-      signInWithEmailAndPassword(auth, emailInput.value, passwordInput.value)
+      try {
+        const { user, session, error } = await supabase.auth.signIn({
+          email: emailInput.value,
+          password: passwordInput.value,
+        });
+
+        if (error || !session) throw error;
+
+        // TODO: test this with email links
+        store.user = supabase.auth.user();
+        if (user && redirect) {
+          router.push(redirect);
+        } else if (user) {
+          router.push("/");
+        }
+      } catch (error) {
+        showErrorMessage(error.message || error.error_description, $q);
+      } finally {
+        isLoading.value = false;
+      }
+      /*signInWithEmailAndPassword(auth, emailInput.value, passwordInput.value)
         .then((userCredential) => {
           const user = userCredential.user;
 
@@ -129,7 +150,7 @@ export default {
         })
         .finally((_) => {
           isLoading.value = false;
-        });
+        });*/
     }
 
     function handleFirebaseErrors(error) {

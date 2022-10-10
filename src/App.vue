@@ -47,7 +47,8 @@ export default {
     }
 
     router.beforeEach(async (to, from) => {
-      const user = await getCurrentUser();
+      const user = supabase.auth.user(); // await getCurrentUser();
+      console.log(user);
       const userRole = await getUserRole(user);
 
       // if user takes firebase action link to reset password

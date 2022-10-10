@@ -125,7 +125,29 @@ export default {
     }
 
     async function handleRegister() {
-      createUserWithEmailAndPassword(
+      try {
+        const { user, session, error } = await supabase.auth.signUp({
+          email: emailInput.value,
+          password: passwordInput.value,
+        });
+
+        if (error) throw error;
+
+        saveUser();
+        setTimeout((_) => {
+          router.push("/auth");
+        }, 1000);
+
+        showSuccessMessage(
+          "Please check your email to verify your account",
+          $q
+        );
+      } catch (error) {
+        showErrorMessage(error.message || error.error_description, $q);
+      } finally {
+        isLoading.value = false;
+      }
+      /*createUserWithEmailAndPassword(
         auth,
         emailInput.value,
         passwordInput.value
@@ -162,18 +184,16 @@ export default {
             .catch((error) => {
               logText(error.message);
             });
-        });
+        });*/
     }
 
     async function saveUser() {
       try {
-        const { data, error } = await supabase
-          .from("profiles")
-          .insert({
-            username: emailInput.value,
-            full_name: getFullName(),
-            user_role: "default",
-          });
+        const { data, error } = await supabase.from("profiles").insert({
+          username: emailInput.value,
+          full_name: getFullName(),
+          user_role: "default",
+        });
 
         if (error) throw error;
       } catch (error) {

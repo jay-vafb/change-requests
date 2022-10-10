@@ -81,6 +81,7 @@ import { useRouter } from "vue-router";
 import { store } from "src/store";
 import { signOut } from "@firebase/auth";
 import { auth } from "src/firebaseConfig";
+import { supabase } from "src/supabase";
 
 export default {
   setup() {
@@ -102,7 +103,15 @@ export default {
     }
 
     async function firebaseSignOut() {
-      signOut(auth)
+      try {
+        const { error } = await supabase.auth.signOut();
+        if (error) throw error;
+
+        router.push("/auth");
+      } catch (error) {
+        logText(error.message);
+      }
+      /*signOut(auth)
         .then((_) => {
           store.user = {};
           store.userRole = "";
@@ -110,7 +119,7 @@ export default {
         })
         .catch((_) => {
           logText(error.message);
-        });
+        });*/
     }
 
     return {
