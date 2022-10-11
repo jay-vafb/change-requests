@@ -80,8 +80,6 @@
 <script>
 import { logText, showErrorMessage, showSuccessMessage } from "src/logger";
 import { ref } from "vue";
-import { auth } from "src/firebaseConfig";
-import { confirmPasswordReset, verifyPasswordResetCode } from "@firebase/auth";
 import { useRoute } from "vue-router";
 import { useQuasar } from "quasar";
 import { supabase } from "src/supabase";
@@ -100,29 +98,24 @@ export default {
     const showConfirmPassword = ref(true);
     const isLoading = ref(false);
 
+    onMounted(async () => {
+      try {
+        const { error } = await supabase.auth.signOut();
+
+        if (error) throw error;
+        showSuccessMessage("Your account has been verified");
+      } catch (error) {
+        showErrorMessage(error.message, $q);
+      }
+    });
+
     function onSubmit() {
       isLoading.value = true;
-      verifyPasswordResetCode(auth, route.query.oobCode)
-        .then((_) => {
-          resetPassword();
-        })
-        .catch((error) => {
-          showErrorMessage(
-            "Invalid or expired password reset token. Please try again",
-            $q
-          );
-        });
+      resetPassword();
     }
 
     function resetPassword() {
-      confirmPasswordReset(auth, route.query.oobCode, passwordInput.value)
-        .then((_) => {
-          showSuccessMessage("Your password was reset", $q);
-          isLoading.value = false;
-        })
-        .catch((error) => {
-          logText(error.message);
-        });
+      isLoading.value = false;
     }
 
     return {

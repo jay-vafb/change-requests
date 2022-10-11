@@ -45,8 +45,6 @@
 <script>
 import { ref } from "vue";
 import { useQuasar } from "quasar";
-import { sendPasswordResetEmail } from "@firebase/auth";
-import { auth } from "src/firebaseConfig";
 import { showErrorMessage, showSuccessMessage } from "src/logger";
 import { useRouter } from "vue-router";
 import { supabase } from "src/supabase";
@@ -77,6 +75,7 @@ export default {
         setTimeout((_) => {
           router.push("/auth");
         }, 1000);
+
         showSuccessMessage(
           "Please check your email to reset your password",
           $q

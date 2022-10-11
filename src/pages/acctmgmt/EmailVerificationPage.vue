@@ -10,26 +10,27 @@
 </template>
 
 <script>
-import { auth } from "src/firebaseConfig";
-import { applyActionCode } from "@firebase/auth";
-import { useRoute } from "vue-router";
 import { showErrorMessage, showSuccessMessage } from "src/logger";
 import { useQuasar } from "quasar";
+import { supabase } from "src/supabase";
+import { onMounted } from "vue";
 
 export default {
   name: "EmailVerificationPage",
 
   setup() {
     const $q = useQuasar();
-    const route = useRoute();
 
-    applyActionCode(auth, route.query.oobCode)
-      .then((_) => {
-        showSuccessMessage("Email account verified", $q);
-      })
-      .catch((error) => {
-        showErrorMessage("Invalid or expired email verification token", $q);
-      });
+    onMounted(async () => {
+      try {
+        const { error } = await supabase.auth.signOut();
+
+        if (error) throw error;
+        showSuccessMessage("Your account has been verified");
+      } catch (error) {
+        showErrorMessage(error.message, $q);
+      }
+    });
   },
 };
 </script>
