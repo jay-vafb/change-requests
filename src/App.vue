@@ -37,7 +37,7 @@ export default {
       console.log(window.location);
 
       // if user takes supabase action link to reset password
-      if (
+      /*if (
         !user &&
         to.path.includes("type=recovery") &&
         to.path !== "/resetPassword"
@@ -56,7 +56,7 @@ export default {
         return { path: "/verifyEmail" };
 
         // route to view change request page when email link is clicked
-      } else if (
+      } else*/ if (
         !user &&
         to.path.includes("/viewChangeRequest") &&
         !from.path.includes("/viewChangeRequest")

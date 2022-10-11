@@ -98,6 +98,8 @@ export default {
     const showConfirmPassword = ref(true);
     const isLoading = ref(false);
 
+    console.log(window.location.hash);
+
     onMounted(async () => {
       try {
         const { error } = await supabase.auth.signOut();
