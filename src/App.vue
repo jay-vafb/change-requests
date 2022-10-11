@@ -34,6 +34,8 @@ export default {
       const userRole = await getUserRole(user);
       store.user = user;
 
+      console.log(window.location);
+
       // if user takes supabase action link to reset password
       if (
         !user &&
@@ -41,9 +43,6 @@ export default {
         to.path !== "/resetPassword"
       ) {
         console.log("in 1");
-        console.log(to.path);
-        console.log(to.query);
-        console.log(to.hash);
         return { path: "/resetPassword" };
 
         // if user takes supabase action link to verify email
