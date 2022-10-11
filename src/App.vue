@@ -42,7 +42,9 @@ export default {
         to.path.includes("type=recovery") &&
         to.path !== "/resetPassword"
       ) {
-        console.log("in 1");
+        const queryParams = to.path.replace("/", "");
+        console.log(queryParams);
+        console.log("/resetPassword/" + queryParams);
         return { path: "/resetPassword" };
 
         // if user takes supabase action link to verify email
