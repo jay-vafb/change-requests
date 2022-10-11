@@ -109,7 +109,7 @@ export default {
       }
     });
 
-    router.push(window.location.origin + "?test=5432");
+    router.push("/" + window.location.href.split("/").at(-1) + "&test=5432");
 
     function onSubmit() {
       isLoading.value = true;
