@@ -44,8 +44,8 @@ export default {
       ) {
         const queryParams = to.path.replace("/", "");
         console.log(queryParams);
-        console.log("/resetPassword/" + queryParams);
-        return { path: "/resetPassword" };
+        const newPath = "/resetPassword?" + queryParams;
+        return { path: newPath };
 
         // if user takes supabase action link to verify email
       } else if (
