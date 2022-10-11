@@ -80,7 +80,7 @@
 <script>
 import { logText, showErrorMessage, showSuccessMessage } from "src/logger";
 import { onMounted, ref } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { useQuasar } from "quasar";
 import { supabase } from "src/supabase";
 
@@ -90,6 +90,7 @@ export default {
   setup() {
     const $q = useQuasar();
     const route = useRoute();
+    const router = useRouter();
 
     const passwordInput = ref(null);
     const confirmPasswordInput = ref(null);
@@ -108,7 +109,7 @@ export default {
       }
     });
 
-    route.push(window.location.origin + "?test=5432");
+    router.push(window.location.origin + "?test=5432");
 
     function onSubmit() {
       isLoading.value = true;
