@@ -79,7 +79,7 @@
 
 <script>
 import { logText, showErrorMessage, showSuccessMessage } from "src/logger";
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
 import { useQuasar } from "quasar";
 import { supabase } from "src/supabase";
