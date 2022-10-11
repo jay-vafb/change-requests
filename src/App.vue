@@ -29,7 +29,12 @@ export default {
       }
     }
 
+    supabase.auth.onAuthStateChange((event, session) => {
+      console.log(event);
+    });
+
     router.beforeEach(async (to, from) => {
+      console.log(supabase.auth.user());
       if (to.path.includes("access_token") && to.path !== "/resetPassword") {
         const queryParams = to.path.replace("/", "");
         console.log(queryParams);

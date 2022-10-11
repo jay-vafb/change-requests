@@ -108,6 +108,8 @@ export default {
       }
     });
 
+    route.push(window.location.origin + "?test=5432");
+
     function onSubmit() {
       isLoading.value = true;
       resetPassword();
