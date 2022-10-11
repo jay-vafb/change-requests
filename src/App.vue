@@ -30,11 +30,11 @@ export default {
     }
 
     router.beforeEach(async (to, from) => {
-      const user = supabase.auth.user();
+      /*const user = supabase.auth.user();
       const userRole = await getUserRole(user);
       store.user = user;
 
-      /*console.log(window.location);
+      console.log(window.location);
 
       // if user takes supabase action link to reset password
       if (
