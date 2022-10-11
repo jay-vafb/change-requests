@@ -47,8 +47,9 @@ import { ref } from "vue";
 import { useQuasar } from "quasar";
 import { sendPasswordResetEmail } from "@firebase/auth";
 import { auth } from "src/firebaseConfig";
-import { showSuccessMessage } from "src/logger";
+import { showErrorMessage, showSuccessMessage } from "src/logger";
 import { useRouter } from "vue-router";
+import { supabase } from "src/supabase";
 
 export default {
   name: "ForgotPasswordPage",
@@ -65,9 +66,14 @@ export default {
       resetPassword();
     }
 
-    function resetPassword() {
-      sendPasswordResetEmail(auth, emailInput.value).then(() => {
-        isLoading.value = false;
+    async function resetPassword() {
+      try {
+        const { data, error } = await supabase.auth.api.resetPasswordForEmail(
+          emailInput.value,
+          { redirectTo: `${import.meta.env.VITE_NETLIFY_URL}/resetPassword/` }
+        );
+        if (error) throw error;
+
         setTimeout((_) => {
           router.push("/auth");
         }, 1000);
@@ -75,7 +81,11 @@ export default {
           "Please check your email to reset your password",
           $q
         );
-      });
+      } catch (error) {
+        showErrorMessage(error.message, $q);
+      } finally {
+        isLoading.value = false;
+      }
     }
 
     return {

@@ -84,6 +84,7 @@ import { auth } from "src/firebaseConfig";
 import { confirmPasswordReset, verifyPasswordResetCode } from "@firebase/auth";
 import { useRoute } from "vue-router";
 import { useQuasar } from "quasar";
+import { supabase } from "src/supabase";
 
 export default {
   name: "PasswordResetPage",

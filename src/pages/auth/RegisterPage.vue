@@ -120,14 +120,18 @@ export default {
 
     async function handleRegister() {
       try {
-        const { user, session, error } = await supabase.auth.signUp({
-          email: emailInput.value,
-          password: passwordInput.value,
-        });
+        const { user, session, error } = await supabase.auth.signUp(
+          {
+            email: emailInput.value,
+            password: passwordInput.value,
+          },
+          { redirectTo: `${import.meta.env.VITE_NETLIFY_URL}/verifyEmail/` }
+        );
 
         if (error) throw error;
 
         saveUser();
+        await supabase.auth.signOut();
         setTimeout((_) => {
           router.push("/auth");
         }, 1000);
