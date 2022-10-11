@@ -26,7 +26,7 @@ export default {
         const { error } = await supabase.auth.signOut();
 
         if (error) throw error;
-        showSuccessMessage("Your account has been verified");
+        showSuccessMessage("Your account has been verified", $q);
       } catch (error) {
         showErrorMessage(error.message, $q);
       }
