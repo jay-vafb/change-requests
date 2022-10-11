@@ -30,6 +30,7 @@ export default {
     }
 
     router.beforeEach(async (to, from) => {
+      console.log(to.path);
       /*const user = supabase.auth.user();
       const userRole = await getUserRole(user);
       store.user = user;
