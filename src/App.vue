@@ -30,9 +30,7 @@ export default {
     }
 
     supabase.auth.onAuthStateChange((event, session) => {
-      if (event === "PASSWORD_RECOVERY") {
-        console.log("Ay");
-      }
+      console.log(event);
     });
 
     router.beforeEach(async (to, from) => {
@@ -41,21 +39,18 @@ export default {
       store.user = user;
 
       // if user takes supabase action link to reset password
-      if (
-        !user &&
-        to.path.includes("type=recovery") &&
-        to.path !== "/resetPassword"
-      ) {
-        const queryParams = to.path.replace("/", "");
-        const newPath = "/resetPassword?" + queryParams;
-        return { path: newPath };
+      if (to.path !== "/resetPassword/" && to.hash.includes("type=recovery")) {
+        return {
+          path: "/resetPassword/",
+          hash: to.hash,
+        };
 
         // if user takes supabase action link to verify email
       } else if (
-        to.path.includes("type=signup") &&
-        to.path !== "/verifyEmail"
+        to.path !== "/verifyEmail/" &&
+        to.hash.includes("type=signup")
       ) {
-        return { path: "/verifyEmail" };
+        return { path: "/verifyEmail/", hash: to.hash };
 
         // route to view change request page when email link is clicked
       } else if (
@@ -71,8 +66,8 @@ export default {
         to.path !== "/auth" &&
         to.path !== "/register" &&
         to.path !== "/forgotPassword" &&
-        to.path !== "/verifyEmail" &&
-        to.path !== "/resetPassword"
+        to.path !== "/verifyEmail/" &&
+        to.path !== "/resetPassword/"
       ) {
         return { path: "/auth" };
 
@@ -81,9 +76,7 @@ export default {
         user &&
         (to.path === "/auth" ||
           to.path === "/register" ||
-          to.path === "/forgotPassword" ||
-          to.path === "/verifyEmail" ||
-          to.path === "/resetPassword")
+          to.path === "/forgotPassword")
       ) {
         return { path: from.path };
 

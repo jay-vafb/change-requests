@@ -125,7 +125,7 @@ export default {
             email: emailInput.value,
             password: passwordInput.value,
           },
-          { redirectTo: `${import.meta.env.VITE_NETLIFY_URL}/verifyEmail/` }
+          { redirectTo: `${import.meta.env.VITE_NETLIFY_URL}/verifyEmail` }
         );
 
         if (error) throw error;

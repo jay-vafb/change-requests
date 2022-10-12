@@ -10,27 +10,21 @@
 </template>
 
 <script>
-import { showErrorMessage, showSuccessMessage } from "src/logger";
+import { showSuccessMessage } from "src/logger";
 import { useQuasar } from "quasar";
-import { supabase } from "src/supabase";
-import { onMounted } from "vue";
+import { useRouter } from "vue-router";
 
 export default {
   name: "EmailVerificationPage",
 
   setup() {
     const $q = useQuasar();
+    const router = useRouter();
 
-    onMounted(async () => {
-      try {
-        const { error } = await supabase.auth.signOut();
-
-        if (error) throw error;
-        showSuccessMessage("Your account has been verified", $q);
-      } catch (error) {
-        showErrorMessage(error.message, $q);
-      }
-    });
+    showSuccessMessage("Account verified", $q);
+    setTimeout((_) => {
+      router.push("/");
+    }, 1000);
   },
 };
 </script>

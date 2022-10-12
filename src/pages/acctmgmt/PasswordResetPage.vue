@@ -104,7 +104,22 @@ export default {
       resetPassword();
     }
 
-    function resetPassword() {
+    async function resetPassword() {
+      try {
+        const { data, error } = await supabase.auth.update({
+          password: passwordInput.value,
+        });
+
+        if (error) throw error;
+
+        setTimeout((_) => {
+          router.push("/");
+        }, 1000);
+
+        showSuccessMessage("Password updated successfully", $q);
+      } catch (error) {
+        showErrorMessage(error.message, $q);
+      }
       isLoading.value = false;
     }
 

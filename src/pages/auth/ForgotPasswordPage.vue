@@ -68,7 +68,7 @@ export default {
       try {
         const { data, error } = await supabase.auth.api.resetPasswordForEmail(
           emailInput.value,
-          { redirectTo: `${import.meta.env.VITE_NETLIFY_URL}/resetPassword/` }
+          { redirectTo: `${import.meta.env.VITE_NETLIFY_URL}/resetPassword` }
         );
         if (error) throw error;
 
