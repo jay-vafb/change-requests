@@ -1,53 +1,59 @@
 <template>
-  <q-page padding>
-    <q-form @submit="onSubmit">
-      <div class="row q-mb-sm">
-        <div class="col-12 col-md-5">
-          <q-select
-            outlined
-            v-model="userEmailDropdown"
-            :options="userEmailOptions"
-            label="Email"
-            lazy-rules
-            emit-value
-            map-options
-            :rules="[
-              (val) => (val && val.length > 0) || 'Please make a selection',
-            ]"
-          />
+  <transition
+    appear
+    enter-active-class="animated fadeIn"
+    leave-active-class="animtaed fadeOut"
+  >
+    <q-page padding>
+      <q-form @submit="onSubmit">
+        <div class="row q-mb-sm">
+          <div class="col-12 col-md-5">
+            <q-select
+              outlined
+              v-model="userEmailDropdown"
+              :options="userEmailOptions"
+              label="Email"
+              lazy-rules
+              emit-value
+              map-options
+              :rules="[
+                (val) => (val && val.length > 0) || 'Please make a selection',
+              ]"
+            />
+          </div>
         </div>
-      </div>
 
-      <div class="row q-mb-sm">
-        <div class="col-12 col-md-5">
-          <q-select
-            class="q-mb-sm"
-            outlined
-            v-model="userRoleDropdown"
-            :options="userRoleOptions"
-            label="Role"
-            lazy-rules
-            emit-value
-            map-options
-            :rules="[
-              (val) => (val && val.length > 0) || 'Please make a selection',
-            ]"
-          />
+        <div class="row q-mb-sm">
+          <div class="col-12 col-md-5">
+            <q-select
+              class="q-mb-sm"
+              outlined
+              v-model="userRoleDropdown"
+              :options="userRoleOptions"
+              label="Role"
+              lazy-rules
+              emit-value
+              map-options
+              :rules="[
+                (val) => (val && val.length > 0) || 'Please make a selection',
+              ]"
+            />
+          </div>
         </div>
-      </div>
 
-      <div class="row">
-        <div class="col-12 col-md-5">
-          <q-btn
-            type="submit"
-            label="Set role"
-            color="primary"
-            style="width: 100%"
-          />
+        <div class="row">
+          <div class="col-12 col-md-5">
+            <q-btn
+              type="submit"
+              label="Set role"
+              color="primary"
+              style="width: 100%"
+            />
+          </div>
         </div>
-      </div>
-    </q-form>
-  </q-page>
+      </q-form>
+    </q-page>
+  </transition>
 </template>
 
 <script>

@@ -1,9 +1,15 @@
 <template>
-  <q-page class="flex flex-center">
-    <div class="column q-gutter-md">
-      <div class="text-h2">Email verified</div>
-    </div>
-  </q-page>
+  <transition
+    appear
+    enter-active-class="animated fadeIn"
+    leave-active-class="animtaed fadeOut"
+  >
+    <q-page class="flex flex-center">
+      <div class="column q-gutter-md">
+        <div class="text-h2">Email verified</div>
+      </div>
+    </q-page>
+  </transition>
 </template>
 
 <script>

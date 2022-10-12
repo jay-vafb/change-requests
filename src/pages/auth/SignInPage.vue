@@ -1,71 +1,80 @@
 <template>
-  <q-page class="flex flex-center">
-    <div class="q-pa-md">
-      <q-form @submit="onSubmit">
-        <div class="q-gutter-y-md column" style="max-width: 300px">
-          <div class="flex" style="justify-content: center">
-            <h5>VAFB Change Requests</h5>
-            <h5>Sign In</h5>
-          </div>
+  <transition
+    appear
+    enter-active-class="animated fadeIn"
+    leave-active-class="animtaed fadeOut"
+  >
+    <q-page class="flex flex-center">
+      <div class="q-pa-md">
+        <q-form @submit="onSubmit">
+          <div class="q-gutter-y-md column" style="max-width: 300px">
+            <div class="flex" style="justify-content: center">
+              <h5>VAFB Change Requests</h5>
+              <h5>Sign In</h5>
+            </div>
 
-          <q-input
-            filled
-            v-model="emailInput"
-            type="email"
-            label="Email"
-            lazy-rules
-            :rules="[
-              (val) => (val && val.length > 0) || 'Please type something',
-            ]"
-          >
-          </q-input>
+            <q-input
+              filled
+              v-model="emailInput"
+              type="email"
+              label="Email"
+              lazy-rules
+              :rules="[
+                (val) => (val && val.length > 0) || 'Please type something',
+              ]"
+            >
+            </q-input>
 
-          <q-input
-            class="q-pb-xs"
-            filled
-            v-model="passwordInput"
-            :type="showPassword ? 'password' : 'text'"
-            label="Password"
-            lazy-rules
-            :rules="[
-              (val) => (val && val.length >= 0) || 'Please type something',
-            ]"
-          >
-            <template v-slot:append>
-              <q-icon
-                :name="showPassword ? 'visibility_off' : 'visibility'"
-                class="cursor-pointer"
-                @click="showPassword = !showPassword"
-              />
-            </template>
-          </q-input>
+            <q-input
+              class="q-pb-xs"
+              filled
+              v-model="passwordInput"
+              :type="showPassword ? 'password' : 'text'"
+              label="Password"
+              lazy-rules
+              :rules="[
+                (val) => (val && val.length >= 0) || 'Please type something',
+              ]"
+            >
+              <template v-slot:append>
+                <q-icon
+                  :name="showPassword ? 'visibility_off' : 'visibility'"
+                  class="cursor-pointer"
+                  @click="showPassword = !showPassword"
+                />
+              </template>
+            </q-input>
 
-          <div class="flex q-pa-none q-ma-none" style="justify-content: right">
+            <div
+              class="flex q-pa-none q-ma-none"
+              style="justify-content: right"
+            >
+              <q-btn
+                flat
+                no-caps
+                padding="none"
+                @click="$router.push('/forgotPassword')"
+                >Forgot password</q-btn
+              >
+            </div>
+
             <q-btn
-              flat
-              no-caps
-              padding="none"
-              @click="$router.push('/forgotPassword')"
-              >Forgot password</q-btn
-            >
-          </div>
+              :loading="isLoading"
+              type="submit"
+              color="primary"
+              label="Sign in"
+            />
 
-          <q-btn
-            :loading="isLoading"
-            type="submit"
-            color="primary"
-            label="Sign in"
-          />
-
-          <div class="flex q-ma-xs" style="justify-content: center">
-            <q-btn flat no-caps @click="$router.push('/register')"
-              >Don't have an account? Register</q-btn
-            >
+            <div class="flex q-ma-xs" style="justify-content: center">
+              <q-btn flat no-caps @click="$router.push('/register')"
+                >Don't have an account? Register</q-btn
+              >
+            </div>
           </div>
-        </div>
-      </q-form>
-    </div>
-  </q-page>
+        </q-form>
+      </div>
+    </q-page>
+  </transition>
 </template>
 
 <script>

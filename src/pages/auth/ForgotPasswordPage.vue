@@ -1,45 +1,51 @@
 <template>
-  <q-page class="flex flex-center">
-    <div class="q-pa-md">
-      <q-form @submit="onSubmit">
-        <div class="q-gutter-y-md column" style="max-width: 300px">
-          <div class="flex" style="justify-content: center">
-            <h5>VAFB Change Requests</h5>
-          </div>
+  <transition
+    appear
+    enter-active-class="animated fadeIn"
+    leave-active-class="animtaed fadeOut"
+  >
+    <q-page class="flex flex-center">
+      <div class="q-pa-md">
+        <q-form @submit="onSubmit">
+          <div class="q-gutter-y-md column" style="max-width: 300px">
+            <div class="flex" style="justify-content: center">
+              <h5>VAFB Change Requests</h5>
+            </div>
 
-          <div class="text-body2">
-            Enter the email address associated with your account and we'll send
-            you a link to reset your password
-          </div>
+            <div class="text-body2">
+              Enter the email address associated with your account and we'll
+              send you a link to reset your password
+            </div>
 
-          <q-input
-            filled
-            v-model="emailInput"
-            type="email"
-            label="Email"
-            lazy-rules
-            :rules="[
-              (val) => (val && val.length > 0) || 'Please type something',
-            ]"
-          >
-          </q-input>
-
-          <q-btn
-            :loading="isLoading"
-            type="submit"
-            color="primary"
-            label="Reset password"
-          />
-
-          <div class="flex q-ma-xs" style="justify-content: center">
-            <q-btn flat no-caps @click="$router.push('/auth')"
-              >Return to sign in page</q-btn
+            <q-input
+              filled
+              v-model="emailInput"
+              type="email"
+              label="Email"
+              lazy-rules
+              :rules="[
+                (val) => (val && val.length > 0) || 'Please type something',
+              ]"
             >
+            </q-input>
+
+            <q-btn
+              :loading="isLoading"
+              type="submit"
+              color="primary"
+              label="Reset password"
+            />
+
+            <div class="flex q-ma-xs" style="justify-content: center">
+              <q-btn flat no-caps @click="$router.push('/auth')"
+                >Return to sign in page</q-btn
+              >
+            </div>
           </div>
-        </div>
-      </q-form>
-    </div>
-  </q-page>
+        </q-form>
+      </div>
+    </q-page>
+  </transition>
 </template>
 
 <script>

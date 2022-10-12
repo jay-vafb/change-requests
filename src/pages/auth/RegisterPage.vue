@@ -1,95 +1,101 @@
 <template>
-  <q-page class="flex flex-center">
-    <div class="q-pa-md">
-      <q-form @submit="onSubmit">
-        <div class="q-gutter-y-md column" style="max-width: 300px">
-          <div class="flex" style="justify-content: center">
-            <h5>VAFB Change Requests</h5>
-            <h5>Register</h5>
-          </div>
-          <q-input
-            filled
-            v-model="firstName"
-            label="First name"
-            lazy-rules
-            :rules="[
-              (val) => (val && val.length > 0) || 'Please type something',
-            ]"
-          >
-          </q-input>
-
-          <q-input
-            filled
-            v-model="lastName"
-            label="Last name"
-            lazy-rules
-            :rules="[
-              (val) => (val && val.length > 0) || 'Please type something',
-            ]"
-          >
-          </q-input>
-
-          <q-input
-            filled
-            v-model="emailInput"
-            type="email"
-            label="Email"
-            lazy-rules
-            :rules="[
-              (val) => (val && val.length > 0) || 'Please type something',
-            ]"
-          >
-          </q-input>
-
-          <q-input
-            filled
-            v-model="passwordInput"
-            :type="showPassword ? 'password' : 'text'"
-            label="Password"
-            lazy-rules
-            :rules="[
-              (val) =>
-                (val && val.length >= 8) ||
-                'Password must be at least 8 characters',
-              (val) =>
-                /[a-z]/.test(val) ||
-                'Password must include at least one lowercase letter',
-              (val) =>
-                /[A-Z]/.test(val) ||
-                'Password must include at least one uppercase letter',
-              (val) =>
-                /[0-9]/.test(val) ||
-                'Password must include at least one numerical digit',
-              (val) =>
-                /[!@#$&*]/.test(val) ||
-                'Password must include at least one special character',
-            ]"
-          >
-            <template v-slot:append>
-              <q-icon
-                :name="showPassword ? 'visibility_off' : 'visibility'"
-                class="cursor-pointer"
-                @click="showPassword = !showPassword"
-              />
-            </template>
-          </q-input>
-
-          <q-btn
-            :loading="isLoading"
-            type="submit"
-            color="primary"
-            label="Register"
-          />
-
-          <div class="flex q-ma-xs" style="justify-content: center">
-            <q-btn flat no-caps @click="$router.push('/auth')"
-              >Already have an account? Sign in</q-btn
+  <transition
+    appear
+    enter-active-class="animated fadeIn"
+    leave-active-class="animtaed fadeOut"
+  >
+    <q-page class="flex flex-center">
+      <div class="q-pa-md">
+        <q-form @submit="onSubmit">
+          <div class="q-gutter-y-md column" style="max-width: 300px">
+            <div class="flex" style="justify-content: center">
+              <h5>VAFB Change Requests</h5>
+              <h5>Register</h5>
+            </div>
+            <q-input
+              filled
+              v-model="firstName"
+              label="First name"
+              lazy-rules
+              :rules="[
+                (val) => (val && val.length > 0) || 'Please type something',
+              ]"
             >
+            </q-input>
+
+            <q-input
+              filled
+              v-model="lastName"
+              label="Last name"
+              lazy-rules
+              :rules="[
+                (val) => (val && val.length > 0) || 'Please type something',
+              ]"
+            >
+            </q-input>
+
+            <q-input
+              filled
+              v-model="emailInput"
+              type="email"
+              label="Email"
+              lazy-rules
+              :rules="[
+                (val) => (val && val.length > 0) || 'Please type something',
+              ]"
+            >
+            </q-input>
+
+            <q-input
+              filled
+              v-model="passwordInput"
+              :type="showPassword ? 'password' : 'text'"
+              label="Password"
+              lazy-rules
+              :rules="[
+                (val) =>
+                  (val && val.length >= 8) ||
+                  'Password must be at least 8 characters',
+                (val) =>
+                  /[a-z]/.test(val) ||
+                  'Password must include at least one lowercase letter',
+                (val) =>
+                  /[A-Z]/.test(val) ||
+                  'Password must include at least one uppercase letter',
+                (val) =>
+                  /[0-9]/.test(val) ||
+                  'Password must include at least one numerical digit',
+                (val) =>
+                  /[!@#$&*]/.test(val) ||
+                  'Password must include at least one special character',
+              ]"
+            >
+              <template v-slot:append>
+                <q-icon
+                  :name="showPassword ? 'visibility_off' : 'visibility'"
+                  class="cursor-pointer"
+                  @click="showPassword = !showPassword"
+                />
+              </template>
+            </q-input>
+
+            <q-btn
+              :loading="isLoading"
+              type="submit"
+              color="primary"
+              label="Register"
+            />
+
+            <div class="flex q-ma-xs" style="justify-content: center">
+              <q-btn flat no-caps @click="$router.push('/auth')"
+                >Already have an account? Sign in</q-btn
+              >
+            </div>
           </div>
-        </div>
-      </q-form>
-    </div>
-  </q-page>
+        </q-form>
+      </div>
+    </q-page>
+  </transition>
 </template>
 
 <script>
