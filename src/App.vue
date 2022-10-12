@@ -35,13 +35,7 @@ export default {
 
     router.beforeEach(async (to, from) => {
       console.log(supabase.auth.user());
-      if (to.path.includes("access_token") && to.path !== "/resetPassword") {
-        const queryParams = to.path.replace("/", "");
-        console.log(queryParams);
-        const newPath = "/resetPassword?" + queryParams;
-        console.log(newPath);
-        return { path: newPath };
-      }
+      console.log(to.path);
       /*const user = supabase.auth.user();
       const userRole = await getUserRole(user);
       store.user = user;

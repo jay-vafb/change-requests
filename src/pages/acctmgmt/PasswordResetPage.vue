@@ -99,18 +99,6 @@ export default {
     const showConfirmPassword = ref(true);
     const isLoading = ref(false);
 
-    onMounted(async () => {
-      try {
-        const { error } = await supabase.auth.signOut();
-
-        if (error) throw error;
-      } catch (error) {
-        showErrorMessage(error.message, $q);
-      }
-    });
-
-    router.push("/" + window.location.href.split("/").at(-1) + "&test=5432");
-
     function onSubmit() {
       isLoading.value = true;
       resetPassword();
