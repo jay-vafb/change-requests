@@ -248,7 +248,8 @@ export default {
         const { data, error } = await supabase
           .from("profiles")
           .select()
-          .match({ user_role: "approving_manager" });
+          .match({ user_role: "approving_manager" })
+          .neq("username", user.email);
 
         if (error) throw error;
 
