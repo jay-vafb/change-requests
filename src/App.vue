@@ -29,10 +29,6 @@ export default {
       }
     }
 
-    supabase.auth.onAuthStateChange((event, session) => {
-      console.log(event);
-    });
-
     router.beforeEach(async (to, from) => {
       const user = supabase.auth.user();
       const userRole = await getUserRole(user);
