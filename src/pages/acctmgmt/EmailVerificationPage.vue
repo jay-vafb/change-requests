@@ -1,10 +1,7 @@
 <template>
   <q-page class="flex flex-center">
     <div class="column q-gutter-md">
-      <div class="text-h5">Email verified</div>
-      <q-btn no-caps underline color="primary" @click="$router.push('/auth')"
-        >Return to sign in</q-btn
-      >
+      <div class="text-h2">Email verified</div>
     </div>
   </q-page>
 </template>

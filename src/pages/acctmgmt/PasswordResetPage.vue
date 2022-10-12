@@ -65,12 +65,6 @@
             color="primary"
             label="Update"
           />
-
-          <div class="flex q-ma-xs" style="justify-content: center">
-            <q-btn flat no-caps @click="$router.push('/auth')"
-              >Back to sign in</q-btn
-            >
-          </div>
         </div>
       </q-form>
     </div>
