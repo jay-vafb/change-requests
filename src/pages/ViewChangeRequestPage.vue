@@ -364,7 +364,7 @@ export default {
     const approvalDate = ref(null);
     const generalCommentsInput = ref(null);
     const generalComments = reactive({});
-    const boardAttendeesInput = ref(null);
+    const boardAttendeesInput = ref([]);
     const boardCommentsInput = ref(null);
     const boardAttendees = ref(null);
     const boardAttendeesOptions = ref([]);
@@ -398,7 +398,10 @@ export default {
 
     async function getBoardAttendees() {
       try {
-        const { data, error } = await supabase.from("profiles").select();
+        const { data, error } = await supabase
+          .from("profiles")
+          .select()
+          .or("user_role.eq.approving_manager, user_role.eq.board_approver");
 
         if (error) throw error;
 
@@ -541,9 +544,17 @@ export default {
       approvingManager.value = changeRequest.value.approving_manager;
       status.value = changeRequest.value.status;
       approvalDate.value = changeRequest.value.approval_date;
-      boardAttendees.value = changeRequest.value.board_attendees;
+      boardAttendees.value = formatBoardAttendees(
+        changeRequest.value.board_attendees
+      );
       boardComments.value = changeRequest.value.board_recommendations;
       boardDate.value = changeRequest.value.board_date;
+
+      // populate with either all possible attendees or attendees
+      // that are currently selected
+      boardAttendeesInput.value = boardAttendees.value
+        ? boardAttendees.value.split("\n")
+        : JSON.parse(JSON.stringify(boardAttendeesOptions.value));
     }
 
     async function createGeneralComment() {
@@ -610,30 +621,28 @@ export default {
     }
 
     async function updateBoardAttendees() {
-      const formattedBoardAttendees = formatBoardAttendees();
-
       try {
         const { error } = await supabase
           .from("change_requests")
-          .update({ board_attendees: formattedBoardAttendees })
+          .update({ board_attendees: boardAttendeesInput.value })
           .match({ id: changeRequest.value.id });
 
-        boardAttendees.value = formattedBoardAttendees;
+        boardAttendees.value = formatBoardAttendees(boardAttendeesInput.value);
 
         if (error) throw error;
 
-        boardAttendeesInput.value = null;
         showSuccessMessage("Board attendees updated", $q);
       } catch (error) {
         logText(error.message);
       }
     }
 
-    function formatBoardAttendees() {
-      return JSON.stringify(boardAttendeesInput.value)
+    function formatBoardAttendees(attendees) {
+      return JSON.stringify(attendees)
         .replaceAll("[", "")
         .replaceAll("]", "")
         .replaceAll('"', "")
+        .replaceAll("\\", "")
         .replaceAll(",", "\n");
     }
 
