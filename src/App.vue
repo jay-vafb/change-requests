@@ -30,17 +30,15 @@ export default {
     }
 
     supabase.auth.onAuthStateChange((event, session) => {
-      console.log(event);
+      if (event === "PASSWORD_RECOVERY") {
+        console.log("Ay");
+      }
     });
 
     router.beforeEach(async (to, from) => {
-      console.log(supabase.auth.user());
-      console.log(to.path);
-      /*const user = supabase.auth.user();
+      const user = supabase.auth.user();
       const userRole = await getUserRole(user);
       store.user = user;
-
-      console.log(window.location);
 
       // if user takes supabase action link to reset password
       if (
@@ -49,7 +47,6 @@ export default {
         to.path !== "/resetPassword"
       ) {
         const queryParams = to.path.replace("/", "");
-        console.log(queryParams);
         const newPath = "/resetPassword?" + queryParams;
         return { path: newPath };
 
@@ -58,7 +55,6 @@ export default {
         to.path.includes("type=signup") &&
         to.path !== "/verifyEmail"
       ) {
-        console.log("in 2");
         return { path: "/verifyEmail" };
 
         // route to view change request page when email link is clicked
@@ -67,7 +63,6 @@ export default {
         to.path.includes("/viewChangeRequest") &&
         !from.path.includes("/viewChangeRequest")
       ) {
-        console.log("in 3");
         return { path: "/auth", query: { redirect: to.path } };
 
         // if user is not logged in, restrict access to any non-authentication page
@@ -79,7 +74,6 @@ export default {
         to.path !== "/verifyEmail" &&
         to.path !== "/resetPassword"
       ) {
-        console.log("in 4");
         return { path: "/auth" };
 
         // if user is logged in, prevent auth / account management access
@@ -91,15 +85,12 @@ export default {
           to.path === "/verifyEmail" ||
           to.path === "/resetPassword")
       ) {
-        console.log(to.path);
-        console.log("in 5");
         return { path: from.path };
 
         // only let admin reach admin page
       } else if (user && userRole !== "admin" && to.path === "/admin") {
-        console.log("in 6");
         return { path: "/" };
-      }*/
+      }
     });
   },
 };
