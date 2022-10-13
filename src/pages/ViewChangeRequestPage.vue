@@ -290,7 +290,13 @@
             />
           </div>
         </div>
-        <div v-if="isChangeRequestActive" class="row">
+        <div
+          v-if="
+            isChangeRequestActive &&
+            (isReviewer || isApprovingManager || isBoardApprover)
+          "
+          class="row"
+        >
           <div class="col-12 col-md-2 q-mb-sm q-pr-sm">
             <q-btn
               label="Approve"
@@ -308,6 +314,7 @@
             />
           </div>
         </div>
+
         <div class="row">
           <div class="col-12 col-md-4 q-pr-sm">
             <q-btn
@@ -434,7 +441,10 @@ export default {
         isApprovingManager.value = true;
       } else if (store.userRole === "reviewer") {
         isReviewer.value = true;
-      } else if (store.userRole === "board_approver") {
+      } else if (
+        store.userRole === "board_approver" ||
+        store.userRole === "admin"
+      ) {
         isBoardApprover.value = true;
       }
     }
