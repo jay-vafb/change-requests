@@ -297,7 +297,7 @@ export default {
           .insert(changeRequestData);
 
         // TODO: uncomment when Sendgrid account and subscription are chosen
-        // sendEmailToReviewer(data[0].id);
+        sendEmailToReviewer(data[0].id);
         if (error) throw error;
         setTimeout((_) => {
           router.push(`/viewChangeRequest/${data[0].id}`);
