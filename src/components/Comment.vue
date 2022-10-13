@@ -5,7 +5,12 @@
       style="border: 1px solid lightgray"
     >
       {{ author + " - " + createdAt }}
-      <div class="text-body2">{{ body }}</div>
+      <div
+        class="text-body2"
+        style="overflow-wrap: break-word; white-space: pre-wrap"
+      >
+        {{ body }}
+      </div>
     </div>
   </div>
 </template>

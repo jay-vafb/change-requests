@@ -383,10 +383,6 @@ export default {
       approvingManagerOptions.value = nameData;
     });
 
-    getBoardAttendees().then((nameData) => {
-      boardAttendeesOptions.value = nameData;
-    });
-
     async function getApprovingManagers() {
       try {
         const { data, error } = await supabase
@@ -462,6 +458,18 @@ export default {
           populateFormFields();
           setNeedsChanges();
           setIsOriginalRequestor();
+
+          // populate with either all possible attendees or attendees
+          // that are currently selected
+          getBoardAttendees().then((nameData) => {
+            boardAttendeesOptions.value = nameData;
+
+            boardAttendeesInput.value =
+              JSON.parse(changeRequest.value.board_attendees) &&
+              JSON.parse(changeRequest.value.board_attendees).length > 0
+                ? JSON.parse(changeRequest.value.board_attendees)
+                : JSON.parse(JSON.stringify(boardAttendeesOptions.value));
+          });
         }
 
         if (error) throw error;
@@ -554,17 +562,11 @@ export default {
       approvingManager.value = changeRequest.value.approving_manager;
       status.value = changeRequest.value.status;
       approvalDate.value = changeRequest.value.approval_date;
-      boardAttendees.value = formatBoardAttendees(
-        changeRequest.value.board_attendees
-      );
+      boardAttendees.value = changeRequest.value.board_attendees
+        ? formatBoardAttendees(changeRequest.value.board_attendees)
+        : "";
       boardComments.value = changeRequest.value.board_recommendations;
       boardDate.value = changeRequest.value.board_date;
-
-      // populate with either all possible attendees or attendees
-      // that are currently selected
-      boardAttendeesInput.value = boardAttendees.value
-        ? boardAttendees.value.split("\n")
-        : JSON.parse(JSON.stringify(boardAttendeesOptions.value));
     }
 
     async function createGeneralComment() {
@@ -636,7 +638,9 @@ export default {
           .update({ board_attendees: boardAttendeesInput.value })
           .match({ id: changeRequest.value.id });
 
-        boardAttendees.value = formatBoardAttendees(boardAttendeesInput.value);
+        boardAttendees.value = boardAttendeesInput.value
+          ? formatBoardAttendees(boardAttendeesInput.value)
+          : "";
 
         if (error) throw error;
 
