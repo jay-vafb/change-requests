@@ -331,7 +331,36 @@ export default {
     }
 
     async function sendEmailToReviewer(changeRequestId) {
-      const details = {
+      try {
+        const data = {
+          personalizations: [
+            {
+              to: [{ email: "jay.call@vafb.com", name: "Jay Call" }],
+            },
+          ],
+          from: { email: "jbcallv@gmail.com", name: "Joseph Call" },
+          subject: `Change request #${5} - created`,
+          content: [
+            {
+              type: "text/plain",
+              value: "A new change request was created. See details:\n\n",
+            },
+          ],
+        };
+
+        const response = await axios.post(
+          "https://api.sendgrid.com/v3/mail/send",
+          data,
+          {
+            headers: {
+              Authorization: `Bearer ${import.meta.env.VITE_SENDGRID_API_KEY}`,
+            },
+          }
+        );
+      } catch (error) {
+        logText(error);
+      }
+      /*const details = {
         trackingNumber: trackingNumberInput.value,
         status: "Under review",
         requestorName: requestorName.value,
@@ -352,7 +381,7 @@ export default {
         })
         .catch((error) => {
           logText(error);
-        });
+        });*/
     }
 
     function setLoading(loading) {
