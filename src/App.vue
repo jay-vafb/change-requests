@@ -54,6 +54,7 @@ export default {
         to.path.includes("/viewChangeRequest") &&
         !from.path.includes("/viewChangeRequest")
       ) {
+        console.log(to.path);
         return { path: "/auth", query: { redirect: to.path } };
 
         // if user is not logged in, restrict access to any non-authentication page
