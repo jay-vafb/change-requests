@@ -52,7 +52,16 @@
             />
           </q-td>
 
-          <q-td v-for="col in props.cols" :key="col.name" :props="props">
+          <q-td
+            v-for="col in props.cols"
+            :key="col.name"
+            :props="props"
+            style="
+              max-width: 50ch;
+              overflow-wrap: break-word;
+              white-space: pre-wrap;
+            "
+          >
             {{ col.value }}
           </q-td>
         </q-tr>
