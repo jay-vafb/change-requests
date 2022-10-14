@@ -6,7 +6,7 @@
   >
     <q-page class="q-pa-md q-gutter-md" style="max-width: 1000px">
       <div class="row">
-        <div class="col-12 col-md-6 q-mb-sm">
+        <div class="col-12 col-md-7 q-mb-sm">
           <q-input
             outlined
             label="Subject"
@@ -15,13 +15,13 @@
             v-model="subject"
           />
         </div>
-        <div class="col-12 col-md-4 offset-md-1">
+        <div class="col-12 col-md-3 offset-md-1">
           <q-input outlined label="Date" stack-label readonly v-model="date" />
         </div>
       </div>
 
       <div class="row">
-        <div class="col-12 col-md-2 q-mb-sm">
+        <div class="col-12 col-md-3 q-mb-sm">
           <q-input
             outlined
             label="Tracking number"
@@ -39,7 +39,7 @@
             v-model="requestorName"
           />
         </div>
-        <div class="col-12 col-md-4 offset-md-1">
+        <div class="col-12 col-md-3 offset-md-1">
           <q-input
             outlined
             label="Change date"

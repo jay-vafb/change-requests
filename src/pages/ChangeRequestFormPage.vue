@@ -7,7 +7,7 @@
     <div class="q-pa-md" style="max-width: 1000px">
       <q-form @submit="onSubmit" @reset="onReset" class="q-gutter-md">
         <div class="row">
-          <div class="col-12 col-md-6">
+          <div class="col-12 col-md-7">
             <q-input
               class="q-mb-sm"
               outlined
@@ -17,10 +17,13 @@
               lazy-rules
               :rules="[
                 (val) => (val && val.length > 0) || 'Please type something',
+                (val) =>
+                  (val && val.length < 255) ||
+                  'Subject must be less than 255 characters',
               ]"
             />
           </div>
-          <div class="col-12 col-md-4 offset-md-1">
+          <div class="col-12 col-md-3 offset-md-1">
             <q-input
               v-model="datePicker"
               readonly
@@ -36,7 +39,7 @@
         </div>
 
         <div class="row">
-          <div class="col-12 col-md-2">
+          <div class="col-12 col-md-3">
             <q-input
               class="q-mb-sm"
               outlined
@@ -46,6 +49,9 @@
               lazy-rules
               :rules="[
                 (val) => (val && val.length > 0) || 'Please type something',
+                (val) =>
+                  (val && val.length < 64) ||
+                  'Tracking number must be less than 64 characters',
               ]"
             />
           </div>
@@ -62,7 +68,7 @@
               ]"
             />
           </div>
-          <div class="col-12 col-md-4 offset-md-1">
+          <div class="col-12 col-md-3 offset-md-1">
             <q-input
               v-model="changeDatePicker"
               filled
