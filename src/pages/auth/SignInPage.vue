@@ -65,6 +65,16 @@
               label="Sign in"
             />
 
+            <q-btn
+              class="typingdna-verify"
+              color="primary"
+              :data-typingdna-client-id="typingDnaClientId"
+              :data-typingdna-application-id="typingDnaApplicationId"
+              :data-typingdna-payload="typingDnaPayload"
+              data-typingdna-callback-fn="typeDNACallback"
+              label="Verify 2FA with TypingDNA"
+            />
+
             <div class="flex q-ma-xs" style="justify-content: center">
               <q-btn flat no-caps @click="$router.push('/register')"
                 >Don't have an account? Register</q-btn
@@ -84,6 +94,7 @@ import { logText, showErrorMessage } from "src/logger";
 import { useRouter, useRoute } from "vue-router";
 import { store } from "src/store";
 import { supabase } from "src/supabase";
+import axios from "axios";
 
 export default {
   name: "SignInPage",
@@ -100,9 +111,52 @@ export default {
 
     const redirect = route.query.redirect;
 
+    const typingDnaClientId = ref(null);
+    const typingDnaApplicationId = ref(null);
+    const typingDnaPayload = ref(null);
+
+    function typeDNAVerify() {
+      axios
+        .get(
+          `https://test-email-server1.herokuapp.com/verifyAccount?email=${emailInput.value}`
+        )
+        .then((res) => {
+          typingDnaClientId.value = res.data.clientId;
+          typingDnaApplicationId.value = res.data.applicationId;
+          typingDnaPayload.value = res.data.payload;
+          console.log("Typing DNA attributes created");
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
+
+    async function typeDNACallback(payload) {
+      console.log("call back", payload);
+      if (payload.success === 1) {
+        let data = {
+          email: emailInput.value,
+          otp: payload.otp,
+        };
+      }
+
+      axios
+        .post("https://test-email-server1.herokuapp.com/validateOtp", {
+          data: data,
+        })
+        .then((res) => {
+          console.log(res.data);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
+
     function onSubmit() {
       isLoading.value = true;
-      handleLogin();
+      typeDNAVerify();
+      isLoading.value = false;
+      //handleLogin();
     }
 
     async function handleLogin() {
@@ -134,6 +188,11 @@ export default {
       isLoading,
       showPassword,
       onSubmit,
+
+      typingDnaClientId,
+      typingDnaApplicationId,
+      typingDnaPayload,
+      typeDNACallback,
     };
   },
 };
