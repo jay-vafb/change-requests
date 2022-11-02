@@ -125,6 +125,9 @@ export default {
           typingDnaApplicationId.value = res.data.applicationId;
           typingDnaPayload.value = res.data.payload;
           console.log("Typing DNA attributes created");
+          console.log(typingDnaClientId.value);
+          console.log(typingDnaApplicationId.value);
+          console.log(typingDnaPayload.value);
         })
         .catch((error) => {
           console.log(error);
