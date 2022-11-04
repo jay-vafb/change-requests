@@ -128,6 +128,8 @@ export default {
           typingDnaPayload.value = res.data.payload;
           showSuccessMessage("Logged in. Now verify with TypingDNA", $q);
 
+          emailAddress = emailInput.value;
+
           TypingDNAVerify2FA({
             ...res.data,
             callbackFn: "typeDNACallback",

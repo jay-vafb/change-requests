@@ -42,24 +42,28 @@
     <!-- quasar:entry-point -->
 
     <script src="https://cdn.typingdna.com/verify/typingdna-verify.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 
     <script>
+      var emailAddress;
+
       async function typeDNACallback(payload) {
         console.log("call back", payload);
         let data;
         if (payload && payload.success) {
           console.log("in");
           data = {
-            email: emailInput.value,
+            email: emailAddress,
             otp: payload.otp,
           };
         }
 
-        axios
+        window.axios
           .post("https://test-email-server1.herokuapp.com/validateOtp", {
             data,
           })
           .then((res) => {
+            console.log("DONE");
             console.log(res.data);
           })
           .catch((error) => {
