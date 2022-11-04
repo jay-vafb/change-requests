@@ -90,7 +90,7 @@
 <script>
 import { ref } from "vue";
 import { useQuasar } from "quasar";
-import { logText, showErrorMessage } from "src/logger";
+import { logText, showErrorMessage, showSuccessMessage } from "src/logger";
 import { useRouter, useRoute } from "vue-router";
 import { store } from "src/store";
 import { supabase } from "src/supabase";
@@ -115,19 +115,18 @@ export default {
     const typingDnaApplicationId = ref(null);
     const typingDnaPayload = ref(null);
 
+    // TODO: revert links back to the original heroku test email server
     function typeDNAVerify() {
       axios
         .get(
           `https://test-email-server1.herokuapp.com/verifyAccount?email=${emailInput.value}`
         )
         .then((res) => {
+          console.log(res);
           typingDnaClientId.value = res.data.clientId;
           typingDnaApplicationId.value = res.data.applicationId;
           typingDnaPayload.value = res.data.payload;
-          console.log("Typing DNA attributes created");
-          console.log(typingDnaClientId.value);
-          console.log(typingDnaApplicationId.value);
-          console.log(typingDnaPayload.value);
+          showSuccessMessage("Logged in. Now verify with TypingDNA", $q);
         })
         .catch((error) => {
           console.log(error);
@@ -136,8 +135,10 @@ export default {
 
     async function typeDNACallback(payload) {
       console.log("call back", payload);
-      if (payload.success === 1) {
-        let data = {
+      let data;
+      if (payload && payload.success) {
+        console.log("in");
+        data = {
           email: emailInput.value,
           otp: payload.otp,
         };
@@ -145,7 +146,7 @@ export default {
 
       axios
         .post("https://test-email-server1.herokuapp.com/validateOtp", {
-          data: data,
+          data,
         })
         .then((res) => {
           console.log(res.data);
