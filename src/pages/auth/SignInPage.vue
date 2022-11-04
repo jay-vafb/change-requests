@@ -127,6 +127,13 @@ export default {
           typingDnaApplicationId.value = res.data.applicationId;
           typingDnaPayload.value = res.data.payload;
           showSuccessMessage("Logged in. Now verify with TypingDNA", $q);
+
+          TypingDNAVerify2FA({
+            email: emailInput.value,
+            language: "en",
+            flow: "STANDARD",
+            callbackFn: typeDNACallback,
+          });
         })
         .catch((error) => {
           console.log(error);
