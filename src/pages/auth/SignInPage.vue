@@ -129,9 +129,7 @@ export default {
           showSuccessMessage("Logged in. Now verify with TypingDNA", $q);
 
           TypingDNAVerify2FA({
-            email: emailInput.value,
-            language: "en",
-            flow: "STANDARD",
+            ...res.data,
             callbackFn: typeDNACallback,
           });
         })
