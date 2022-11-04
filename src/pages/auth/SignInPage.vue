@@ -138,7 +138,7 @@ export default {
         });
     }
 
-    async function typeDNACallback(payload) {
+    /*async function typeDNACallback(payload) {
       console.log("call back", payload);
       let data;
       if (payload && payload.success) {
@@ -159,7 +159,7 @@ export default {
         .catch((error) => {
           console.log(error);
         });
-    }
+    }*/
 
     function onSubmit() {
       isLoading.value = true;
@@ -201,7 +201,7 @@ export default {
       typingDnaClientId,
       typingDnaApplicationId,
       typingDnaPayload,
-      typeDNACallback,
+      //typeDNACallback,
     };
   },
 };
