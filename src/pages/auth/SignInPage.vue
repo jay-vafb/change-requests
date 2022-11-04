@@ -130,7 +130,7 @@ export default {
 
           TypingDNAVerify2FA({
             ...res.data,
-            callbackFn: typeDNACallback,
+            callbackFn: "typeDNACallback",
           });
         })
         .catch((error) => {
