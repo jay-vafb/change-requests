@@ -46,7 +46,7 @@
 
     <script>
       var emailAddress;
-      var verified = false;
+      var verified = localStorage.getItem("verified") || false;
 
       async function typeDNACallback(payload) {
         console.log("call back", payload);
@@ -65,7 +65,7 @@
           })
           .then((res) => {
             console.log(res.data);
-            verified = true;
+            localStorage.setItem("verified", true);
             console.log("index.html", verified);
             window.location.reload();
           })
