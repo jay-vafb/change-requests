@@ -34,7 +34,7 @@ export default {
       const userRole = await getUserRole(user);
       store.user = user;
 
-      user = user && verified;
+      user = user && sessionStorage.getItem("verified");
 
       // if user takes supabase action link to reset password
       if (to.path !== "/resetPassword/" && to.hash.includes("type=recovery")) {

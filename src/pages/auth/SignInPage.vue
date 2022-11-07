@@ -184,7 +184,7 @@ export default {
           router.push(redirect);
         } else if (user) {
           //router.push("/");
-          localStorage.setItem("verified", false);
+          sessionStorage.setItem("verified", false);
           showSuccessMessage(
             "Logged in. Please authenticate with TypingDNA",
             $q
