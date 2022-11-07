@@ -34,7 +34,8 @@ export default {
       const userRole = await getUserRole(user);
       store.user = user;
 
-      console.log("App.vue", verified);
+      user = user && verified;
+
       // if user takes supabase action link to reset password
       if (to.path !== "/resetPassword/" && to.hash.includes("type=recovery")) {
         return {
