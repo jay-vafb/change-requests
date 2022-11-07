@@ -65,7 +65,6 @@
           .then((res) => {
             console.log(res.data);
             sessionStorage.setItem("verified", true);
-            console.log("index.html", verified);
             window.location.reload();
           })
           .catch((error) => {
