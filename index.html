@@ -66,6 +66,7 @@
           .then((res) => {
             console.log(res.data);
             verified = true;
+            console.log("index.html", verified);
             window.location.reload();
           })
           .catch((error) => {
