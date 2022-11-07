@@ -43,7 +43,6 @@
 
     <script src="https://cdn.typingdna.com/verify/typingdna-verify.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-    <script type="module" src="./src/store.js"></script>
 
     <script>
       var emailAddress;
@@ -65,8 +64,7 @@
           })
           .then((res) => {
             console.log(res.data);
-            store.verified = true;
-            console.log(store.verified);
+            window.location.reload();
           })
           .catch((error) => {
             console.log(error);

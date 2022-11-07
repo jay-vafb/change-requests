@@ -126,7 +126,6 @@ export default {
           typingDnaClientId.value = res.data.clientId;
           typingDnaApplicationId.value = res.data.applicationId;
           typingDnaPayload.value = res.data.payload;
-          showSuccessMessage("Logged in. Now verify with TypingDNA", $q);
 
           emailAddress = emailInput.value;
 
@@ -166,8 +165,8 @@ export default {
     function onSubmit() {
       isLoading.value = true;
       typeDNAVerify();
-      isLoading.value = false;
-      //handleLogin();
+      //isLoading.value = false;
+      handleLogin();
     }
 
     async function handleLogin() {
@@ -184,7 +183,11 @@ export default {
         if (user && redirect) {
           router.push(redirect);
         } else if (user) {
-          router.push("/");
+          //router.push("/");
+          showSuccessMessage(
+            "Logged in. Please authenticate with TypingDNA",
+            $q
+          );
         }
       } catch (error) {
         showErrorMessage(error.message || error.error_description, $q);
