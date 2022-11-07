@@ -48,10 +48,8 @@
       var emailAddress;
 
       async function typeDNACallback(payload) {
-        console.log("call back", payload);
         let data;
         if (payload && payload.success) {
-          console.log("in");
           data = {
             email: emailAddress,
             otp: payload.otp,
@@ -63,7 +61,6 @@
             data,
           })
           .then((res) => {
-            console.log(res.data);
             sessionStorage.setItem("verified", true);
             window.location.reload();
           })
