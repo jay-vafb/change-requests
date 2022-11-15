@@ -13,6 +13,13 @@ export default {
   setup() {
     const router = useRouter();
 
+    supabase.auth.onAuthStateChange(async (event, session) => {
+      if (event === "SIGNED_IN") {
+        const user = await supabase.auth.getUser();
+        store.user = user.data.user;
+      }
+    });
+
     async function getUserRole(user) {
       if (!user) return;
       try {
@@ -30,11 +37,11 @@ export default {
     }
 
     router.beforeEach(async (to, from) => {
-      let user = supabase.auth.user();
+      const user = store.user;
       const userRole = await getUserRole(user);
-      store.user = user;
 
-      user = user && sessionStorage.getItem("verified") === "true";
+      const authenticated =
+        store.user && sessionStorage.getItem("verified") === "true";
 
       // if user takes supabase action link to reset password
       if (to.path !== "/resetPassword/" && to.hash.includes("type=recovery")) {
@@ -52,7 +59,7 @@ export default {
 
         // route to view change request page when email link is clicked
       } else if (
-        !user &&
+        !authenticated &&
         to.path.includes("/viewChangeRequest") &&
         !from.path.includes("/viewChangeRequest")
       ) {
@@ -60,7 +67,7 @@ export default {
 
         // if user is not logged in, restrict access to any non-authentication page
       } else if (
-        !user &&
+        !authenticated &&
         to.path !== "/auth" &&
         to.path !== "/register" &&
         to.path !== "/forgotPassword" &&
@@ -71,7 +78,7 @@ export default {
 
         // if user is logged in, prevent auth / account management access
       } else if (
-        user &&
+        authenticated &&
         (to.path === "/auth" ||
           to.path === "/register" ||
           to.path === "/forgotPassword")
@@ -79,7 +86,11 @@ export default {
         return { path: from.path };
 
         // only let admin reach admin page
-      } else if (user && userRole !== "admin" && to.path === "/admin") {
+      } else if (
+        authenticated &&
+        userRole !== "admin" &&
+        to.path === "/admin"
+      ) {
         return { path: "/" };
       }
     });

@@ -124,7 +124,6 @@ export default {
           }`
         )
         .then((res) => {
-          console.log(res);
           typingDnaClientId.value = res.data.clientId;
           typingDnaApplicationId.value = res.data.applicationId;
           typingDnaPayload.value = res.data.payload;
@@ -149,15 +148,15 @@ export default {
 
     async function handleLogin() {
       try {
-        const { user, session, error } = await supabase.auth.signIn({
+        const { error } = await supabase.auth.signInWithPassword({
           email: emailInput.value,
           password: passwordInput.value,
         });
 
-        if (error || !session) throw error;
+        const user = await supabase.auth.getUser();
+        if (error) throw error;
 
         // TODO: test this with email links
-        store.user = supabase.auth.user();
         if (user && redirect) {
           router.push(redirect);
         } else if (user) {

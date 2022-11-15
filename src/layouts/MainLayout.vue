@@ -102,6 +102,8 @@ export default {
 
     async function signOut() {
       try {
+        store.user = {};
+        sessionStorage.setItem("verified", false);
         const { error } = await supabase.auth.signOut();
         if (error) throw error;
 
