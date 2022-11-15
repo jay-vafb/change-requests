@@ -119,7 +119,9 @@ export default {
     function typeDNAVerify() {
       axios
         .get(
-          `https://test-email-server1.herokuapp.com/verifyAccount?email=${emailInput.value}`
+          `${import.meta.env.VITE_BACKEND_PRODUCTION}/verifyAccount?email=${
+            emailInput.value
+          }`
         )
         .then((res) => {
           console.log(res);
