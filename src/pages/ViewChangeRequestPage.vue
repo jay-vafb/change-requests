@@ -620,7 +620,9 @@ export default {
       };
       axios
         .post(
-          `https://test-email-server1.herokuapp.com/email/comment/${changeRequest.value.id}`,
+          `${import.meta.env.VITE_BACKEND_PRODUCTION}/email/comment/${
+            changeRequest.value.id
+          }`,
           details
         )
         .then((result) => {

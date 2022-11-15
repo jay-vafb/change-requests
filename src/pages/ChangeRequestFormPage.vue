@@ -350,7 +350,9 @@ export default {
 
       axios
         .post(
-          `https://test-email-server1.herokuapp.com/email/create/${changeRequestId}`,
+          `${
+            import.meta.env.VITE_BACKEND_PRODUCTION
+          }/email/create/${changeRequestId}`,
           details
         )
         .then((result) => {

@@ -139,33 +139,9 @@ export default {
         });
     }
 
-    /*async function typeDNACallback(payload) {
-      console.log("call back", payload);
-      let data;
-      if (payload && payload.success) {
-        console.log("in");
-        data = {
-          email: emailInput.value,
-          otp: payload.otp,
-        };
-      }
-
-      axios
-        .post("https://test-email-server1.herokuapp.com/validateOtp", {
-          data,
-        })
-        .then((res) => {
-          console.log(res.data);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    }*/
-
     function onSubmit() {
       isLoading.value = true;
       typeDNAVerify();
-      //isLoading.value = false;
       handleLogin();
     }
 
@@ -207,7 +183,6 @@ export default {
       typingDnaClientId,
       typingDnaApplicationId,
       typingDnaPayload,
-      //typeDNACallback,
     };
   },
 };
