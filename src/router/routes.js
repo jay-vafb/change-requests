@@ -1,51 +1,36 @@
-import MainLayout from "../layouts/MainLayout.vue";
-import HomePage from "../pages/HomePage.vue";
-import ChangeRequestFormPage from "../pages/ChangeRequestFormPage.vue";
-import ListChangeRequestsPage from "../pages/ListChangeRequestsPage.vue";
-import ViewChangeRequestPage from "../pages/ViewChangeRequestPage.vue";
-import StatisticsPage from "../pages/StatisticsPage.vue";
-import UserAdministrationPage from "../pages/UserAdministrationPage.vue";
-import BasicLayout from "../layouts/BasicLayout.vue";
-import SignInPage from "../pages/auth/SignInPage.vue";
-import RegisterPage from "../pages/auth/RegisterPage.vue";
-import ForgotPasswordPage from "../pages/auth/ForgotPasswordPage.vue";
-import EmailVerificationPage from "../pages/acctmgmt/EmailVerificationPage.vue";
-import PasswordResetPage from "../pages/acctmgmt/PasswordResetPage.vue";
-import ErrorNotFound from "../pages/ErrorNotFound.vue";
-
 const routes = [
   {
     path: "/",
-    component: MainLayout,
+    component: () => import("layouts/MainLayout.vue"),
     children: [
       {
         path: "",
-        component: HomePage,
+        component: () => import("pages/HomePage.vue"),
         meta: { title: "Home" },
       },
       {
         path: "/changeRequestForm",
-        component: ChangeRequestFormPage,
+        component: () => import("pages/ChangeRequestFormPage.vue"),
         meta: { title: "Change request form" },
       },
       {
         path: "/changeRequests",
-        component: ListChangeRequestsPage,
+        component: () => import("pages/ListChangeRequestsPage.vue"),
         meta: { title: "Change requests" },
       },
       {
         path: "/viewChangeRequest/:id",
-        component: ViewChangeRequestPage,
+        component: () => import("pages/ViewChangeRequestPage.vue"),
         meta: { title: "View change request" },
       },
       {
         path: "/statistics",
-        component: StatisticsPage,
+        component: () => import("pages/StatisticsPage.vue"),
         meta: { title: "Statistics" },
       },
       {
         path: "/admin",
-        component: UserAdministrationPage,
+        component: () => import("pages/UserAdministrationPage.vue"),
         meta: { title: "User administration" },
       },
     ],
@@ -53,27 +38,27 @@ const routes = [
 
   {
     path: "/auth",
-    component: BasicLayout,
+    component: () => import("layouts/BasicLayout.vue"),
     children: [
       {
         path: "",
-        component: SignInPage,
+        component: () => import("pages/auth/SignInPage.vue"),
       },
       {
         path: "/register",
-        component: RegisterPage,
+        component: () => import("pages/auth/RegisterPage.vue"),
       },
       {
         path: "/forgotPassword",
-        component: ForgotPasswordPage,
+        component: () => import("pages/auth/ForgotPasswordPage.vue"),
       },
       {
         path: "/verifyEmail",
-        component: EmailVerificationPage,
+        component: () => import("pages/acctmgmt/EmailVerificationPage.vue"),
       },
       {
         path: "/resetPassword",
-        component: PasswordResetPage,
+        component: () => import("pages/acctmgmt/PasswordResetPage.vue"),
       },
     ],
   },
@@ -82,7 +67,7 @@ const routes = [
   // but you can also remove it
   {
     path: "/:catchAll(.*)*",
-    component: ErrorNotFound,
+    component: () => import("pages/ErrorNotFound.vue"),
   },
 ];
 
