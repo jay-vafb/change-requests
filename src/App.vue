@@ -30,9 +30,6 @@ export default {
 
         if (error) throw error;
 
-        console.log("app.vue data", data[0]);
-        console.log("app.vue data role", data[0].user_role);
-
         store.userRole = data[0] ? data[0].user_role : "other";
         return data[0] ? data[0].user_role : "other";
       } catch (error) {
