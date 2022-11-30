@@ -30,8 +30,8 @@ export default {
 
         if (error) throw error;
 
-        store.userRole = data[0] ? data[0].user_role : "other";
-        return data[0] ? data[0].user_role : "other";
+        store.userRole = data[0] ? data[0].user_role : "default";
+        return data[0] ? data[0].user_role : "default";
       } catch (error) {
         console.log(error.message);
       }
