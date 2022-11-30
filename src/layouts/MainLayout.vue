@@ -88,7 +88,6 @@ export default {
     const user = store.user;
     const userRole = store.userRole;
 
-    console.log(user);
     console.log(userRole);
 
     watch(
